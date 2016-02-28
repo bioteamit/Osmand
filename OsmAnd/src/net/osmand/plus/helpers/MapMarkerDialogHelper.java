@@ -25,6 +25,7 @@ import net.osmand.IndexConstants;
 import net.osmand.Location;
 import net.osmand.data.LatLon;
 import net.osmand.data.PointDescription;
+import net.osmand.plus.ApplicationMode;
 import net.osmand.plus.GPXUtilities;
 import net.osmand.plus.GPXUtilities.GPXFile;
 import net.osmand.plus.GPXUtilities.WptPt;
@@ -56,7 +57,8 @@ import java.util.Locale;
 
 public class MapMarkerDialogHelper {
 	public static final int ACTIVE_MARKERS = 0;
-	public static final int MARKERS_HISTORY = 1;
+	public static final int MY_LOCATION = 10;
+	public static final int MARKERS_HISTORY = 100;
 
 	private MapActivity mapActivity;
 	private OsmandApplication app;
@@ -67,16 +69,20 @@ public class MapMarkerDialogHelper {
 	private boolean selectionMode;
 
 	private boolean useCenter;
+	private LatLon myLoc;
 	private LatLon loc;
 	private Float heading;
 	private int screenOrientation;
 	private boolean reloading;
 	private long lastUpdateTime;
+	private boolean allSelected;
 
 	public interface MapMarkersDialogHelperCallbacks {
 		void reloadAdapter();
 
 		void deleteMapMarker(int position);
+
+		void showMarkersRouteOnMap();
 	}
 
 	public MapMarkerDialogHelper(MapActivity mapActivity) {
@@ -89,7 +95,7 @@ public class MapMarkerDialogHelper {
 		this.helperCallbacks = helperCallbacks;
 	}
 
-	public boolean isSelectionMode() {
+	public boolean isInSelectionMode() {
 		return selectionMode;
 	}
 
@@ -120,10 +126,27 @@ public class MapMarkerDialogHelper {
 				Object obj = listAdapter.getItem(item);
 				if (obj instanceof MapMarker) {
 					MapMarker marker = (MapMarker) obj;
-					if (!marker.history) {
-						showMarkerOnMap(mapActivity, marker);
+					if (selectionMode) {
+						CheckBox checkBox = (CheckBox) view.findViewById(R.id.checkbox);
+						checkBox.setChecked(!checkBox.isChecked());
+						marker.selected = checkBox.isChecked();
+						markersHelper.updateMapMarker(marker, false);
+						if (helperCallbacks != null) {
+							helperCallbacks.showMarkersRouteOnMap();
+						}
 					} else {
-						showHistoryOnMap(marker);
+						if (!marker.history) {
+							showMarkerOnMap(mapActivity, marker);
+						} else {
+							showHistoryOnMap(marker);
+						}
+					}
+				} else if (obj instanceof Integer && (Integer) obj == MY_LOCATION && selectionMode) {
+					CheckBox checkBox = (CheckBox) view.findViewById(R.id.checkbox);
+					checkBox.setChecked(!checkBox.isChecked());
+					markersHelper.setStartFromMyLocation(checkBox.isChecked());
+					if (helperCallbacks != null) {
+						helperCallbacks.showMarkersRouteOnMap();
 					}
 				}
 			}
@@ -138,6 +161,15 @@ public class MapMarkerDialogHelper {
 		final List<Object> objects = getListObjects();
 		List<Object> activeObjects = getActiveObjects(objects);
 
+		allSelected = true;
+		List<MapMarker> activeMarkers = new ArrayList<>(markersHelper.getActiveMapMarkers());
+		for (MapMarker m : activeMarkers) {
+			if (!m.selected) {
+				allSelected = false;
+				break;
+			}
+		}
+
 		return new StableArrayAdapter(mapActivity,
 				R.layout.map_marker_item, R.id.title, objects, activeObjects) {
 
@@ -149,7 +181,8 @@ public class MapMarkerDialogHelper {
 			@Override
 			public boolean isEnabled(int position) {
 				Object obj = getItem(position);
-				return obj instanceof MapMarker;
+				return obj instanceof MapMarker
+						|| (obj instanceof Integer && (Integer) obj == MY_LOCATION);
 			}
 
 			@Override
@@ -161,7 +194,11 @@ public class MapMarkerDialogHelper {
 				boolean topDividerView = (obj instanceof Boolean) && ((Boolean) obj);
 				boolean bottomDividerView = (obj instanceof Boolean) && !((Boolean) obj);
 				if (labelView) {
-					v = createItemForCategory(this, (Integer) obj);
+					if ((Integer) obj == MY_LOCATION) {
+						v = updateMyLocationView(v);
+					} else {
+						v = createItemForCategory(this, (Integer) obj);
+					}
 					AndroidUtils.setListItemBackground(mapActivity, v, nightMode);
 				} else if (topDividerView) {
 					v = mapActivity.getLayoutInflater().inflate(R.layout.card_top_divider, null);
@@ -264,72 +301,103 @@ public class MapMarkerDialogHelper {
 			});
 
 		} else if (type == ACTIVE_MARKERS) {
-			final ImageButton btn = (ImageButton) v.findViewById(R.id.image_button);
-			btn.setImageDrawable(app.getIconsCache().getContentIcon(R.drawable.ic_overflow_menu_white, !nightMode));
-			btn.setVisibility(View.VISIBLE);
-			btn.setOnClickListener(new View.OnClickListener() {
-				@Override
-				public void onClick(View v) {
-
-					IconsCache iconsCache = app.getIconsCache();
-					final PopupMenu optionsMenu = new PopupMenu(mapActivity, v);
-					DirectionsDialogs.setupPopUpMenuIcon(optionsMenu);
-					MenuItem item;
-					item = optionsMenu.getMenu().add(R.string.shared_string_clear)
-							.setIcon(iconsCache.getContentIcon(R.drawable.ic_action_delete_dark, !nightMode));
-					item.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-						@Override
-						public boolean onMenuItemClick(MenuItem item) {
-							AlertDialog.Builder builder = new AlertDialog.Builder(mapActivity);
-							builder.setMessage(mapActivity.getString(R.string.clear_active_markers_q))
-									.setPositiveButton(R.string.shared_string_yes, new DialogInterface.OnClickListener() {
-										@Override
-										public void onClick(DialogInterface dialog, int which) {
-											listAdapter.notifyDataSetInvalidated();
-											markersHelper.removeActiveMarkers();
-											if (markersHelper.getMapMarkersHistory().size() == 0) {
-												mapActivity.getDashboard().hideDashboard();
-											} else if (helperCallbacks != null) {
-												helperCallbacks.reloadAdapter();
-											} else {
-												reloadListAdapter(listAdapter);
-											}
-										}
-									})
-									.setNegativeButton(R.string.shared_string_no, null)
-									.show();
-							return true;
-						}
-					});
-
-					item = optionsMenu.getMenu().add(R.string.shared_string_reverse_order).setIcon(
-							iconsCache.getContentIcon(R.drawable.ic_action_undo_dark, !nightMode));
-					item.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-						@Override
-						public boolean onMenuItemClick(MenuItem item) {
-							markersHelper.reverseActiveMarkersOrder();
-							if (helperCallbacks != null) {
-								helperCallbacks.reloadAdapter();
-							} else {
-								reloadListAdapter(listAdapter);
-							}
-							return true;
-						}
-					});
-
-					item = optionsMenu.getMenu().add(R.string.shared_string_save_as_gpx).setIcon(
-							iconsCache.getContentIcon(R.drawable.ic_action_save, !nightMode));
-					item.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-						@Override
-						public boolean onMenuItemClick(MenuItem item) {
-							generateGPX(markersHelper.getActiveMapMarkers());
-							return true;
-						}
-					});
-
-					optionsMenu.show();
+			if (selectionMode) {
+				final Button btn = (Button) v.findViewById(R.id.header_button);
+				btn.setTextColor(!nightMode ? mapActivity.getResources().getColor(R.color.map_widget_blue)
+						: mapActivity.getResources().getColor(R.color.osmand_orange));
+				if (allSelected) {
+					btn.setText(mapActivity.getString(R.string.shared_string_deselect_all));
+				} else {
+					btn.setText(mapActivity.getString(R.string.shared_string_select_all));
 				}
-			});
+				btn.setVisibility(View.VISIBLE);
+				btn.setOnClickListener(new View.OnClickListener() {
+					@Override
+					public void onClick(View v) {
+						List<MapMarker> markers = markersHelper.getActiveMapMarkers();
+						for (MapMarker marker : markers) {
+							marker.selected = !allSelected;
+						}
+						markersHelper.setStartFromMyLocation(!allSelected);
+						allSelected = !allSelected;
+						if (helperCallbacks != null) {
+							helperCallbacks.reloadAdapter();
+						} else {
+							reloadListAdapter(listAdapter);
+						}
+					}
+				});
+
+			} else {
+				final ImageButton btn = (ImageButton) v.findViewById(R.id.image_button);
+				btn.setImageDrawable(app.getIconsCache().getContentIcon(R.drawable.ic_overflow_menu_white, !nightMode));
+				btn.setVisibility(View.VISIBLE);
+				btn.setOnClickListener(new View.OnClickListener() {
+					@Override
+					public void onClick(View v) {
+
+						IconsCache iconsCache = app.getIconsCache();
+						final PopupMenu optionsMenu = new PopupMenu(mapActivity, v);
+						DirectionsDialogs.setupPopUpMenuIcon(optionsMenu);
+						MenuItem item;
+						item = optionsMenu.getMenu().add(R.string.shared_string_clear)
+								.setIcon(iconsCache.getContentIcon(R.drawable.ic_action_delete_dark, !nightMode));
+						item.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+							@Override
+							public boolean onMenuItemClick(MenuItem item) {
+								AlertDialog.Builder builder = new AlertDialog.Builder(mapActivity);
+								builder.setMessage(mapActivity.getString(R.string.clear_active_markers_q))
+										.setPositiveButton(R.string.shared_string_yes, new DialogInterface.OnClickListener() {
+											@Override
+											public void onClick(DialogInterface dialog, int which) {
+												listAdapter.notifyDataSetInvalidated();
+												markersHelper.removeActiveMarkers();
+												if (markersHelper.getMapMarkersHistory().size() == 0) {
+													mapActivity.getDashboard().hideDashboard();
+												} else if (helperCallbacks != null) {
+													helperCallbacks.reloadAdapter();
+												} else {
+													reloadListAdapter(listAdapter);
+												}
+											}
+										})
+										.setNegativeButton(R.string.shared_string_no, null)
+										.show();
+								return true;
+							}
+						});
+
+						if (!sorted) {
+							item = optionsMenu.getMenu().add(R.string.shared_string_reverse_order).setIcon(
+									iconsCache.getContentIcon(R.drawable.ic_action_undo_dark, !nightMode));
+							item.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+								@Override
+								public boolean onMenuItemClick(MenuItem item) {
+									markersHelper.reverseActiveMarkersOrder();
+									if (helperCallbacks != null) {
+										helperCallbacks.reloadAdapter();
+									} else {
+										reloadListAdapter(listAdapter);
+									}
+									return true;
+								}
+							});
+						}
+
+						item = optionsMenu.getMenu().add(R.string.shared_string_save_as_gpx).setIcon(
+								iconsCache.getContentIcon(R.drawable.ic_action_save, !nightMode));
+						item.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+							@Override
+							public boolean onMenuItemClick(MenuItem item) {
+								generateGPX(markersHelper.getActiveMapMarkers());
+								return true;
+							}
+						});
+
+						optionsMenu.show();
+					}
+				});
+			}
 		}
 
 		TextView tv = (TextView) v.findViewById(R.id.header_text);
@@ -342,14 +410,14 @@ public class MapMarkerDialogHelper {
 		if (v == null || v.findViewById(R.id.info_close) == null) {
 			v = mapActivity.getLayoutInflater().inflate(R.layout.map_marker_item, null);
 		}
-		updateMapMarkerInfoView(mapActivity, v, loc, heading, useCenter, nightMode, screenOrientation,
-				selectionMode, marker);
+		updateMapMarkerInfo(mapActivity, v, loc, heading, useCenter, nightMode, screenOrientation,
+				selectionMode, helperCallbacks, marker);
 		final View more = v.findViewById(R.id.all_points);
 		final View move = v.findViewById(R.id.info_move);
 		final View remove = v.findViewById(R.id.info_close);
 		remove.setVisibility(View.GONE);
 		more.setVisibility(View.GONE);
-		if (!marker.history) {
+		if (!marker.history && !sorted) {
 			move.setVisibility(View.VISIBLE);
 			((ImageView) move).setImageDrawable(app.getIconsCache().getContentIcon(
 					R.drawable.ic_action_reorder, !nightMode));
@@ -379,14 +447,16 @@ public class MapMarkerDialogHelper {
 			});
 		} else {
 			move.setVisibility(View.GONE);
+			move.setTag(null);
 		}
 		return v;
 	}
 
-	public static void updateMapMarkerInfoView(Context ctx, View localView, LatLon loc,
-											   Float heading, boolean useCenter, boolean nightMode,
-											   int screenOrientation, boolean selectionMode,
-											   final MapMarker marker) {
+	public static void updateMapMarkerInfo(final Context ctx, View localView, LatLon loc,
+										   Float heading, boolean useCenter, boolean nightMode,
+										   int screenOrientation, boolean selectionMode,
+										   final MapMarkersDialogHelperCallbacks helperCallbacks,
+										   final MapMarker marker) {
 		TextView text = (TextView) localView.findViewById(R.id.waypoint_text);
 		TextView textShadow = (TextView) localView.findViewById(R.id.waypoint_text_shadow);
 		TextView textDist = (TextView) localView.findViewById(R.id.waypoint_dist);
@@ -394,7 +464,7 @@ public class MapMarkerDialogHelper {
 		ImageView waypointIcon = (ImageView) localView.findViewById(R.id.waypoint_icon);
 		TextView waypointDeviation = (TextView) localView.findViewById(R.id.waypoint_deviation);
 		TextView descText = (TextView) localView.findViewById(R.id.waypoint_desc_text);
-		CheckBox checkBox = (CheckBox) localView.findViewById(R.id.checkbox);
+		final CheckBox checkBox = (CheckBox) localView.findViewById(R.id.checkbox);
 
 		if (text == null || textDist == null || arrow == null || waypointIcon == null
 				|| waypointDeviation == null || descText == null) {
@@ -430,7 +500,7 @@ public class MapMarkerDialogHelper {
 		arrow.setVisibility(View.VISIBLE);
 		arrow.invalidate();
 
-		OsmandApplication app = (OsmandApplication) ctx.getApplicationContext();
+		final OsmandApplication app = (OsmandApplication) ctx.getApplicationContext();
 
 		if (!marker.history) {
 			waypointIcon.setImageDrawable(getMapMarkerIcon(app, marker.colorIndex));
@@ -465,9 +535,23 @@ public class MapMarkerDialogHelper {
 		descText.setVisibility(View.GONE);
 
 		if (selectionMode) {
+			checkBox.setChecked(marker.selected);
 			checkBox.setVisibility(View.VISIBLE);
+			checkBox.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					marker.selected = checkBox.isChecked();
+					app.getMapMarkersHelper().updateMapMarker(marker, false);
+					if (helperCallbacks != null) {
+						helperCallbacks.showMarkersRouteOnMap();
+					} else if (ctx instanceof MapActivity) {
+						((MapActivity) ctx).refreshMap();
+					}
+				}
+			});
 		} else {
 			checkBox.setVisibility(View.GONE);
+			checkBox.setOnClickListener(null);
 		}
 
 		/*
@@ -525,6 +609,73 @@ public class MapMarkerDialogHelper {
 
 		int dist = (int) mes[0];
 		textDist.setText(OsmAndFormatter.getFormattedDistance(dist, app));
+	}
+
+	protected View updateMyLocationView(View v) {
+		if (v == null || v.findViewById(R.id.info_close) == null) {
+			v = mapActivity.getLayoutInflater().inflate(R.layout.map_marker_item, null);
+		}
+		updateMyLocationInfo(mapActivity, v, nightMode, selectionMode, helperCallbacks);
+		final View more = v.findViewById(R.id.all_points);
+		final View move = v.findViewById(R.id.info_move);
+		final View remove = v.findViewById(R.id.info_close);
+		remove.setVisibility(View.GONE);
+		more.setVisibility(View.GONE);
+		move.setVisibility(View.GONE);
+		move.setTag(null);
+		return v;
+	}
+
+	public static void updateMyLocationInfo(final Context ctx, View localView, boolean nightMode,
+											boolean selectionMode,
+											final MapMarkersDialogHelperCallbacks helperCallbacks) {
+		TextView text = (TextView) localView.findViewById(R.id.waypoint_text);
+		TextView textDist = (TextView) localView.findViewById(R.id.waypoint_dist);
+		ImageView arrow = (ImageView) localView.findViewById(R.id.direction);
+		ImageView waypointIcon = (ImageView) localView.findViewById(R.id.waypoint_icon);
+		TextView waypointDeviation = (TextView) localView.findViewById(R.id.waypoint_deviation);
+		TextView descText = (TextView) localView.findViewById(R.id.waypoint_desc_text);
+		final CheckBox checkBox = (CheckBox) localView.findViewById(R.id.checkbox);
+
+		if (text == null || textDist == null || arrow == null || waypointIcon == null
+				|| waypointDeviation == null || descText == null) {
+			return;
+		}
+
+		arrow.setVisibility(View.GONE);
+		textDist.setVisibility(View.GONE);
+		waypointDeviation.setVisibility(View.GONE);
+
+		final OsmandApplication app = (OsmandApplication) ctx.getApplicationContext();
+
+		ApplicationMode appMode = app.getSettings().getApplicationMode();
+		waypointIcon.setImageDrawable(ctx.getResources().getDrawable(appMode.getResourceLocationDay()));
+
+		text.setText(ctx.getString(R.string.shared_string_my_location));
+		descText.setText(ctx.getResources().getString(R.string.starting_point));
+		descText.setVisibility(View.VISIBLE);
+
+		AndroidUtils.setTextPrimaryColor(ctx, text, nightMode);
+		AndroidUtils.setTextSecondaryColor(ctx, descText, nightMode);
+
+		if (selectionMode) {
+			checkBox.setChecked(app.getMapMarkersHelper().isStartFromMyLocation());
+			checkBox.setVisibility(View.VISIBLE);
+			checkBox.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					app.getMapMarkersHelper().setStartFromMyLocation(checkBox.isChecked());
+					if (helperCallbacks != null) {
+						helperCallbacks.showMarkersRouteOnMap();
+					} else if (ctx instanceof MapActivity) {
+						((MapActivity) ctx).refreshMap();
+					}
+				}
+			});
+		} else {
+			checkBox.setVisibility(View.GONE);
+			checkBox.setOnClickListener(null);
+		}
 	}
 
 	public static void showMarkerOnMap(MapActivity mapActivity, MapMarker marker) {
@@ -594,19 +745,24 @@ public class MapMarkerDialogHelper {
 		}
 		if (activeMarkers.size() > 0) {
 			objects.add(ACTIVE_MARKERS);
+			if (selectionMode) {
+				objects.add(MY_LOCATION);
+			}
 			objects.addAll(activeMarkers);
 			objects.add(false);
 		}
 
-		List<MapMarker> markersHistory = new ArrayList<>(markersHelper.getMapMarkersHistory());
-		calcDistance(mapLocation, markersHistory);
-		if (markersHistory.size() > 0) {
-			if (activeMarkers.size() > 0) {
-				objects.add(true);
+		if (!selectionMode) {
+			List<MapMarker> markersHistory = new ArrayList<>(markersHelper.getMapMarkersHistory());
+			calcDistance(mapLocation, markersHistory);
+			if (markersHistory.size() > 0) {
+				if (activeMarkers.size() > 0) {
+					objects.add(true);
+				}
+				objects.add(MARKERS_HISTORY);
+				objects.addAll(markersHistory);
+				objects.add(false);
 			}
-			objects.add(MARKERS_HISTORY);
-			objects.addAll(markersHistory);
-			objects.add(false);
 		}
 
 		return objects;
@@ -665,6 +821,7 @@ public class MapMarkerDialogHelper {
 		lastUpdateTime = System.currentTimeMillis();
 
 		try {
+			LatLon prevMyLoc = myLoc;
 			calculateLocationParams();
 
 			for (int i = listView.getFirstVisiblePosition(); i <= listView.getLastVisiblePosition(); i++) {
@@ -672,6 +829,14 @@ public class MapMarkerDialogHelper {
 				View v = listView.getChildAt(i - listView.getFirstVisiblePosition());
 				if (obj instanceof MapMarker && v != null) {
 					updateMapMarkerArrowDistanceView(v, (MapMarker) obj);
+				}
+			}
+
+			if (selectionMode && markersHelper.isStartFromMyLocation() && prevMyLoc == null && myLoc != null) {
+				if (helperCallbacks != null) {
+					helperCallbacks.showMarkersRouteOnMap();
+				} else {
+					mapActivity.refreshMap();
 				}
 			}
 		} catch (Exception e) {
@@ -684,8 +849,8 @@ public class MapMarkerDialogHelper {
 				Object obj = listView.getItemAtPosition(i);
 				View v = listView.getChildAt(i - listView.getFirstVisiblePosition());
 				if (obj == marker) {
-					updateMapMarkerInfoView(mapActivity, v, loc, heading, useCenter, nightMode,
-							screenOrientation, selectionMode, marker);
+					updateMapMarkerInfo(mapActivity, v, loc, heading, useCenter, nightMode,
+							screenOrientation, selectionMode, helperCallbacks, marker);
 				}
 			}
 		} catch (Exception e) {
@@ -703,7 +868,7 @@ public class MapMarkerDialogHelper {
 		LatLon mw = d.getMapViewLocation();
 		Location l = d.getMyLocation();
 		boolean mapLinked = d.isMapLinkedToLocation() && l != null;
-		LatLon myLoc = l == null ? null : new LatLon(l.getLatitude(), l.getLongitude());
+		myLoc = l == null ? null : new LatLon(l.getLatitude(), l.getLongitude());
 		useCenter = !mapLinked;
 		loc = (useCenter ? mw : myLoc);
 		heading = useCenter ? -mapRotation : head;

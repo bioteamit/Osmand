@@ -20,6 +20,8 @@ import net.osmand.plus.helpers.AndroidUiHelper;
 import net.osmand.plus.helpers.MapMarkerDialogHelper;
 import net.osmand.plus.views.DirectionDrawable;
 import net.osmand.plus.views.OsmandMapLayer.DrawSettings;
+import net.osmand.plus.views.OsmandMapTileView;
+import net.osmand.plus.views.mapwidgets.RouteInfoWidgetsFactory.DistanceToPointInfoControl;
 import net.osmand.util.Algorithms;
 import net.osmand.util.MapUtils;
 
@@ -37,6 +39,7 @@ public class MapMarkersWidgetsFactory {
 	private boolean largeDevice;
 
 	private View topBar;
+	private View addressTopBar;
 	private View topBar2nd;
 	private View rowView;
 	private View rowView2nd;
@@ -51,10 +54,8 @@ public class MapMarkersWidgetsFactory {
 	private ImageButton moreButton;
 	private ImageButton moreButton2nd;
 
-	private int markerColorIndex = -1;
-	private String markerDistText;
-	private int markerColorIndex2nd = -1;
-	private String markerDistText2nd;
+	private MapMarker marker;
+	private MapMarker marker2nd;
 
 	public MapMarkersWidgetsFactory(final MapActivity map) {
 		this.map = map;
@@ -63,6 +64,7 @@ public class MapMarkersWidgetsFactory {
 		portraitMode = AndroidUiHelper.isOrientationPortrait(map);
 		largeDevice = AndroidUiHelper.isXLargeDevice(map);
 
+		addressTopBar = map.findViewById(R.id.map_top_bar);
 		topBar = map.findViewById(R.id.map_markers_top_bar);
 		topBar2nd = map.findViewById(R.id.map_markers_top_bar_2nd);
 		rowView = map.findViewById(R.id.map_marker_row);
@@ -167,7 +169,8 @@ public class MapMarkersWidgetsFactory {
 	}
 
 	public boolean isTopBarVisible() {
-		return topBar.getVisibility() == View.VISIBLE;
+		return topBar.getVisibility() == View.VISIBLE
+				&& map.findViewById(R.id.MapHudButtonsOverlay).getVisibility() == View.VISIBLE;
 	}
 
 	public void updateInfo(LatLon customLocation, int zoom) {
@@ -177,10 +180,11 @@ public class MapMarkersWidgetsFactory {
 
 		List<MapMarker> markers = helper.getSortedMapMarkers();
 		if (zoom < 3 || markers.size() == 0
-				|| !map.getMyApplication().getSettings().SHOW_MAP_MARKERS_TOOLBAR.get()
+				|| !map.getMyApplication().getSettings().MAP_MARKERS_MODE.get().isToolbar()
 				|| map.getMyApplication().getRoutingHelper().isFollowingMode()
 				|| map.getMyApplication().getRoutingHelper().isRoutePlanningMode()
-				|| map.getMapLayers().getMapControlsLayer().getMapRouteInfoMenu().isVisible()) {
+				|| map.getMapLayers().getMapControlsLayer().getMapRouteInfoMenu().isVisible()
+				|| addressTopBar.getVisibility() == View.VISIBLE) {
 			updateVisibility(false);
 			return;
 		}
@@ -201,7 +205,7 @@ public class MapMarkersWidgetsFactory {
 
 		if (markers.size() > 1) {
 			marker = markers.get(1);
-			if (loc != null) {
+			if (loc != null && customLocation == null) {
 				for (int i = 1; i < markers.size(); i++) {
 					MapMarker m = markers.get(i);
 					m.dist = (int) (MapUtils.getDistance(m.getLatitude(), m.getLongitude(),
@@ -246,13 +250,17 @@ public class MapMarkersWidgetsFactory {
 		arrowImg.invalidate();
 
 		int dist = (int) mes[0];
-		String txt;
+		String txt = null;
 		if (loc != null) {
 			txt = OsmAndFormatter.getFormattedDistance(dist, map.getMyApplication());
 		} else {
-			txt = "—";
+			if ((firstLine && marker != this.marker) || (!firstLine && marker != this.marker2nd)) {
+				txt = "—";
+			}
 		}
-		distText.setText(txt);
+		if (txt != null) {
+			distText.setText(txt);
+		}
 		updateVisibility(okButton, !customLocation && loc != null && dist < MIN_DIST_OK_VISIBLE);
 
 		String descr;
@@ -269,101 +277,71 @@ public class MapMarkersWidgetsFactory {
 		addressText.setText(descr);
 
 		if (firstLine) {
-			markerColorIndex = marker.colorIndex;
-			markerDistText = txt;
+			this.marker = marker;
 		} else {
-			markerColorIndex2nd = marker.colorIndex;
-			markerDistText2nd = txt;
+			this.marker2nd = marker;
 		}
 
 	}
 
-	public TextInfoWidget createMapMarkerControl(final MapActivity map) {
-		final TextInfoWidget mapMarkerControl = new TextInfoWidget(map) {
+	public TextInfoWidget createMapMarkerControl(final MapActivity map, final boolean firstMarker) {
+		DistanceToPointInfoControl ctrl = new DistanceToPointInfoControl(map, 0, 0) {
 			private int cachedMarkerColorIndex = -1;
-			private String cachedMarkerDistText;
+			private Boolean cachedNightMode = null;
 
 			@Override
-			public boolean updateInfo(DrawSettings d) {
-				if (markerColorIndex != -1 && markerDistText != null) {
-					boolean res = false;
-					if (markerColorIndex != cachedMarkerColorIndex) {
-						setImageDrawable(map.getMyApplication().getIconsCache()
-								.getIcon(R.drawable.widget_intermediate_day,
-										MapMarkerDialogHelper.getMapMarkerColorId(markerColorIndex)));
-						res = true;
-					}
-					if (!markerDistText.equals(cachedMarkerDistText)) {
-						int ls = markerDistText.lastIndexOf(' ');
-						if (ls == -1) {
-							setText(markerDistText, null);
-						} else {
-							setText(markerDistText.substring(0, ls), markerDistText.substring(ls + 1));
-						}
-						res = true;
-					}
-					return res;
-
-				} else if (cachedMarkerDistText != null) {
-					cachedMarkerDistText = null;
-					setText(null, null);
-					return true;
+			public LatLon getPointToNavigate() {
+				MapMarker marker = getMarker();
+				if (marker != null) {
+					return marker.point;
 				}
-				return false;
+				return null;
+			}
+
+			private MapMarker getMarker() {
+				List<MapMarker> markers = helper.getSortedMapMarkers();
+				if (firstMarker) {
+					if (markers.size() > 0) {
+						return markers.get(0);
+					}
+				} else {
+					if (markers.size() > 1) {
+						return markers.get(1);
+					}
+				}
+				return null;
+			}
+
+			@Override
+			public boolean updateInfo(DrawSettings drawSettings) {
+				MapMarker marker = getMarker();
+				if (marker == null) {
+					setText(null, null);
+					return false;
+				}
+				boolean res = super.updateInfo(drawSettings);
+
+				if (marker.colorIndex != -1) {
+					if (marker.colorIndex != cachedMarkerColorIndex
+							|| cachedNightMode == null || cachedNightMode != isNight()) {
+						setImageDrawable(map.getMyApplication().getIconsCache()
+								.getIcon(isNight() ? R.drawable.widget_marker_night : R.drawable.widget_marker_day,
+										R.drawable.widget_marker_triangle,
+										MapMarkerDialogHelper.getMapMarkerColorId(marker.colorIndex)));
+						cachedMarkerColorIndex = marker.colorIndex;
+						cachedNightMode = isNight();
+					}
+				}
+				return res;
+			}
+
+			@Override
+			protected void click(OsmandMapTileView view) {
+				showMarkerOnMap(firstMarker ? 0 : 1);
 			}
 		};
-		mapMarkerControl.setText(null, null);
-		mapMarkerControl.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				showMarkerOnMap(0);
-			}
-		});
-		return mapMarkerControl;
-	}
-
-	public TextInfoWidget createMapMarkerControl2nd(final MapActivity map) {
-		final TextInfoWidget mapMarkerControl = new TextInfoWidget(map) {
-			private int cachedMarkerColorIndex = -1;
-			private String cachedMarkerDistText;
-
-			@Override
-			public boolean updateInfo(DrawSettings d) {
-				if (markerColorIndex2nd != -1 && markerDistText2nd != null) {
-					boolean res = false;
-					if (markerColorIndex2nd != cachedMarkerColorIndex) {
-						setImageDrawable(map.getMyApplication().getIconsCache()
-								.getIcon(R.drawable.widget_intermediate_day,
-										MapMarkerDialogHelper.getMapMarkerColorId(markerColorIndex2nd)));
-						res = true;
-					}
-					if (!markerDistText2nd.equals(cachedMarkerDistText)) {
-						int ls = markerDistText2nd.lastIndexOf(' ');
-						if (ls == -1) {
-							setText(markerDistText2nd, null);
-						} else {
-							setText(markerDistText2nd.substring(0, ls), markerDistText2nd.substring(ls + 1));
-						}
-						res = true;
-					}
-					return res;
-
-				} else if (cachedMarkerDistText != null) {
-					cachedMarkerDistText = null;
-					setText(null, null);
-					return true;
-				}
-				return false;
-			}
-		};
-		mapMarkerControl.setText(null, null);
-		mapMarkerControl.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				showMarkerOnMap(1);
-			}
-		});
-		return mapMarkerControl;
+		ctrl.setAutoHide(false);
+		return ctrl;
 	}
 
 	public boolean isLandscapeLayout() {

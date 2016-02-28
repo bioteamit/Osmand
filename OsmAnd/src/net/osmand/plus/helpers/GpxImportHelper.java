@@ -67,11 +67,13 @@ public class GpxImportHelper {
 
 		if (fileName != null && fileName.endsWith(KML_SUFFIX)) {
 			handleKmlImport(intentUri, fileName, saveFile);
-		} else if (fileName != null && (fileName.contains("favourite")|| 
-				fileName.contains("favorite"))) {
-			handleFavouritesImport(intentUri, fileName, saveFile);
+//Issue 2275
+//		} else if (fileName != null && (fileName.contains("favourite")|| 
+//				fileName.contains("favorite"))) {
+//			handleFavouritesImport(intentUri, fileName, saveFile);
 		} else {
-			handleGpxImport(intentUri, fileName, saveFile);
+//			handleGpxImport(intentUri, fileName, saveFile);
+			handleFavouritesImport(intentUri, fileName, saveFile);
 		}
 	}
 
@@ -180,6 +182,7 @@ public class GpxImportHelper {
 					favoritesHelper.deleteFavourite(favourite, false);
 					favoritesHelper.addFavourite(favourite, false);
 				}
+				favoritesHelper.sortAll();
 				favoritesHelper.saveCurrentPointsIntoFile();
 				return null;
 			}
@@ -354,6 +357,9 @@ public class GpxImportHelper {
 		for (GPXUtilities.WptPt p : wptPts) {
 			if (p.category != null) {
 				final FavouritePoint fp = new FavouritePoint(p.lat, p.lon, p.name, p.category);
+				if (p.desc!=null) {
+					fp.setDescription(p.desc);
+				}
 				favourites.add(fp);
 			} else if (p.name != null) {
 				int c;

@@ -1132,13 +1132,31 @@ public class OsmandSettings {
 	public final CommonPreference<String> MAP_TILE_SOURCES = new StringPreference("map_tile_sources",
 			TileSourceManager.getMapnikSource().getName()).makeGlobal();
 
+	public final CommonPreference<Boolean> SHOW_LAYER_TRANSPARENCY_SEEKBAR =
+			new BooleanPreference("show_layer_transparency_seekbar", false).makeGlobal();
+
+	public final CommonPreference<String> MAP_OVERLAY_PREVIOUS = new StringPreference("map_overlay_previous", null).makeGlobal().cache();
+
+	public final CommonPreference<String> MAP_UNDERLAY_PREVIOUS = new StringPreference("map_underlay_previous", null).makeGlobal().cache();
 
 	public CommonPreference<String> PREVIOUS_INSTALLED_VERSION = new StringPreference("previous_installed_version", "").makeGlobal();
 
 	public final OsmandPreference<Boolean> SHOULD_SHOW_FREE_VERSION_BANNER = new BooleanPreference("should_show_free_version_banner", false).makeGlobal().cache();
 
 	public final OsmandPreference<Boolean> USE_MAP_MARKERS = new BooleanPreference("use_map_markers", true).makeGlobal().cache();
-	public final OsmandPreference<Boolean> SHOW_MAP_MARKERS_TOOLBAR = new BooleanPreference("show_map_markers_toolbar", true).makeGlobal().cache();
+
+	public final CommonPreference<MapMarkersMode> MAP_MARKERS_MODE =
+			new EnumIntPreference<>("map_markers_mode", MapMarkersMode.TOOLBAR, MapMarkersMode.values());
+
+	{
+		MAP_MARKERS_MODE.makeProfile().cache();
+		MAP_MARKERS_MODE.setModeDefaultValue(ApplicationMode.DEFAULT, MapMarkersMode.TOOLBAR);
+		MAP_MARKERS_MODE.setModeDefaultValue(ApplicationMode.CAR, MapMarkersMode.TOOLBAR);
+		MAP_MARKERS_MODE.setModeDefaultValue(ApplicationMode.BICYCLE, MapMarkersMode.TOOLBAR);
+		MAP_MARKERS_MODE.setModeDefaultValue(ApplicationMode.PEDESTRIAN, MapMarkersMode.TOOLBAR);
+	}
+
+	public final OsmandPreference<Boolean> ROUTE_MAP_MARKERS_START_MY_LOC = new BooleanPreference("route_map_markers_start_my_loc", false).makeGlobal().cache();
 
 	public ITileSource getMapTileSource(boolean warnWhenSelected) {
 		String tileName = MAP_TILE_SOURCES.get();
@@ -2454,9 +2472,39 @@ public class OsmandSettings {
 				return new DayNightMode[]{AUTO, DAY, NIGHT};
 			}
 		}
-
 	}
 
+	public enum MapMarkersMode {
+		TOOLBAR(R.string.shared_string_toolbar),
+		WIDGETS(R.string.shared_string_widgets),
+		NONE(R.string.shared_string_none);
+
+		private final int key;
+
+		MapMarkersMode(int key) {
+			this.key = key;
+		}
+
+		public String toHumanString(Context ctx) {
+			return ctx.getString(key);
+		}
+
+		public boolean isToolbar() {
+			return this == TOOLBAR;
+		}
+
+		public boolean isWidgets() {
+			return this == WIDGETS;
+		}
+
+		public boolean isNone() {
+			return this == NONE;
+		}
+
+		public static MapMarkersMode[] possibleValues(Context context) {
+			return new MapMarkersMode[]{TOOLBAR, WIDGETS, NONE};
+		}
+	}
 
 	public enum SpeedConstants {
 		KILOMETERS_PER_HOUR(R.string.km_h, R.string.si_kmh),

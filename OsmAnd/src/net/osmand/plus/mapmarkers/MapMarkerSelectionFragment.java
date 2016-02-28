@@ -58,15 +58,17 @@ public class MapMarkerSelectionFragment extends BaseOsmAndDialogFragment {
 			screenOrientation = DashLocationFragment.getScreenOrientation(mapActivity);
 
 			MapViewTrackingUtilities trackingUtils = mapActivity.getMapViewTrackingUtilities();
-			float head = trackingUtils.getHeading();
-			float mapRotation = mapActivity.getMapRotate();
-			LatLon mw = mapActivity.getMapLocation();
-			Location l = trackingUtils.getMyLocation();
-			boolean mapLinked = trackingUtils.isMapLinkedToLocation() && l != null;
-			LatLon myLoc = l == null ? null : new LatLon(l.getLatitude(), l.getLongitude());
-			useCenter = !mapLinked;
-			loc = (useCenter ? mw : myLoc);
-			heading = useCenter ? -mapRotation : head;
+			if (trackingUtils != null) {
+				float head = trackingUtils.getHeading();
+				float mapRotation = mapActivity.getMapRotate();
+				LatLon mw = mapActivity.getMapLocation();
+				Location l = trackingUtils.getMyLocation();
+				boolean mapLinked = trackingUtils.isMapLinkedToLocation() && l != null;
+				LatLon myLoc = l == null ? null : new LatLon(l.getLatitude(), l.getLongitude());
+				useCenter = !mapLinked;
+				loc = (useCenter ? mw : myLoc);
+				heading = useCenter ? -mapRotation : head;
+			}
 		}
 		nightMode = !app.getSettings().isLightContent();
 
@@ -84,7 +86,9 @@ public class MapMarkerSelectionFragment extends BaseOsmAndDialogFragment {
 		final ArrayAdapter<MapMarker> adapter = new MapMarkersListAdapter();
 		List<MapMarker> markers = getMyApplication().getMapMarkersHelper().getActiveMapMarkers();
 		if (markers.size() > 0) {
-			adapter.addAll(markers);
+			for (MapMarker marker : markers) {
+				adapter.add(marker);
+			}
 		}
 		listView.setAdapter(adapter);
 		listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -119,14 +123,18 @@ public class MapMarkerSelectionFragment extends BaseOsmAndDialogFragment {
 			if (convertView == null) {
 				convertView = getMapActivity().getLayoutInflater().inflate(R.layout.map_marker_item, null);
 			}
-			MapMarkerDialogHelper.updateMapMarkerInfoView(getContext(), convertView, loc, heading,
-					useCenter, nightMode, screenOrientation, false, marker);
+			MapMarkerDialogHelper.updateMapMarkerInfo(getContext(), convertView, loc, heading,
+					useCenter, nightMode, screenOrientation, false, null, marker);
 			final View remove = convertView.findViewById(R.id.info_close);
 			remove.setVisibility(View.GONE);
 			AndroidUtils.setListItemBackground(getMapActivity(), convertView, nightMode);
 
 			return convertView;
 		}
+	}
+
+	public static MapMarkerSelectionFragment newInstance() {
+		return new MapMarkerSelectionFragment();
 	}
 
 	public MapActivity getMapActivity() {

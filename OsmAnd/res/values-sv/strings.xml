@@ -1378,7 +1378,7 @@
     <string name="arrival_distance_descr">Hur tidigt vill du höra ankomstmeddelandet?</string>
 
     <string name="create_poi_link_to_osm_doc"><u>Online OSM</u>-kartklassificering med bilder</string>
-    <string name="import_file_favourites">Spara punkter som GPX-fil eller importera dem till favoriter?</string>
+    <string name="import_file_favourites">Spara data som GPX-fil eller importera waypoints till favoriter?</string>
     <string name="share_fav_subject">Favoriter utdelade via OsmAnd</string>
     <string name="commiting_node">Skickar nod…</string>
     <string name="none_selected_gpx">Inga GPX-filer markerade. För att markera tryck och håll ned på tillgängligt spår.</string>
@@ -2090,7 +2090,7 @@
     <string name="show_map_markers">Kartmarkörer</string>
     <string name="show_map_markers_description">Aktivera kartmarkörer</string>
     <string name="clear_active_markers_q">Vill du ta bort alla aktiva markörer?</string>
-    <string name="clear_markers_history_q">Vill du radera markörhistoriken?</string>
+    <string name="clear_markers_history_q">Vill du radera kartmarkörshistoriken?</string>
     <string name="active_markers">Aktiva markörer</string>
     <string name="map_markers">Kartmarkörer</string>
     <string name="map_marker">Kartmarkör</string>
@@ -2108,4 +2108,27 @@
     <string name="upload_anonymously">Ladda upp anonymt</string>
 <string name="select_map_marker">Välj kartmarkör</string>
     <string name="map_markers_other">Andra markörer</string>
+    <string name="upload_osm_note_description">Du kan ladda upp din OSM-anteckning anonymt om du använder din profil på OpenStreetMap.org.</string>
+    <string name="donations">Donationer</string>
+    <string name="number_of_recipients">Antal mottagare</string>
+    <string name="osm_user_stat">Redigeringar %1$s, rang %2$s, redigeringar totalt %3$s</string>
+    <string name="osm_editors_ranking">Ranglista OSM-redigerare</string>
+    <string name="osm_live_subscription">OSM Live-prenumeration</string>
+    <string name="osm_live_subscribe_btn">Prenumerera</string>
+    <string name="osm_live_email_desc">Vi behöver det för att ge er information och bidrag</string>
+    <string name="osm_live_user_public_name">Publikt namn</string>
+    <string name="osm_live_hide_user_name">Visa inte mitt namn i rapporter</string>
+    <string name="osm_live_month_cost">Månadskostnad</string>
+    <string name="osm_live_month_cost_desc">Månadsbetalning</string>
+    <string name="osm_live_active">Aktiv</string>
+    <string name="osm_live_not_active">Inaktiv</string>
+    <string name="osm_live_enter_email">Ange en giltig e-postadress</string>
+    <string name="osm_live_enter_user_name">Ange publikt namn</string>
+    <string name="osm_live_thanks">Tack för att du prenumererar på live-uppdateringar!</string>
+    <string name="osm_live_region_desc">Delar av din donation kommer att skickas till OSM-användare som skickar in kartändringar i det området</string>
+    <string name="osm_live_subscription_settings">Prenumerationsinställningar</string>
+    <string name="osm_live_ask_for_purchase">Köp OSM Live-prenumeration först</string>
+
+    <string name="show_transparency_seekbar">Visa transparent sökfält</string>
+    <string name="recalculate_route">Beräkna om rutten</string>
     </resources>

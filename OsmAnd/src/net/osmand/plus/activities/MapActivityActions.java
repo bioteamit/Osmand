@@ -40,6 +40,7 @@ import net.osmand.plus.OsmandPlugin;
 import net.osmand.plus.OsmandSettings;
 import net.osmand.plus.R;
 import net.osmand.plus.TargetPointsHelper;
+import net.osmand.plus.Version;
 import net.osmand.plus.activities.actions.OsmAndDialogs;
 import net.osmand.plus.activities.search.SearchActivity;
 import net.osmand.plus.dashboard.DashboardOnMap.DashboardType;
@@ -436,6 +437,34 @@ public class MapActivityActions implements DialogProvider {
 		}
 	}
 
+	public void recalculateRoute(boolean showDialog) {
+		settings.USE_INTERMEDIATE_POINTS_NAVIGATION.set(true);
+		OsmandApplication app = mapActivity.getMyApplication();
+		TargetPointsHelper targets = app.getTargetPointsHelper();
+
+		ApplicationMode mode = getRouteMode(null);
+		app.getSettings().APPLICATION_MODE.set(mode);
+		app.getRoutingHelper().setAppMode(mode);
+		app.initVoiceCommandPlayer(mapActivity);
+		// save application mode controls
+		settings.FOLLOW_THE_ROUTE.set(false);
+		app.getRoutingHelper().setFollowingMode(false);
+		app.getRoutingHelper().setRoutePlanningMode(true);
+		// reset start point
+		targets.setStartPoint(null, false, null);
+		// then update start and destination point
+		targets.updateRouteAndRefresh(true);
+
+		mapActivity.getMapViewTrackingUtilities().switchToRoutePlanningMode();
+		mapActivity.getMapView().refreshMap(true);
+		if (showDialog) {
+			mapActivity.getMapLayers().getMapControlsLayer().showDialog();
+		}
+		if (targets.hasTooLongDistanceToNavigate()) {
+			app.showToastMessage(R.string.route_is_too_long);
+		}
+	}
+
 	public ApplicationMode getRouteMode(LatLon from) {
 		ApplicationMode mode = settings.DEFAULT_APPLICATION_MODE.get();
 		ApplicationMode selected = settings.APPLICATION_MODE.get();
@@ -691,16 +720,18 @@ public class MapActivityActions implements DialogProvider {
 					}
 				}).reg();
 
-		optionsMenuHelper.item(R.string.osm_live).iconColor(R.drawable.ic_action_osm_live)
-				.listen(new OnContextMenuClick() {
-					@Override
-					public boolean onContextMenuClick(ArrayAdapter<?> adapter, int itemId, int pos, boolean isChecked) {
-						Intent intent = new Intent(mapActivity, OsmLiveActivity.class);
-						intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-						mapActivity.startActivity(intent);
-						return false;
-					}
-				}).reg();
+		if (Version.isGooglePlayEnabled(app)) {
+			optionsMenuHelper.item(R.string.osm_live).iconColor(R.drawable.ic_action_osm_live)
+					.listen(new OnContextMenuClick() {
+						@Override
+						public boolean onContextMenuClick(ArrayAdapter<?> adapter, int itemId, int pos, boolean isChecked) {
+							Intent intent = new Intent(mapActivity, OsmLiveActivity.class);
+							intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+							mapActivity.startActivity(intent);
+							return false;
+						}
+					}).reg();
+		}
 
 		optionsMenuHelper.item(R.string.prefs_plugins).iconColor(R.drawable.ic_extension_dark)
 				.listen(new OnContextMenuClick() {

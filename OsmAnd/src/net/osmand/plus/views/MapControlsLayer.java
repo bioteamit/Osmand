@@ -28,11 +28,8 @@ import net.londatiga.android.QuickAction;
 import net.osmand.AndroidUtils;
 import net.osmand.core.android.MapRendererContext;
 import net.osmand.data.LatLon;
-import net.osmand.data.PointDescription;
 import net.osmand.data.RotatedTileBox;
 import net.osmand.plus.ApplicationMode;
-import net.osmand.plus.MapMarkersHelper;
-import net.osmand.plus.MapMarkersHelper.MapMarker;
 import net.osmand.plus.OsmAndLocationProvider;
 import net.osmand.plus.OsmandApplication;
 import net.osmand.plus.OsmandPlugin;
@@ -40,6 +37,7 @@ import net.osmand.plus.OsmandSettings;
 import net.osmand.plus.OsmandSettings.CommonPreference;
 import net.osmand.plus.R;
 import net.osmand.plus.TargetPointsHelper;
+import net.osmand.plus.TargetPointsHelper.TargetPoint;
 import net.osmand.plus.activities.MapActivity;
 import net.osmand.plus.activities.search.SearchAddressFragment;
 import net.osmand.plus.dashboard.DashboardOnMap.DashboardType;
@@ -74,6 +72,7 @@ public class MapControlsLayer extends OsmandMapLayer {
 	private SeekBar transparencyBar;
 	private LinearLayout transparencyBarLayout;
 	private static CommonPreference<Integer> settingsToTransparency;
+	private boolean isTransparencyBarEnabled = true;
 	private OsmandSettings settings;
 
 	private MapRouteInfoMenu mapRouteInfoMenu;
@@ -92,6 +91,7 @@ public class MapControlsLayer extends OsmandMapLayer {
 	private MapHudButton mapZoomIn;
 	private MapHudButton layersHud;
 	private long lastZoom;
+	private boolean hasTargets;
 
 	public MapControlsLayer(MapActivity activity) {
 		this.mapActivity = activity;
@@ -365,12 +365,13 @@ public class MapControlsLayer extends OsmandMapLayer {
 		routePlanButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				doRoute();
+				doRoute(false);
 			}
 		});
 	}
 
-	public void doRoute() {
+	public void doRoute(boolean hasTargets) {
+		this.hasTargets = hasTargets;
 		if (OsmAndLocationProvider.isLocationPermissionAvailable(mapActivity)) {
 			onNavigationClick();
 		} else {
@@ -389,13 +390,20 @@ public class MapControlsLayer extends OsmandMapLayer {
 		MapActivity.clearPrevActivityIntent();
 		RoutingHelper routingHelper = mapActivity.getRoutingHelper();
 		if (!routingHelper.isFollowingMode() && !routingHelper.isRoutePlanningMode()) {
-			if (settings.USE_MAP_MARKERS.get()) {
+			if (settings.USE_MAP_MARKERS.get() && !hasTargets) {
 				mapActivity.getMapActions().setFirstMapMarkerAsTarget();
 			}
-			mapActivity.getMapActions().enterRoutePlanningMode(null, null);
+			TargetPoint start = getTargets().getPointToStart();
+			if (hasTargets && start != null) {
+				mapActivity.getMapActions().enterRoutePlanningMode(
+						new LatLon(start.getLatitude(), start.getLongitude()), start.getOriginalPointDescription());
+			} else {
+				mapActivity.getMapActions().enterRoutePlanningMode(null, null);
+			}
 		} else {
 			showRouteInfoControlDialog();
 		}
+		hasTargets = false;
 	}
 
 
@@ -632,15 +640,20 @@ public class MapControlsLayer extends OsmandMapLayer {
 			@Override
 			public void onClick(View v) {
 				transparencyBarLayout.setVisibility(View.GONE);
+				settings.SHOW_LAYER_TRANSPARENCY_SEEKBAR.set(false);
 				hideTransparencyBar(settingsToTransparency);
 			}
 		});
 	}
 
 	public void showTransparencyBar(CommonPreference<Integer> transparenPreference) {
-		MapControlsLayer.settingsToTransparency = transparenPreference;
-		transparencyBarLayout.setVisibility(View.VISIBLE);
-		transparencyBar.setProgress(transparenPreference.get());
+		if (MapControlsLayer.settingsToTransparency != transparenPreference) {
+			MapControlsLayer.settingsToTransparency = transparenPreference;
+			if (isTransparencyBarEnabled) {
+				transparencyBarLayout.setVisibility(View.VISIBLE);
+			}
+			transparencyBar.setProgress(transparenPreference.get());
+		}
 	}
 
 	public void hideTransparencyBar(CommonPreference<Integer> transparentPreference) {
@@ -648,6 +661,21 @@ public class MapControlsLayer extends OsmandMapLayer {
 			transparencyBarLayout.setVisibility(View.GONE);
 			settingsToTransparency = null;
 		}
+	}
+
+	public void setTransparencyBarEnabled(boolean isTransparencyBarEnabled) {
+		this.isTransparencyBarEnabled = isTransparencyBarEnabled;
+		if (settingsToTransparency != null) {
+			if(isTransparencyBarEnabled) {
+				transparencyBarLayout.setVisibility(View.VISIBLE);
+			} else {
+				transparencyBarLayout.setVisibility(View.GONE);
+			}
+		}
+	}
+
+	public boolean isTransparencyBarInitialized() {
+		return settingsToTransparency != null;
 	}
 
 	private class MapHudButton {

@@ -72,11 +72,14 @@ import net.osmand.plus.dialogs.ErrorBottomSheetDialog;
 import net.osmand.plus.dialogs.RateUsBottomSheetDialog;
 import net.osmand.plus.dialogs.WhatsNewDialogFragment;
 import net.osmand.plus.download.DownloadIndexesThread.DownloadEvents;
+import net.osmand.plus.helpers.AndroidUiHelper;
 import net.osmand.plus.helpers.GpxImportHelper;
 import net.osmand.plus.helpers.WakeLockHelper;
 import net.osmand.plus.mapcontextmenu.MapContextMenu;
 import net.osmand.plus.mapcontextmenu.MapContextMenuFragment;
 import net.osmand.plus.mapcontextmenu.other.DestinationReachedMenu;
+import net.osmand.plus.mapcontextmenu.other.MapRouteInfoMenu;
+import net.osmand.plus.mapcontextmenu.other.MapRouteInfoMenuFragment;
 import net.osmand.plus.render.RendererRegistry;
 import net.osmand.plus.resources.ResourceManager;
 import net.osmand.plus.routing.RoutingHelper;
@@ -139,7 +142,7 @@ public class MapActivity extends AccessibleActivity implements DownloadEvents,
 	private OsmandApplication app;
 	private OsmandSettings settings;
 
-	boolean firstTime;
+	private boolean landscapeLayout;
 
 	private Dialog progressDlg = null;
 
@@ -181,6 +184,10 @@ public class MapActivity extends AccessibleActivity implements DownloadEvents,
 		settings = app.getSettings();
 		app.applyTheme(this);
 		supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
+
+		boolean portraitMode = AndroidUiHelper.isOrientationPortrait(this);
+		boolean largeDevice = AndroidUiHelper.isXLargeDevice(this);
+		landscapeLayout = !portraitMode && !largeDevice;
 
 		mapContextMenu.setMapActivity(this);
 
@@ -243,6 +250,12 @@ public class MapActivity extends AccessibleActivity implements DownloadEvents,
 		if (settings.FOLLOW_THE_ROUTE.get() && !app.getRoutingHelper().isRouteCalculated()
 				&& !app.getRoutingHelper().isRouteBeingCalculated()) {
 			FailSafeFuntions.restoreRoutingMode(this);
+		} else if (app.getSettings().USE_MAP_MARKERS.get()
+				&& !app.getRoutingHelper().isRoutePlanningMode()
+				&& !settings.FOLLOW_THE_ROUTE.get()
+				&& app.getTargetPointsHelper().getAllPoints().size() > 0) {
+			app.getRoutingHelper().clearCurrentRoute(null, new ArrayList<LatLon>());
+			app.getTargetPointsHelper().removeAllWayPoints(false);
 		}
 
 		if (!settings.isLastKnownMapLocation()) {
@@ -1181,6 +1194,47 @@ public class MapActivity extends AccessibleActivity implements DownloadEvents,
 
 	@Override
 	public void newRouteIsCalculated(boolean newRoute, ValueHolder<Boolean> showToast) {
+		RoutingHelper rh = app.getRoutingHelper();
+		if (newRoute && rh.isRoutePlanningMode() && mapView != null) {
+			Location lt = rh.getLastProjection();
+			if (lt == null) {
+				lt = app.getTargetPointsHelper().getPointToStartLocation();
+			}
+			if (lt != null) {
+				double left = lt.getLongitude(), right = lt.getLongitude();
+				double top = lt.getLatitude(), bottom = lt.getLatitude();
+				List<Location> list = rh.getCurrentCalculatedRoute();
+				for (Location l : list) {
+					left = Math.min(left, l.getLongitude());
+					right = Math.max(right, l.getLongitude());
+					top = Math.max(top, l.getLatitude());
+					bottom = Math.min(bottom, l.getLatitude());
+				}
+				List<TargetPoint> targetPoints = app.getTargetPointsHelper().getIntermediatePointsWithTarget();
+				for (TargetPoint l : targetPoints) {
+					left = Math.min(left, l.getLongitude());
+					right = Math.max(right, l.getLongitude());
+					top = Math.max(top, l.getLatitude());
+					bottom = Math.min(bottom, l.getLatitude());
+				}
+
+				RotatedTileBox tb = mapView.getCurrentRotatedTileBox().copy();
+				int tileBoxWidthPx = 0;
+				int tileBoxHeightPx = 0;
+
+				MapRouteInfoMenu routeInfoMenu = mapLayers.getMapControlsLayer().getMapRouteInfoMenu();
+				WeakReference<MapRouteInfoMenuFragment> fragmentRef = routeInfoMenu.findMenuFragment();
+				if (fragmentRef != null) {
+					MapRouteInfoMenuFragment f = fragmentRef.get();
+					if (landscapeLayout) {
+						tileBoxWidthPx = tb.getPixWidth() - f.getWidth();
+					} else {
+						tileBoxHeightPx = tb.getPixHeight() - f.getHeight();
+					}
+				}
+				mapView.fitRectToMap(left, right, top, bottom, tileBoxWidthPx, tileBoxHeightPx, 0);
+			}
+		}
 	}
 
 	@Override

@@ -444,7 +444,7 @@
     <string name="routing_settings">Navigation</string>
 
     <string name="download_files_not_enough_space">Der er ikke ledig plads nok til at hente %1$s MB (Ledig: %2$s).</string>
-    <string name="download_files_question_space">Virkelig hente {0} fil(er)? Dette krævet {1} MB permanent? I øjeblikket, er der {2} MB til rådighed.</string>
+    <string name="download_files_question_space">Hent {0} filer? Har brug for {1} MB permanent. I øjeblikket er {2} MB til rådighed.</string>
 
     <string name="use_transparent_map_theme">Gennemsigtigt tema</string>
     <string name="native_library_not_supported">Indbygget bibliotek er ikke understøttet på enheden.</string>
@@ -1312,7 +1312,7 @@
     <string name="select_gpx">Vælg GPX…</string>
     <string name="route_preferences">Ruteindstillinger</string>
     <string name="route_descr_select_destination">Vælg destination</string>
-    <string name="keep_and_add_destination_point">Tilføj som destinationspunkt</string>
+    <string name="keep_and_add_destination_point">Tilføj som sidste destinationspunkt</string>
 
     <string name="use_displayed_track_for_navigation">Brug viste spor til navigation?</string>
     <string name="calculate_osmand_route_without_internet">Beregn OsmAnd rutesegment uden internet</string>
@@ -1440,7 +1440,7 @@
     <string name="osmo_enable_tracker">Send positioner</string>
     <string name="osmo_control">OsMo hurtig adgang</string>
 
-    <string name="import_file_favourites">Gem punkter som en GPX-fil eller importer dem til favoritter?</string>
+    <string name="import_file_favourites">Gem data som en GPX-fil eller importer rutepunkter til Favoritter?</string>
 
     
     <string name="rendering_value_pink_name">Lyserød</string>
@@ -2238,7 +2238,7 @@
     <string name="data_is_not_available">Data er ikke tilgængelig</string>
     <string name="rendering_attr_hideUnderground_name">Skjul underjordiske objekter</string>
     <string name="shared_string_read_more">Læs mere</string>
-    <string name="osmand_plus_extended_description_4000_chars_v2">" OsmAnd Maps &amp; Navigation - lav ruter og find steder på kortet uden en internetforbindelse. Hent kort for et land, før rejsen og find steder og ruter i et ukendt område.
+    <string name="osmand_plus_extended_description_4000_chars_v2">" OsmAnd Maps &amp; Navigation - find steder på kortet og beregn ruter uden en internetforbindelse. Hent kort for et land, før rejsen og find steder og ruter i et ukendt område.
 \n\nGrundlæggende indstillinger:
 \n• Detaljerede kort for 200 lande
 \n• Offline navigation med stemmevejledning\n• Adressesøgning i offline mode
@@ -2273,9 +2273,9 @@
     <string name="underlay_transparency">Underlejringsgennemsigtighed</string>
     <string name="rendering_attr_showMtbRoutes_name">Vis MTB ruter</string>
     <string name="show_map_markers">Kortmarkører</string>
-    <string name="show_map_markers_description">Aktivér kortmarkører funktion</string>
+    <string name="show_map_markers_description">Aktivér kortmarkører</string>
     <string name="clear_active_markers_q">Slet alle aktive markører?</string>
-    <string name="clear_markers_history_q">Slet markørhistoriken?</string>
+    <string name="clear_markers_history_q">Slet kortmarkørhistoriken?</string>
     <string name="active_markers">Aktive markører</string>
     <string name="map_markers">Kortmarkører</string>
     <string name="map_marker">Kortmarkør</string>
@@ -2289,11 +2289,36 @@
     <string name="map_marker_2nd">Anden kortmarkør</string>
     <string name="shared_string_toolbar">Værktøjslinie</string>
     <string name="shared_string_widgets">Moduler</string>
-    <string name="download_files_error_not_enough_space">Ikke nok plads! Dette skulle {3} MB midlertidigt og {1} MB permanent. I øjeblikket, er der kun {2} MB tilgængelig.</string>
-    <string name="download_files_question_space_with_temp">Virkelig hente {0} fil(er)? Dette kræver {3} MB midlertidigt og {1} MB permanent? I øjeblikket, er der {2} MB til rådighed.</string>
+    <string name="download_files_error_not_enough_space">Ikke plads nok! Har brug for {3} MB midlertidigt og {1} MB permanent. I øjeblikket, er kun {2} MB tilgængelig.</string>
+    <string name="download_files_question_space_with_temp">Hent {0} filer? Har brug for {3} MB midlertidigt og {1} MB permanent. I øjeblikket er {2} MB til rådighed.</string>
     <string name="upload_osm_note">Overfør OSM Note</string>
     <string name="upload_anonymously">Overfør anonymt</string>
-<string name="upload_osm_note_description">Du kan overføre din OSM Note anonymt eller bruge din OpenStreetMap.org profil.</string>
+<string name="upload_osm_note_description">Overfør OSM-noter anonymt hvis OpenStreetMap.org profilen bruges.</string>
     <string name="select_map_marker">Vælg kortmarkør</string>
     <string name="map_markers_other">Andre markører</string>
+    <string name="show_transparency_seekbar">Vis glider for gennemsigtighed</string>
+    <string name="donations">Donationer</string>
+    <string name="number_of_recipients">Antal modtagere</string>
+    <string name="osm_user_stat">Redigeringer %1$s, rang %2$s, redigeringer totalt %3$s</string>
+    <string name="osm_editors_ranking">OSM redaktører rangering</string>
+    <string name="osm_live_subscription">OSM Live-abonnement</string>
+    <string name="osm_live_subscribe_btn">Tilmeld</string>
+    <string name="osm_live_email_desc">Skal bruges til at give oplysninger om bidrag</string>
+    <string name="osm_live_user_public_name">Offentligt navn</string>
+    <string name="osm_live_hide_user_name">Vis ikke navn i rapporter</string>
+    <string name="osm_live_support_region">Support region</string>
+    <string name="osm_live_month_cost">Månedlige omkostninger</string>
+    <string name="osm_live_month_cost_desc">Månedlig betaling</string>
+    <string name="osm_live_active">Aktiv</string>
+    <string name="osm_live_not_active">Inaktiv</string>
+    <string name="osm_live_enter_email">Indtast gyldig e-mail adresse</string>
+    <string name="osm_live_enter_user_name">Indtast offentligt navn</string>
+    <string name="osm_live_thanks">Tak for at abonnere på live opdateringer!</string>
+    <string name="osm_live_region_desc">En del af donationen vil blive sendt til OSM brugere, som indsender ændringer til kortet i den pågældende region</string>
+    <string name="osm_live_subscription_settings">Indstillinger for abonnement</string>
+    <string name="osm_live_ask_for_purchase">Køb først OSM Live-abonnement</string>
+
+    <string name="osm_live_header">Abonnementet giver timebaserede opdateringer til alle kort i hele verden. Størstedelen af indkomsten går tilbage til OSM fællesskabet og udbetales for hvert OSM bidrag. Hvis du er fan af OsmAnd og OSM og ønsker at støtte dem, er dette en perfekt måde at gøre det.</string>
+    
+    <string name="recalculate_route">Genberegn ruten</string>
     </resources>

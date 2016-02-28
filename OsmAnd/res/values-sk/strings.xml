@@ -17,7 +17,7 @@
     <string name="target_points">Ciele</string>
     <string name="intermediate_point_too_far">Prechodný bod %1$s je príliš ďaleko od najbližšej cesty.</string>
     <string name="arrived_at_intermediate_point">Dorazili ste k Vášmu prechodnému bodu</string>
-    <string name="context_menu_item_intermediate_point">Pridať prechodný bod</string>
+    <string name="context_menu_item_intermediate_point">Pridať ako prechodný bod</string>
     <string name="map_widget_intermediate_distance">Prechodný bod</string>
     <string name="ending_point_too_far">Štartovací bod je príliš ďaleko od najbližšej cesty.</string>
     <string name="poi_filter_parking">Parkovanie</string>
@@ -816,7 +816,7 @@
     <string name="map_widget_monitoring_services">Monitorovacie služby</string>
     <string name="no_route">Žiadna cesta</string>
     <string name="delete_target_point">Odstrániť cieľ</string>
-    <string name="intermediate_point">Cieľ %1$s</string>
+    <string name="intermediate_point">Prechodný bod %1$s</string>
     <string name="map_widget_show_destination_arrow">Zobraziť smer k cieľu</string>
     <string name="rendering_attr_roadColors_description">Vyberte farebnú schému pre cesty:</string>
     <string name="rendering_attr_roadColors_name">Farebná schéma ciest</string>
@@ -824,7 +824,7 @@
     <string name="rendering_attr_showRoadMaps_description">Vyberte, kedy zobraziť mapy ciest:</string>
     <string name="safe_mode">Bezpečný režim</string>
     <string name="safe_mode_description">Spustenie aplikácie v bezpečnom režime (namiesto natívneho kódu sa použije pomalší kód pre Android).</string>
-    <string name="background_service_is_enabled_question">Služba v pozadí je stále spustená. Chcete ju prerušiť?</string>
+    <string name="background_service_is_enabled_question">Služba v pozadí je stále spustená. Chcete ju zastaviť?</string>
     <string name="native_library_not_running">Aplikácia je spustená v bezpečnom režime (vypnete ho v nastaveniach).</string>
     <string name="download_roads_only_maps">Mapa ciest</string>
     <string name="download_roads_only_item">Len cestná sieť</string>
@@ -885,7 +885,7 @@
     <string name="dropbox_plugin_description">Zásuvný modul pre Dropbox vám umožňuje synchronizovať stopy a video/zvukové poznámky s vaším účtom na službe Dropbox.</string>
     <string name="dropbox_plugin_name">Zásuvný modul pre Dropbox</string>
     <string name="stop_routing_confirm">Naozaj chcete vypnúť navigáciu?</string>
-    <string name="clear_dest_confirm">Naozaj chcete zmazať váš cieľový bod?</string>
+    <string name="clear_dest_confirm">Naozaj chcete zmazať váš cieľový bod (a prechodné body)?</string>
     <string name="local_indexes_cat_av">Zvukové/video údaje</string>
     <string name="precise_routing_mode">Precízna navigácia (vo vývoji)</string>
     <string name="index_name_openmaps">OpenMaps EU</string>
@@ -1066,7 +1066,7 @@
     <string name="route_descr_select_destination">Vybrať cieľ</string>
     <string name="route_preferences">Predvoľby trasy</string>
     <string name="route_info">Informácie trasy</string>
-    <string name="keep_and_add_destination_point">Pridať ako cieľový bod</string>
+    <string name="keep_and_add_destination_point">Pridať ako posledný cieľový bod</string>
     <string name="use_displayed_track_for_navigation">Chcete použiť zobrazenú trasu pre navigáciu?</string>
     <string name="calculate_osmand_route_without_internet">Vypočítať OsmAnd trasu úseku bez pripojenia na Internet</string>
     <string name="gpx_option_calculate_first_last_segment">Vypočítať OsmAnd trasu pre prvý a posledný úsek</string>
@@ -1164,7 +1164,7 @@
     <string name="osmo_conn_successfull">Vytvorené spojenie: %1$s </string>
     <string name="osmo_mode_restart">Reštartovať reláciu OsMo</string>
     <string name="osmo_settings_debug">Informácie pre ladenie</string>
-    <string name="import_file_favourites">Uložiť body ako súbor GPX alebo ich importovať do obľúbených?</string>
+    <string name="import_file_favourites">Uložiť údaje ako súbor GPX alebo importovať body cesty do Obľúbených?</string>
     
     <string name="rendering_value_pink_name">ružová</string>
     
@@ -1263,10 +1263,10 @@
     <string name="osmo_group_by_invite">Vstúpiť pozvaním</string>
     <string name="osmo_group_information_desc">" - Všetky vytvorené skupiny sú verejné! Ak chcete byť anonymný, pripojte zariadenia priamo cez Tracker id.\n - Súkromné skupiny sú obmedzené na 8 ľudí.\n - Skupina bude zrušená v prípade nečinnosti alebo aktivity len jednej osoby počas 2 týždňov.\n - Môžete obmedziť vstup do skupiny len na pozvánky, ale pre ovládanie skupiny musíte použiť administračnú konzolu.\n - Ak potrebujete vytvoriť skupinu s inými podmienkami, kontaktujte http://osmo.mobi"</string>
     <string name="osmo_group_information">Prosím prečítajte si pred vytváraním skupiny!</string>
-    <string name="stop_navigation_service">Prerušiť</string>
+    <string name="stop_navigation_service">Zastaviť</string>
     <string name="enable_sleep_mode">Zapnúť režim GPS v pozadí</string>
     <string name="gps_wake_up_timer">Interval prebúdzania GPS</string>
-    <string name="sleep_mode_stop_dialog">Prerušiť službu GPS v pozadí?</string>
+    <string name="sleep_mode_stop_dialog">Zastaviť službu GPS v pozadí?</string>
     <string name="map_preferred_locale_descr">Preferovaný jazyk pre nápisy na mape (ak nie je dostupný budú použité anglické alebo lokálne názvy)</string>
     <string name="map_preferred_locale">Preferovaný jazyk mapy</string>
     <string name="local_map_names">Lokálne názvy</string>
@@ -1958,10 +1958,35 @@
     <string name="shared_string_reverse_order">Obrátené poradie</string>
     <string name="show_map_markers_description">Aktivovať funkciu mapových značiek</string>
     <string name="clear_active_markers_q">Chcete vymazať všetky aktívne značky?</string>
-    <string name="clear_markers_history_q">Chcete vymazať históriu značiek?</string>
+    <string name="clear_markers_history_q">Chcete vymazať históriu mapových značiek?</string>
     <string name="active_markers">Aktívne značky</string>
     <string name="map_markers">Mapové značky</string>
     <string name="map_marker">Mapová značka</string>
     <string name="consider_turning_polygons_off">Odporúča sa vypnúť zobrazovanie polygónov.</string>
     <string name="upload_anonymously">Odoslať anonymne</string>
-</resources>
+<string name="donations">Príspevky</string>
+    <string name="number_of_recipients">Počet príjemcov</string>
+    <string name="osm_user_stat">Počet úprav %1$s, pozícia %2$s, celkový počet úprav %3$s</string>
+    <string name="osm_editors_ranking">Pozícia medzi editormi OSM</string>
+    <string name="osm_live_subscription">Registrácia v OSM</string>
+    <string name="osm_live_subscribe_btn">Registrovať</string>
+    <string name="osm_live_email_desc">Potrebujeme to na poskytnutie informácií o príspevkoch</string>
+    <string name="osm_live_user_public_name">Verejné meno</string>
+    <string name="osm_live_hide_user_name">Nezobrazovať moje meno v reportoch</string>
+    <string name="osm_live_support_region">Región podpory</string>
+    <string name="osm_live_month_cost">Mesačná cena</string>
+    <string name="osm_live_month_cost_desc">Mesačná platba</string>
+    <string name="osm_live_active">Aktívne</string>
+    <string name="osm_live_not_active">Neaktívne</string>
+    <string name="osm_live_enter_email">Prosím zadajte platnú e-mailovú adresu</string>
+    <string name="osm_live_enter_user_name">Prosím zadajte verejné meno</string>
+    <string name="osm_live_thanks">Ďakujeme za registrovanie na okamžité aktualizácie!</string>
+    <string name="osm_live_region_desc">Časť príspevkov bude zaslaná používateľom OSM, ktorí upravujú mapu v danom regióne</string>
+    <string name="osm_live_subscription_settings">Nastavenia registrácie</string>
+    <string name="osm_live_ask_for_purchase">Prosím zakúpte si najprv OSM Naživo</string>
+
+    <string name="osm_live_header">Registrácia umožní hodinové aktualizácie všetkých má sveta. Veľká časť príjmu ide späť do OSM komunity a za každý príspevok do OSM je vyplatená odmena. Ak máte radi OsmAnd a OSM a chcete ich podporiť, toto je výborný spôsob.</string>
+    
+    <string name="show_transparency_seekbar">Zobraziť panel priesvitnosti</string>
+    <string name="recalculate_route">Prepočítať trasu</string>
+    </resources>

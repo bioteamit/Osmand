@@ -21,6 +21,7 @@ public class MapMarkersHelper {
 	private OsmandSettings settings;
 	private List<MapMarkerChangedListener> listeners = new ArrayList<>();
 	private OsmandApplication ctx;
+	private boolean startFromMyLocation;
 
 	public interface MapMarkerChangedListener {
 		void onMapMarkerChanged(MapMarker mapMarker);
@@ -83,8 +84,18 @@ public class MapMarkersHelper {
 
 	public MapMarkersHelper(OsmandApplication ctx) {
 		this.ctx = ctx;
-		this.settings = ctx.getSettings();
+		settings = ctx.getSettings();
+		startFromMyLocation = settings.ROUTE_MAP_MARKERS_START_MY_LOC.get();
 		readFromSettings();
+	}
+
+	public boolean isStartFromMyLocation() {
+		return startFromMyLocation;
+	}
+
+	public void setStartFromMyLocation(boolean startFromMyLocation) {
+		this.startFromMyLocation = startFromMyLocation;
+		settings.ROUTE_MAP_MARKERS_START_MY_LOC.set(startFromMyLocation);
 	}
 
 	private void readFromSettings() {
@@ -194,10 +205,30 @@ public class MapMarkersHelper {
 		return mapMarkersHistory;
 	}
 
+	public List<MapMarker> getSelectedMarkers() {
+		List<MapMarker> list = new ArrayList<>();
+		for (MapMarker m : this.mapMarkers) {
+			if (m.selected) {
+				list.add(m);
+			}
+		}
+		return list;
+	}
+
 	public List<LatLon> getActiveMarkersLatLon() {
 		List<LatLon> list = new ArrayList<>();
 		for (MapMarker m : this.mapMarkers) {
 			list.add(m.point);
+		}
+		return list;
+	}
+
+	public List<LatLon> getSelectedMarkersLatLon() {
+		List<LatLon> list = new ArrayList<>();
+		for (MapMarker m : this.mapMarkers) {
+			if (m.selected) {
+				list.add(m.point);
+			}
 		}
 		return list;
 	}
@@ -224,6 +255,11 @@ public class MapMarkersHelper {
 
 	public void removeActiveMarkers() {
 		cancelAddressRequests();
+		List<MapMarker> markers = new ArrayList<>(mapMarkers.size());
+		for (int i = 0; i<= mapMarkers.size() - 1; i++) {
+			MapMarker marker = mapMarkers.get(i);
+			addMapMarkerHistory(marker);
+		}
 		settings.clearActiveMapMarkers();
 		readFromSettings();
 		refresh();
@@ -295,6 +331,17 @@ public class MapMarkersHelper {
 					selections, indexes);
 			readFromSettings();
 			normalizePositions();
+		}
+	}
+
+	public void updateMapMarker(MapMarker marker, boolean refresh) {
+		if (marker != null) {
+			settings.updateMapMarker(marker.getLatitude(), marker.getLongitude(),
+					marker.pointDescription, marker.colorIndex, marker.pos, marker.selected);
+			if (refresh) {
+				readFromSettings();
+				refresh();
+			}
 		}
 	}
 

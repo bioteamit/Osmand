@@ -105,12 +105,12 @@ public abstract class OsmandPlugin {
 		allPlugins.add(new OsmandRasterMapsPlugin(app));
 		allPlugins.add(new OsmandMonitoringPlugin(app));
 		allPlugins.add(new OsMoPlugin(app));
+		checkMarketPlugin(app, new PirattoPlugin(app), false, PirattoPlugin.PIRATTO_PLUGIN_COMPONENT, null);
 		checkMarketPlugin(app, new SRTMPlugin(app), true, SRTM_PLUGIN_COMPONENT_PAID, SRTM_PLUGIN_COMPONENT);
 
 		// ? questionable - definitely not market plugin 
 //		checkMarketPlugin(app, new TouringViewPlugin(app), false, TouringViewPlugin.COMPONENT, null);
 		checkMarketPlugin(app, new NauticalMapsPlugin(app), false, NauticalMapsPlugin.COMPONENT, null);
-		checkMarketPlugin(app, new PirattoPlugin(app), false, PirattoPlugin.PIRATTO_PLUGIN_COMPONENT, null);
 		checkMarketPlugin(app, new SkiMapsPlugin(app), false, SkiMapsPlugin.COMPONENT, null);
 
 //		checkMarketPlugin(app, new RoutePointsPlugin(app), false /*FIXME*/, RoutePointsPlugin.ROUTE_POINTS_PLUGIN_COMPONENT, null);

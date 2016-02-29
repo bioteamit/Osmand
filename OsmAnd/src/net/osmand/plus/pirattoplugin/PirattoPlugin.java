@@ -5,6 +5,8 @@ import android.app.Activity;
 import net.osmand.plus.OsmandApplication;
 import net.osmand.plus.OsmandPlugin;
 import net.osmand.plus.R;
+import net.osmand.plus.activities.MapActivity;
+import net.osmand.plus.views.OsmandMapTileView;
 
 public class PirattoPlugin extends OsmandPlugin {
 
@@ -45,5 +47,13 @@ public class PirattoPlugin extends OsmandPlugin {
 	@Override
 	public Class<? extends Activity> getSettingsActivity() {
 		return null;
+	}
+
+	@Override
+	public void registerLayers(MapActivity activity) {
+	}
+
+	@Override
+	public void updateLayers(OsmandMapTileView mapView, MapActivity activity) {
 	}
 }

@@ -370,4 +370,5 @@ dependencies {
 	qtcoreCompile "net.osmand:OsmAndCore_androidNativeRelease:0.1-SNAPSHOT@aar"
 	qtcoreCompile "net.osmand:OsmAndCore_android:0.1-SNAPSHOT@aar"
 	compile files('libs/gson-2.5.jar')
+    compile 'com.squareup.okhttp3:okhttp:3.1.2'
 }

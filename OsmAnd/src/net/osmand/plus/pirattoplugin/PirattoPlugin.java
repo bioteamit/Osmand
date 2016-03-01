@@ -158,40 +158,21 @@ public class PirattoPlugin extends OsmandPlugin {
 			@Override
 			public boolean onContextMenuClick(ArrayAdapter<?> adapter, int resId,
 											  int pos, boolean isChecked) {
-				if (resId == R.string.context_menu_item_add_parking_point) {
-					showAddParkingDialog(mapActivity, latitude, longitude);
+				if (resId == R.string.context_menu_item_piratto_add_destination_point) {
+					PirattoPlugin.this.addDestinationPointToMap(mapActivity, latitude, longitude);
 				}
 				return true;
 			}
 		};
-		adapter.item(R.string.context_menu_item_add_parking_point)
-				.iconColor( R.drawable.ic_action_parking_dark).listen(addListener).reg();
+		adapter.item(R.string.context_menu_item_piratto_add_destination_point)
+				.iconColor( R.drawable.ic_action_piratto).listen(addListener).reg();
 
 	}
 
-	/**
-	 * Method dialog for adding of a parking location.
-	 * It allows user to choose a type of parking (time-limited or time-unlimited).
-	 */
-	private void showAddParkingDialog(final MapActivity mapActivity, final double latitude, final double longitude) {
-		final View addParking = mapActivity.getLayoutInflater().inflate(R.layout.parking_set_type, null);
-		final Dialog choose = new Dialog(mapActivity);
-		choose.setContentView(addParking);
-		choose.setCancelable(true);
-		choose.setTitle(mapActivity.getString(R.string.osmand_parking_choose_type));
-
-		ImageButton noLimitButton = (ImageButton) addParking.findViewById(R.id.parking_no_lim_button);
-		noLimitButton.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				choose.dismiss();
-				setDestinationPoint(mapActivity, latitude, longitude, false);
-				showContextMenuIfNeeded(mapActivity);
-				mapActivity.getMapView().refreshMap();
-			}
-		});
-
-		choose.show();
+	private void addDestinationPointToMap(MapActivity mapActivity, double latitude, double longitude) {
+		this.setDestinationPoint(mapActivity, latitude, longitude, false);
+		this.showContextMenuIfNeeded(mapActivity);
+		mapActivity.getMapView().refreshMap();
 	}
 
 	private void showContextMenuIfNeeded(final MapActivity mapActivity) {

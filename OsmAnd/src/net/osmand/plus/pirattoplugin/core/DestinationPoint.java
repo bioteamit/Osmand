@@ -1,5 +1,7 @@
 package net.osmand.plus.pirattoplugin.core;
 
+import net.osmand.data.LatLon;
+
 public class DestinationPoint implements Comparable<DestinationPoint> {
 
 	public static final String TAG_ADDRESS = "address";
@@ -7,28 +9,22 @@ public class DestinationPoint implements Comparable<DestinationPoint> {
 	public static final String TAG_LONGITUDE = "longitude";
 
 	private String address;
-	private double latitude;
-	private double longitude;
+	private LatLon latLon;
 
 	public DestinationPoint() {
 	}
 
 	public DestinationPoint(String address, double latitude, double longitude) {
 		this.address = address;
-		this.latitude = latitude;
-		this.longitude = longitude;
+		this.latLon = new LatLon(latitude, longitude);
 	}
 
 	public void setAddress(String address) {
 		this.address = address;
 	}
 
-	public void setLatitude(double latitude) {
-		this.latitude = latitude;
-	}
-
-	public void setLongitude(double longitude) {
-		this.longitude = longitude;
+	public void setLatLong(double latitude, double longitude) {
+		this.latLon = new LatLon(latitude, longitude);
 	}
 
 	public String getAddress() {
@@ -36,11 +32,11 @@ public class DestinationPoint implements Comparable<DestinationPoint> {
 	}
 
 	public double getLatitude() {
-		return latitude;
+		return this.latLon.getLatitude();
 	}
 
 	public double getLongitude() {
-		return longitude;
+		return this.latLon.getLongitude();
 	}
 
 	@Override
@@ -48,8 +44,8 @@ public class DestinationPoint implements Comparable<DestinationPoint> {
 		if (obj == null || !(obj instanceof DestinationPoint)) return false;
 		DestinationPoint another = (DestinationPoint) obj;
 		if (!this.address.equalsIgnoreCase(another.address)) return false;
-		if (this.latitude != another.latitude) return false;
-		if (this.longitude != another.longitude) return false;
+		if (this.latLon.getLatitude() != another.getLatitude()) return false;
+		if (this.latLon.getLongitude() != another.getLongitude()) return false;
 		return true;
 	}
 
@@ -57,8 +53,8 @@ public class DestinationPoint implements Comparable<DestinationPoint> {
 	public int compareTo(DestinationPoint another) {
 		if (another == null) return 1;
 		if (!this.address.equalsIgnoreCase(another.address)) return 1;
-		if (this.latitude != another.latitude) return 1;
-		if (this.longitude != another.longitude) return 1;
+		if (this.latLon.getLatitude() != another.getLatitude()) return 1;
+		if (this.latLon.getLongitude() != another.getLongitude()) return 1;
 		return 0;
 	}
 }

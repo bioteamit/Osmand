@@ -86,6 +86,8 @@ public class DestinationPoints {
 		try {
 			int eventType = parser.getEventType();
 			DestinationPoint destinationPoint = null;
+			double latitude = -1;
+			double longitude = -1;
 			boolean done = false;
 			while (eventType != XmlPullParser.END_DOCUMENT && !done) {
 				String name = null;
@@ -96,15 +98,15 @@ public class DestinationPoints {
 						name = parser.getName();
 						if (name.equalsIgnoreCase(TAG_DESTINATION_POINT)) {
 							destinationPoint = new DestinationPoint();
+							latitude = -1;
+							longitude = -1;
 						} else if (destinationPoint != null) {
 							if (name.equalsIgnoreCase(DestinationPoint.TAG_ADDRESS)) {
 								destinationPoint.setAddress(parser.nextText());
 							} else if (name.equalsIgnoreCase(DestinationPoint.TAG_LATITUDE)) {
-								double latitude = Double.parseDouble(parser.nextText());
-								destinationPoint.setLatitude(latitude);
+								latitude = Double.parseDouble(parser.nextText());
 							} else if (name.equalsIgnoreCase(DestinationPoint.TAG_LONGITUDE)){
-								double longitude = Double.parseDouble(parser.nextText());
-								destinationPoint.setLongitude(longitude);
+								longitude = Double.parseDouble(parser.nextText());
 							}
 						}
 						break;
@@ -112,7 +114,10 @@ public class DestinationPoints {
 						name = parser.getName();
 						if (name.equalsIgnoreCase(TAG_DESTINATION_POINT)
 								&& destinationPoint != null) {
-							destinationPoints.addPoint(destinationPoint);
+							if (latitude > 0 && longitude > 0) {
+								destinationPoint.setLatLong(latitude, longitude);
+								destinationPoints.addPoint(destinationPoint);
+							}
 						}
 						break;
 				}

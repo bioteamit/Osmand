@@ -111,7 +111,7 @@ public class PirattoPositionLayer extends OsmandMapLayer implements ContextMenuL
 
 	@Override
 	public String getObjectDescription(Object o) {
-		return plugin.getParkingDescription(this.mapActivity);
+		return plugin.getDestinationPointDescription(this.mapActivity);
 
 	}
 

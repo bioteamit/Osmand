@@ -1,12 +1,10 @@
 package net.osmand.plus.pirattoplugin;
 
 import android.app.Activity;
-import android.app.Dialog;
 import android.content.DialogInterface;
 import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.ImageButton;
 
 import net.osmand.data.LatLon;
 import net.osmand.plus.ApplicationMode;
@@ -31,6 +29,7 @@ public class PirattoPlugin extends OsmandPlugin {
 	public static final String PIRATTO_PLUGIN_COMPONENT = "net.osmand.oneteam.pirattoPlugin"; //$NON-NLS-1$
 	public final static String PIRATTO_POINT_LAT = "piratto_point_lat"; //$NON-NLS-1$
 	public final static String PIRATTO_POINT_LON = "piratto_point_lon"; //$NON-NLS-1$
+	public final static String KEY_PIRATTO_POINTS = "piratto_points"; //$NON-NLS-1$
 	private LatLon destinationPoint;
 	private OsmandApplication application;
 
@@ -42,7 +41,7 @@ public class PirattoPlugin extends OsmandPlugin {
 	public PirattoPlugin(OsmandApplication application) {
 		this.application = application;
 		OsmandSettings set = application.getSettings();
-		ApplicationMode.regWidget("piratto_points", (ApplicationMode[]) null);
+		ApplicationMode.regWidget(KEY_PIRATTO_POINTS, (ApplicationMode[]) null);
 		this.pointLatitude = set.registerFloatPreference(PIRATTO_POINT_LAT, 0f).makeGlobal();
 		this.pointLongitude = set.registerFloatPreference(PIRATTO_POINT_LON, 0f).makeGlobal();
 		this.destinationPoint = constructDestinationPoint();
@@ -142,9 +141,9 @@ public class PirattoPlugin extends OsmandPlugin {
 	private void registerWidget(MapActivity activity) {
 		MapInfoLayer mapInfoLayer = activity.getMapLayers().getMapInfoLayer();
 		if (mapInfoLayer != null) {
-			this.pirattoPlaceControl = this.createParkingPlaceInfoControl(activity);
+			this.pirattoPlaceControl = this.createPointInfoControl(activity);
 			mapInfoLayer.registerSideWidget(this.pirattoPlaceControl,
-					R.drawable.ic_action_parking_dark,  R.string.map_widget_parking, "parking", false, 8);
+					R.drawable.ic_action_piratto_dark,  R.string.map_widget_piratto, KEY_PIRATTO_POINTS, false, 8);
 			mapInfoLayer.recreateControls();
 		}
 	}
@@ -165,7 +164,7 @@ public class PirattoPlugin extends OsmandPlugin {
 			}
 		};
 		adapter.item(R.string.context_menu_item_piratto_add_destination_point)
-				.iconColor( R.drawable.ic_action_piratto).listen(addListener).reg();
+				.iconColor( R.drawable.ic_action_piratto_dark).listen(addListener).reg();
 
 	}
 
@@ -186,17 +185,17 @@ public class PirattoPlugin extends OsmandPlugin {
 	}
 
 	/**
-	 * Method creates confirmation dialog for deletion of a parking location.
+	 * Method creates confirmation dialog for deletion of a destination point location.
 	 */
 	public AlertDialog showDeleteDialog(final Activity activity) {
 		AlertDialog.Builder confirm = new AlertDialog.Builder(activity);
-		confirm.setTitle(activity.getString(R.string.osmand_parking_delete));
-		confirm.setMessage(activity.getString(R.string.osmand_parking_delete_confirm));
+		confirm.setTitle(activity.getString(R.string.osmand_oneteam_piratto_delete));
+		confirm.setMessage(activity.getString(R.string.osmand_oneteam_piratto_delete_confirm));
 		confirm.setCancelable(true);
 		confirm.setPositiveButton(R.string.shared_string_yes, new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
-				cancelParking();
+				cancelDestinationPoint();
 				if (activity instanceof MapActivity) {
 					((MapActivity) activity).getContextMenu().close();
 				}
@@ -207,7 +206,7 @@ public class PirattoPlugin extends OsmandPlugin {
 	}
 
 	/**
-	 * Method sets a parking point on a ParkingLayer.
+	 * Method sets a destination point on a PirattoLayer.
 	 * @param mapActivity
 	 * @param latitude
 	 * @param longitude
@@ -220,7 +219,7 @@ public class PirattoPlugin extends OsmandPlugin {
 		}
 	}
 
-	private void cancelParking() {
+	private void cancelDestinationPoint() {
 		if (this.pirattoLayer != null) {
 			this.pirattoLayer.refresh();
 		}
@@ -235,21 +234,21 @@ public class PirattoPlugin extends OsmandPlugin {
 	 * @return the control to be added on a MapInfoLayer
 	 * that shows a distance between
 	 * the current position on the map
-	 * and the location of the parked car
+	 * and the location of the destination point
 	 */
-	private TextInfoWidget createParkingPlaceInfoControl(final MapActivity map) {
-		TextInfoWidget parkingPlaceControl = new TextInfoWidget(map) {
+	private TextInfoWidget createPointInfoControl(final MapActivity map) {
+		TextInfoWidget pointInfoControl = new TextInfoWidget(map) {
 			private float[] calculations = new float[1];
 			private int cachedMeters = 0;
 
 			@Override
 			public boolean updateInfo(OsmandMapLayer.DrawSettings drawSettings) {
-				LatLon parkingPoint = pirattoLayer.getDestinationPoint();
-				if( parkingPoint != null && !map.getRoutingHelper().isFollowingMode()) {
+				LatLon destinationPoint = pirattoLayer.getDestinationPoint();
+				if( destinationPoint != null && !map.getRoutingHelper().isFollowingMode()) {
 					OsmandMapTileView view = map.getMapView();
 					int d = 0;
 					if (d == 0) {
-						net.osmand.Location.distanceBetween(view.getLatitude(), view.getLongitude(), parkingPoint.getLatitude(), parkingPoint.getLongitude(), calculations);
+						net.osmand.Location.distanceBetween(view.getLatitude(), view.getLongitude(), destinationPoint.getLatitude(), destinationPoint.getLongitude(), calculations);
 						d = (int) calculations[0];
 					}
 					if (distChanged(cachedMeters, d)) {
@@ -289,24 +288,24 @@ public class PirattoPlugin extends OsmandPlugin {
 				return true;
 			}
 		};
-		parkingPlaceControl.setOnClickListener(new View.OnClickListener() {
+		pointInfoControl.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				OsmandMapTileView view = map.getMapView();
-				AnimateDraggingMapThread thread = view.getAnimatedDraggingThread();
-				LatLon parkingPoint = destinationPoint;
-				if (parkingPoint != null) {
-					int fZoom = view.getZoom() < 15 ? 15 : view.getZoom();
-					thread.startMoving(parkingPoint.getLatitude(), parkingPoint.getLongitude(), fZoom, true);
+				OsmandMapTileView mapView = map.getMapView();
+				AnimateDraggingMapThread thread = mapView.getAnimatedDraggingThread();
+				final LatLon destinationPoint = PirattoPlugin.this.destinationPoint;
+				if (destinationPoint != null) {
+					int fZoom = mapView.getZoom() < 15 ? 15 : mapView.getZoom();
+					thread.startMoving(destinationPoint.getLatitude(), destinationPoint.getLongitude(), fZoom, true);
 				}
 			}
 		});
-		parkingPlaceControl.setText(null, null);
-		parkingPlaceControl.setIcons(R.drawable.widget_parking_day, R.drawable.widget_parking_night);
-		return parkingPlaceControl;
+		pointInfoControl.setText(null, null);
+		pointInfoControl.setIcons(R.drawable.widget_piratto_day, R.drawable.widget_piratto_night);
+		return pointInfoControl;
 	}
 
-	public String getParkingDescription(Activity ctx) {
+	public String getDestinationPointDescription(Activity ctx) {
 		// TODO: Set the description of selected destination point 1
 		StringBuilder description = new StringBuilder();
 		description.append("destination point description 1");

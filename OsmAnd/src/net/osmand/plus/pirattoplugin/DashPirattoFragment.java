@@ -26,8 +26,8 @@ import net.osmand.plus.helpers.FontCache;
  * 26.01.2015.
  */
 public class DashPirattoFragment extends DashLocationFragment {
-	private static final String TAG = "DASH_PARKING_FRAGMENT";
-	private static final int TITLE_ID = R.string.osmand_parking_plugin_name;
+	private static final String TAG = "DASH_PIRATTO_FRAGMENT";
+	private static final int TITLE_ID = R.string.osmand_oneteam_piratto_plugin_name;
 	PirattoPlugin plugin;
 
 	private static final DashFragmentData.ShouldShowFunction SHOULD_SHOW_FUNCTION =

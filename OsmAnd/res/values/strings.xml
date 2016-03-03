@@ -2277,5 +2277,6 @@ If you need help with OsmAnd application, please contact our support team: suppo
     <string name="osmand_oneteam_piratto_delete_confirm">Do you want to delete the destination point marker?</string>
     <string name="osmand_oneteam_piratto_delete">Delete a destination point marker</string>
     <string name="osmand_oneteam_piratto_destination_point">Destination Point</string>
-    <string name="osmand_oneteam_piratto_position_name">Destination point</string>
+    <string name="osmand_oneteam_piratto_point_name">Destination point</string>
+    <string name="osmand_oneteam_piratto_point_info">Destination point info</string>
 </resources>

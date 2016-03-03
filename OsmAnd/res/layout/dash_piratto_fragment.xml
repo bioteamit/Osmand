@@ -72,7 +72,7 @@
 				android:layout_height="wrap_content"
 				android:textColor="@color/color_white"
 				android:textSize="@dimen/default_desc_text_size"
-				tools:text="@string/parking_place_limited"/>
+				tools:text="@string/osmand_oneteam_piratto_point_info"/>
 
 
 		</LinearLayout>

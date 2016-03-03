@@ -61,7 +61,7 @@ public class DashPirattoFragment extends DashLocationFragment {
 			public void onClick(View v) {
 				LatLon point = plugin.getDestinationPoint();
 				getMyApplication().getSettings().setMapLocationToShow(point.getLatitude(), point.getLongitude(),
-						15, new PointDescription(PointDescription.POINT_TYPE_PIRATTO_MARKER, getString(R.string.osmand_oneteam_piratto_position_name)), false,
+						15, new PointDescription(PointDescription.POINT_TYPE_PIRATTO_MARKER, getString(R.string.osmand_oneteam_piratto_point_name)), false,
 						point); //$NON-NLS-1$
 				MapActivity.launchMapActivityMoveToTop(getActivity());
 			}

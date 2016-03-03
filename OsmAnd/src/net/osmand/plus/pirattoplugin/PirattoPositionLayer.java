@@ -117,7 +117,7 @@ public class PirattoPositionLayer extends OsmandMapLayer implements ContextMenuL
 	@Override
 	public PointDescription getObjectName(Object o) {
 		return new PointDescription(PointDescription.POINT_TYPE_PIRATTO_MARKER,
-				mapTileView.getContext().getString(R.string.osmand_oneteam_piratto_position_name));
+				mapTileView.getContext().getString(R.string.osmand_oneteam_piratto_point_name));
 	}
 
 	public void refresh() {

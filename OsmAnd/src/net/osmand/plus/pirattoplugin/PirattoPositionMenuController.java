@@ -14,13 +14,13 @@ import net.osmand.util.Algorithms;
 public class PirattoPositionMenuController extends MenuController {
 
 	private PirattoPlugin plugin;
-	private String parkingDescription = "";
+	private String destinationPointDescription = "";
 
 	public PirattoPositionMenuController(OsmandApplication app, MapActivity mapActivity, PointDescription pointDescription) {
 		super(new MenuBuilder(app), pointDescription, mapActivity);
 		plugin = OsmandPlugin.getPlugin(PirattoPlugin.class);
 		if (plugin != null) {
-			buildParkingDescription(mapActivity);
+			this.buildDestinationPointDescription(mapActivity);
 		}
 		leftTitleButtonController = new TitleButtonController() {
 			@Override
@@ -34,17 +34,17 @@ public class PirattoPositionMenuController extends MenuController {
 		leftTitleButtonController.leftIconId = R.drawable.ic_action_delete_dark;
 	}
 
-	private void buildParkingDescription(MapActivity mapActivity) {
+	private void buildDestinationPointDescription(MapActivity mapActivity) {
 		// TODO: add destination point description 2
 		StringBuilder sb = new StringBuilder();
 		sb.append("destination point description 2");
-		parkingDescription = sb.toString();
+		destinationPointDescription = sb.toString();
 	}
 
 	@Override
 	protected void setObject(Object object) {
 		if (plugin != null) {
-			buildParkingDescription(getMapActivity());
+			buildDestinationPointDescription(getMapActivity());
 		}
 	}
 
@@ -55,7 +55,7 @@ public class PirattoPositionMenuController extends MenuController {
 
 	@Override
 	public boolean needTypeStr() {
-		return !Algorithms.isEmpty(parkingDescription);
+		return !Algorithms.isEmpty(this.destinationPointDescription);
 	}
 
 	@Override
@@ -65,12 +65,12 @@ public class PirattoPositionMenuController extends MenuController {
 
 	@Override
 	public Drawable getLeftIcon() {
-		return getIcon(R.drawable.ic_action_parking_dark, R.color.map_widget_blue);
+		return getIcon(R.drawable.ic_action_piratto_dark, R.color.map_widget_blue);
 	}
 
 	@Override
 	public String getTypeStr() {
-		return parkingDescription;
+		return this.destinationPointDescription;
 	}
 
 	@Override

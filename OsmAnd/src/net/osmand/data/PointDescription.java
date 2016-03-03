@@ -30,6 +30,7 @@ public class PointDescription {
 	public static final String POINT_TYPE_ADDRESS = "address";
 	public static final String POINT_TYPE_OSM_NOTE= "osm_note";
 	public static final String POINT_TYPE_MARKER = "marker";
+	public static final String POINT_TYPE_PIRATTO_MARKER = "piratto_marker";
 	public static final String POINT_TYPE_PARKING_MARKER = "parking_marker";
 	public static final String POINT_TYPE_AUDIO_NOTE = "audionote";
 	public static final String POINT_TYPE_VIDEO_NOTE = "videonote";
@@ -198,6 +199,10 @@ public class PointDescription {
 
 	public boolean isParking() {
 		return POINT_TYPE_PARKING_MARKER.equals(type);
+	}
+
+	public boolean isPiratto() {
+		return POINT_TYPE_PIRATTO_MARKER.equals(type);
 	}
 
 	public boolean isMyLocation() {

@@ -21,10 +21,6 @@ import net.osmand.plus.dashboard.DashboardOnMap;
 import net.osmand.plus.dashboard.tools.DashFragmentData;
 import net.osmand.plus.helpers.FontCache;
 
-/**
- * Created by Denis on
- * 26.01.2015.
- */
 public class DashPirattoFragment extends DashLocationFragment {
 	private static final String TAG = "DASH_PIRATTO_FRAGMENT";
 	private static final int TITLE_ID = R.string.osmand_oneteam_piratto_plugin_name;
@@ -43,7 +39,7 @@ public class DashPirattoFragment extends DashLocationFragment {
 
 	@Override
 	public View initView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		View view = getActivity().getLayoutInflater().inflate(R.layout.dash_parking_fragment, container, false);
+		View view = getActivity().getLayoutInflater().inflate(R.layout.dash_piratto_fragment, container, false);
 		Typeface typeface = FontCache.getRobotoMedium(getActivity());
 		Button remove = (Button) view.findViewById(R.id.remove_tag);
 		remove.setOnClickListener(new View.OnClickListener() {
@@ -53,19 +49,19 @@ public class DashPirattoFragment extends DashLocationFragment {
 				dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
 					@Override
 					public void onDismiss(DialogInterface dialog) {
-						updateParkingPosition();
+						updateDestinationPointPosition();
 					}
 				});
 			}
 		});
 		remove.setTypeface(typeface);
 
-		view.findViewById(R.id.parking_header).setOnClickListener(new View.OnClickListener() {
+		view.findViewById(R.id.destination_point_header).setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				LatLon point = plugin.getDestinationPoint();
 				getMyApplication().getSettings().setMapLocationToShow(point.getLatitude(), point.getLongitude(),
-						15, new PointDescription(PointDescription.POINT_TYPE_PARKING_MARKER, getString(R.string.osmand_parking_position_name)), false,
+						15, new PointDescription(PointDescription.POINT_TYPE_PIRATTO_MARKER, getString(R.string.osmand_oneteam_piratto_position_name)), false,
 						point); //$NON-NLS-1$
 				MapActivity.launchMapActivityMoveToTop(getActivity());
 			}
@@ -76,10 +72,10 @@ public class DashPirattoFragment extends DashLocationFragment {
 	@Override
 	public void onOpenDash() {
 		plugin = OsmandPlugin.getEnabledPlugin(PirattoPlugin.class);
-		updateParkingPosition();
+		this.updateDestinationPointPosition();
 	}
 
-	private void updateParkingPosition() {
+	private void updateDestinationPointPosition() {
 		View mainView = getView();
 		if (mainView == null) {
 			return;
@@ -95,7 +91,7 @@ public class DashPirattoFragment extends DashLocationFragment {
 		LatLon position = plugin.getDestinationPoint();
 
 		TextView timeLeft = (TextView) mainView.findViewById(R.id.time_left);
-		String description = getString(R.string.parking_place);
+		String description = getString(R.string.osmand_oneteam_piratto_destination_point);
 		timeLeft.setText("");
 		timeLeft.setVisibility(View.GONE);
 		((TextView) mainView.findViewById(R.id.name)).setText(description);
@@ -106,30 +102,5 @@ public class DashPirattoFragment extends DashLocationFragment {
 			dv.arrowResId = R.drawable.ic_action_start_navigation; 
 			distances.add(dv);
 		}
-
-
-	}
-
-	String getFormattedTime(long timeInMillis) {
-		if (timeInMillis < 0) {
-			timeInMillis *= -1;
-		}
-		StringBuilder timeStringBuilder = new StringBuilder();
-		int hours = (int) timeInMillis / (1000 * 60 * 60);
-		int minMills = (int) timeInMillis % (1000 * 60 * 60);
-		int minutes = minMills / (1000 * 60);
-		if (hours > 0) {
-			timeStringBuilder.append(hours);
-			timeStringBuilder.append(" ");
-			timeStringBuilder.append(getResources().getString(R.string.osmand_parking_hour));
-		}
-
-		timeStringBuilder.append(" ");
-		timeStringBuilder.append(minutes);
-		timeStringBuilder.append(" ");
-		timeStringBuilder.append(getResources().getString(R.string.osmand_parking_minute));
-
-
-		return timeStringBuilder.toString();
 	}
 }

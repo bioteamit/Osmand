@@ -39,6 +39,7 @@ import net.osmand.plus.osmedit.OsmPoint;
 import net.osmand.plus.osmo.OsMoGroupsStorage.OsMoDevice;
 import net.osmand.plus.osmo.OsMoMenuController;
 import net.osmand.plus.parkingpoint.ParkingPositionMenuController;
+import net.osmand.plus.pirattoplugin.PirattoPositionMenuController;
 import net.osmand.plus.views.DownloadedRegionsLayer.DownloadMapObject;
 
 public abstract class MenuController extends BaseMenuController {
@@ -111,6 +112,8 @@ public abstract class MenuController extends BaseMenuController {
 					menuController = new ParkingPositionMenuController(app, mapActivity, pointDescription);
 				} else if (pointDescription.isMyLocation()) {
 					menuController = new MyLocationMenuController(app, mapActivity, pointDescription);
+				} else if (pointDescription.isPiratto()) {
+					menuController = new PirattoPositionMenuController(app, mapActivity, pointDescription);
 				}
 			} else if (object instanceof RouteDataObject) {
 				menuController = new ImpassibleRoadsMenuController(app, mapActivity,

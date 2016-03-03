@@ -31,7 +31,7 @@ public class PirattoPositionLayer extends OsmandMapLayer implements ContextMenuL
 
 	private Paint bitmapPaint;
 
-	private Bitmap parkingLimitIcon;
+	private Bitmap pointIcon;
 
 	private PirattoPlugin plugin;
 
@@ -55,25 +55,25 @@ public class PirattoPositionLayer extends OsmandMapLayer implements ContextMenuL
 		bitmapPaint.setDither(true);
 		bitmapPaint.setAntiAlias(true);
 		bitmapPaint.setFilterBitmap(true);
-		parkingLimitIcon = BitmapFactory.decodeResource(mapTileView.getResources(), R.drawable.map_poi_parking_pos_limit);
+		pointIcon = BitmapFactory.decodeResource(mapTileView.getResources(), R.drawable.map_poi_piratto_pos);
 	}
 
 	@Override
 	public void onDraw(Canvas canvas, RotatedTileBox tb, DrawSettings nightMode) {
-		LatLon parkingPoint = getDestinationPoint();
-		if (parkingPoint == null)
+		LatLon destinationPoint = getDestinationPoint();
+		if (destinationPoint == null)
 			return;
 
-		Bitmap parkingIcon = parkingLimitIcon;
-		double latitude = parkingPoint.getLatitude();
-		double longitude = parkingPoint.getLongitude();
+		final Bitmap pointIcon = this.pointIcon;
+		double latitude = destinationPoint.getLatitude();
+		double longitude = destinationPoint.getLongitude();
 		if (isLocationVisible(tb, latitude, longitude)) {
-			int marginX = parkingLimitIcon.getWidth() / 2;
-			int marginY = parkingLimitIcon.getHeight() / 2;
+			int marginX = pointIcon.getWidth() / 2;
+			int marginY = pointIcon.getHeight() / 2;
 			int locationX = tb.getPixXFromLonNoRot(longitude);
 			int locationY = tb.getPixYFromLatNoRot(latitude);
-			canvas.rotate(-mapTileView.getRotate(), locationX, locationY);
-			canvas.drawBitmap(parkingIcon, locationX - marginX, locationY - marginY, bitmapPaint);
+			canvas.rotate(-this.mapTileView.getRotate(), locationX, locationY);
+			canvas.drawBitmap(pointIcon, locationX - marginX, locationY - marginY, this.bitmapPaint);
 		}
 	}
 
@@ -98,7 +98,7 @@ public class PirattoPositionLayer extends OsmandMapLayer implements ContextMenuL
 
 	@Override
 	public void collectObjectsFromPoint(PointF point, RotatedTileBox tileBox, List<Object> o) {
-		getParkingFromPoint(tileBox, point, o);
+		this.getDestinationPointFromPoint(tileBox, point, o);
 	}
 
 	@Override
@@ -112,13 +112,12 @@ public class PirattoPositionLayer extends OsmandMapLayer implements ContextMenuL
 	@Override
 	public String getObjectDescription(Object o) {
 		return plugin.getDestinationPointDescription(this.mapActivity);
-
 	}
 
 	@Override
 	public PointDescription getObjectName(Object o) {
-		return new PointDescription(PointDescription.POINT_TYPE_PARKING_MARKER,
-				mapTileView.getContext().getString(R.string.osmand_parking_position_name));
+		return new PointDescription(PointDescription.POINT_TYPE_PIRATTO_MARKER,
+				mapTileView.getContext().getString(R.string.osmand_oneteam_piratto_position_name));
 	}
 
 	public void refresh() {
@@ -130,10 +129,10 @@ public class PirattoPositionLayer extends OsmandMapLayer implements ContextMenuL
 	/**
 	 * @param latitude
 	 * @param longitude
-	 * @return true if the parking point is located on a visible part of map
+	 * @return true if the destination point is located on a visible part of map
 	 */
 	private boolean isLocationVisible(RotatedTileBox tb, double latitude, double longitude){
-		if(getDestinationPoint() == null || mapTileView == null){
+		if(this.getDestinationPoint() == null || mapTileView == null){
 			return false;
 		}
 		return tb.containsLatLon(latitude, longitude);
@@ -141,23 +140,23 @@ public class PirattoPositionLayer extends OsmandMapLayer implements ContextMenuL
 
 	/**
 	 * @param point
-	 * @param parkingPosition
+	 * @param destinationPoints
 	 *            is in this case not necessarily has to be a list, but it's also used in method
 	 *            <link>collectObjectsFromPoint(PointF point, List<Object> o)</link>
 	 */
-	private void getParkingFromPoint(RotatedTileBox tb, PointF point, List<? super LatLon> parkingPosition) {
-		LatLon parkingPoint = getDestinationPoint();
-		if (parkingPoint != null && mapTileView != null) {
+	private void getDestinationPointFromPoint(RotatedTileBox tb, PointF point, List<? super LatLon> destinationPoints) {
+		final LatLon destinationPoint = this.getDestinationPoint();
+		if (destinationPoint != null && mapTileView != null) {
 			int ex = (int) point.x;
 			int ey = (int) point.y;
 			LatLon position = plugin.getDestinationPoint();
 			int x = (int) tb.getPixXFromLatLon(position.getLatitude(), position.getLongitude());
 			int y = (int) tb.getPixYFromLatLon(position.getLatitude(), position.getLongitude());
 			// the width of an image is 40 px, the height is 60 px -> radius = 20,
-			// the position of a parking point relatively to the icon is at the center of the bottom line of the image
+			// the position of a destination point relatively to the icon is at the center of the bottom line of the image
 			int rad = (int) (radius * tb.getDensity());
 			if (Math.abs(x - ex) <= rad && (ey - y) <= rad && (y - ey) <= 2.5 * rad) {
-				parkingPosition.add(parkingPoint);
+				destinationPoints.add(destinationPoint);
 			}
 		}
 	}

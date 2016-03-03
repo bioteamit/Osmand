@@ -48,10 +48,16 @@
 	<dimen name="gpx_small_icon_margin">3dp</dimen>
 	<dimen name="gpx_small_text_margin">14dp</dimen>
 	<dimen name="gpx_text_top_margin">6dp</dimen>
-	
-	
+
+
 	<dimen name="dashboard_parking_left_margin">16dp</dimen>
 	<dimen name="dashboard_parking_icon_size">48dp</dimen>
+
+    <!-- piratto dashboard -->
+    <dimen name="dashboard_piratto_height">78dp</dimen>
+    <dimen name="dashboard_piratto_left_margin">16dp</dimen>
+    <dimen name="dashboard_piratto_icon_size">48dp</dimen>
+
 	<!--  map buttons -->
 	<dimen name="map_trans_seek_size">80dp</dimen>
 	<dimen name="map_route_buttons_width">60dp</dimen>

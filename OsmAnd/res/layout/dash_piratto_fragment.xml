@@ -13,16 +13,16 @@
 	<LinearLayout
 		android:id="@+id/destination_point_header"
 		android:layout_width="match_parent"
-		android:layout_height="@dimen/dash_parking_height"
-		android:background="?attr/dash_parking_bg"
+		android:layout_height="@dimen/dashboard_piratto_height"
+		android:background="?attr/dashboard_piratto_bg"
 		android:orientation="horizontal">
 
 		<ImageView
 			android:id="@+id/direction_icon"
-			android:layout_width="@dimen/dashboard_parking_icon_size"
-			android:layout_height="@dimen/dashboard_parking_icon_size"
+			android:layout_width="@dimen/dashboard_piratto_icon_size"
+			android:layout_height="@dimen/dashboard_piratto_icon_size"
 			android:layout_gravity="center_vertical"
-			android:layout_marginLeft="@dimen/dashboard_parking_left_margin"
+			android:layout_marginLeft="@dimen/dashboard_piratto_left_margin"
 			android:layout_marginRight="@dimen/dashFavIconMargin"
 			android:src="@drawable/ic_action_start_navigation"
 			android:scaleType="center"

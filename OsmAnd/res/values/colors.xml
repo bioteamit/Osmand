@@ -42,7 +42,12 @@
 	<color name="dashboard_parking_light_color">#009688</color>
 	<color name="dashboard_parking_dark_color">#54778c</color>
 	<color name="dashboard_parking_dark_selected">#446072</color>
-	
+
+    <color name="dashboard_piratto_light_selected">#007888</color>
+    <color name="dashboard_piratto_light_color">#009688</color>
+    <color name="dashboard_piratto_dark_color">#54778c</color>
+    <color name="dashboard_piratto_dark_selected">#446072</color>
+
 	<color name="plugin_details_install_header_bg_light">#dbdbdb</color>
 	<color name="plugin_details_install_header_bg_dark">#2d3438</color>
 	

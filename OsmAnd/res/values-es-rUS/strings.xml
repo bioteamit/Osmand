@@ -187,7 +187,7 @@
     <string name="osmo_use_https">Usar HTTPS</string>
     <string name="search_for">Buscar</string>
     <string name="coordinates">Coordenadas</string>
-    <string name="rendering_attr_subwayMode_name">Rutas de subte</string>
+    <string name="rendering_attr_subwayMode_name">Rutas de metro</string>
     <string name="impassable_road">Evitar carreteras…</string>
     <string name="rendering_attr_trainLightrailRoutes_name">Rutas de tren</string>
     <string name="rendering_attr_shareTaxiRoutes_name">Rutas de taxi</string>
@@ -812,11 +812,11 @@
     <string name="ending_point_too_far">Punto final demasiado lejos de la carretera más cercana.</string>
     <string name="add_tag">Añadir Etiqueta</string>
     <string name="btn_advanced_mode">Modo Avanzado…</string>
-    <string name="poi_filter_parking">Estacionamiento</string>
+    <string name="poi_filter_parking">Estacionamientos</string>
     <string name="poi_filter_emergency">Emergencia</string>
     <string name="poi_filter_public_transport">Transporte público</string>
     <string name="poi_filter_entertainment">Entretenimiento</string>
-    <string name="poi_filter_accomodation">Alojamiento</string>
+    <string name="poi_filter_accomodation">Alojamientos</string>
     <string name="poi_filter_restaurants">Restaurantes</string>
     <string name="poi_filter_sightseeing">Turismo</string>
     <string name="poi_filter_car_aid">Asistencia vehicular</string>
@@ -1597,7 +1597,7 @@
     <string name="error_calculating_route_occured">Ocurrió un error al calcular la ruta</string>
     <string name="empty_route_calculated">Error: La ruta calculada está vacía</string>
     <string name="new_route_calculated_dist">Nueva ruta calculada, distancia</string>
-    <string name="arrived_at_destination">Ha llegado a tu destino</string>
+    <string name="arrived_at_destination">Has llegado a tu destino</string>
     <string name="invalid_locations">¡Las coordenadas son inválidas!</string>
     <string name="go_back_to_osmand">Volver al mapa OsmAnd</string>
     <string name="loading_data">Cargando datos…</string>
@@ -2104,7 +2104,7 @@
     <string name="download_files_question_space_with_temp">¿Descargar realmente {0} archivo(s)? Se necesitará {3} MB temporalmente y {1} MB constantemente. Actualmente, hay disponible {2} MB.</string>
     <string name="donations">Donaciones</string>
     <string name="number_of_recipients">Número de destinatarios</string>
-    <string name="osm_user_stat">Ediciones %1$s, rango %2$s, ediciones totales %3$s</string>
+    <string name="osm_user_stat">Ediciones %1$s, posición %2$s, ediciones totales %3$s</string>
     <string name="osm_editors_ranking">Clasificación de editores OSM</string>
     <string name="osm_live_subscription">Suscripción de OSM en vivo</string>
     <string name="osm_live_subscribe_btn">Suscribir</string>
@@ -2119,7 +2119,7 @@
     <string name="osm_live_enter_email">Ingresa un correo electrónico válido</string>
     <string name="osm_live_enter_user_name">Ingresa un nombre público</string>
     <string name="osm_live_thanks">¡Gracias por suscribirte a las actualizaciones en vivo!</string>
-    <string name="osm_live_region_desc">Parte de tu donación será enviada a los usuarios de OSM que realicen cambios en el mapa de esa región</string>
+    <string name="osm_live_region_desc">Parte de tu donación se enviará a los usuarios de OSM que realicen cambios en el mapa de esa región</string>
     <string name="osm_live_subscription_settings">Ajustes de suscripción</string>
     <string name="osm_live_ask_for_purchase">Primero compra la suscripción de OSM en vivo</string>
 
@@ -2132,4 +2132,5 @@
     <string name="upload_osm_note_description">Puedes subir tus notas OSM anónimamente si usas tu perfil de OpenStreetMap.org.</string>
     <string name="upload_osm_note">Subir Notas OSM</string>
     <string name="recalculate_route">Recalcular ruta</string>
+    <string name="shared_string_topbar">Barra superior</string>
     </resources>

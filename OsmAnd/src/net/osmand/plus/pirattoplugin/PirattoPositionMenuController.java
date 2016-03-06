@@ -9,24 +9,29 @@ import net.osmand.plus.R;
 import net.osmand.plus.activities.MapActivity;
 import net.osmand.plus.mapcontextmenu.MenuBuilder;
 import net.osmand.plus.mapcontextmenu.MenuController;
+import net.osmand.plus.pirattoplugin.core.DestinationPoint;
 import net.osmand.util.Algorithms;
 
 public class PirattoPositionMenuController extends MenuController {
 
-	private PirattoPlugin plugin;
+	private boolean isPluginEnabled;
 	private String destinationPointDescription = "";
 
-	public PirattoPositionMenuController(OsmandApplication app, MapActivity mapActivity, PointDescription pointDescription) {
+	public PirattoPositionMenuController(OsmandApplication app, MapActivity mapActivity, final PointDescription pointDescription) {
 		super(new MenuBuilder(app), pointDescription, mapActivity);
-		plugin = OsmandPlugin.getPlugin(PirattoPlugin.class);
-		if (plugin != null) {
+
+		PirattoPlugin plugin = OsmandPlugin.getPlugin(PirattoPlugin.class);
+		this.isPluginEnabled = plugin != null;
+
+		if (this.isPluginEnabled) {
 			this.buildDestinationPointDescription(mapActivity);
 		}
 		leftTitleButtonController = new TitleButtonController() {
 			@Override
 			public void buttonPressed() {
-				if (plugin != null) {
-					plugin.showDeleteDialog(getMapActivity());
+				if (PirattoPositionMenuController.this.isPluginEnabled) {
+					DestinationPoint destinationPoint = new DestinationPoint(pointDescription);
+					PirattoDeleteDialog.newInstance(destinationPoint).show();
 				}
 			}
 		};
@@ -43,7 +48,7 @@ public class PirattoPositionMenuController extends MenuController {
 
 	@Override
 	protected void setObject(Object object) {
-		if (plugin != null) {
+		if (this.isPluginEnabled) {
 			buildDestinationPointDescription(getMapActivity());
 		}
 	}

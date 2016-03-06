@@ -1,8 +1,11 @@
 package net.osmand.plus.pirattoplugin.core;
 
 import net.osmand.data.LatLon;
+import net.osmand.data.PointDescription;
 
-public class DestinationPoint implements Comparable<DestinationPoint> {
+import java.io.Serializable;
+
+public class DestinationPoint implements Comparable<DestinationPoint>, Serializable {
 
 	public static final String TAG_ADDRESS = "address";
 	public static final String TAG_LATITUDE = "latitude";
@@ -12,6 +15,14 @@ public class DestinationPoint implements Comparable<DestinationPoint> {
 	private LatLon latLon;
 
 	public DestinationPoint() {
+	}
+
+	public DestinationPoint(PointDescription pointDescription) {
+		if (pointDescription == null) {
+			return;
+		}
+
+		this.latLon = new LatLon(pointDescription.getLat(), pointDescription.getLon());
 	}
 
 	public DestinationPoint(String address, double latitude, double longitude) {
@@ -37,6 +48,10 @@ public class DestinationPoint implements Comparable<DestinationPoint> {
 
 	public double getLongitude() {
 		return this.latLon.getLongitude();
+	}
+
+	public LatLon getPoint() {
+		return this.latLon;
 	}
 
 	@Override

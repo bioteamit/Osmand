@@ -22,9 +22,11 @@ import net.osmand.plus.dashboard.tools.DashFragmentData;
 import net.osmand.plus.helpers.FontCache;
 
 public class DashPirattoFragment extends DashLocationFragment {
+
 	private static final String TAG = "DASH_PIRATTO_FRAGMENT";
 	private static final int TITLE_ID = R.string.osmand_oneteam_piratto_plugin_name;
-	PirattoPlugin plugin;
+
+	private PirattoPlugin plugin;
 
 	private static final DashFragmentData.ShouldShowFunction SHOULD_SHOW_FUNCTION =
 			new DashboardOnMap.DefaultShouldShow() {

@@ -14,6 +14,8 @@ import net.osmand.data.PointDescription;
 import net.osmand.data.RotatedTileBox;
 import net.osmand.plus.R;
 import net.osmand.plus.activities.MapActivity;
+import net.osmand.plus.pirattoplugin.core.DestinationPoint;
+import net.osmand.plus.pirattoplugin.core.PirattoManager;
 import net.osmand.plus.views.ContextMenuLayer;
 import net.osmand.plus.views.OsmandMapLayer;
 import net.osmand.plus.views.OsmandMapTileView;
@@ -34,14 +36,12 @@ public class PirattoPositionLayer extends OsmandMapLayer implements ContextMenuL
 	private Bitmap pointIcon;
 
 	private PirattoPlugin plugin;
+	private PirattoManager pirattoManager;
 
 	public PirattoPositionLayer(MapActivity mapActivity, PirattoPlugin plugin) {
 		this.mapActivity = mapActivity;
 		this.plugin = plugin;
-	}
-
-	public LatLon getDestinationPoint() {
-		return plugin.getDestinationPoint();
+		this.pirattoManager = PirattoManager.getInstance();
 	}
 
 	@Override
@@ -60,20 +60,23 @@ public class PirattoPositionLayer extends OsmandMapLayer implements ContextMenuL
 
 	@Override
 	public void onDraw(Canvas canvas, RotatedTileBox tb, DrawSettings nightMode) {
-		LatLon destinationPoint = getDestinationPoint();
-		if (destinationPoint == null)
+		List<DestinationPoint> destinationPoints = this.pirattoManager.getDestinationPoints();
+		if (destinationPoints == null || destinationPoints.isEmpty()) {
 			return;
+		}
 
-		final Bitmap pointIcon = this.pointIcon;
-		double latitude = destinationPoint.getLatitude();
-		double longitude = destinationPoint.getLongitude();
-		if (isLocationVisible(tb, latitude, longitude)) {
-			int marginX = pointIcon.getWidth() / 2;
-			int marginY = pointIcon.getHeight() / 2;
-			int locationX = tb.getPixXFromLonNoRot(longitude);
-			int locationY = tb.getPixYFromLatNoRot(latitude);
-			canvas.rotate(-this.mapTileView.getRotate(), locationX, locationY);
-			canvas.drawBitmap(pointIcon, locationX - marginX, locationY - marginY, this.bitmapPaint);
+		for (DestinationPoint destinationPoint : destinationPoints) {
+			final Bitmap pointIcon = this.pointIcon;
+			double latitude = destinationPoint.getLatitude();
+			double longitude = destinationPoint.getLongitude();
+			if (this.isLocationVisible(tb, latitude, longitude)) {
+				int marginX = pointIcon.getWidth() / 2;
+				int marginY = pointIcon.getHeight() / 2;
+				int locationX = tb.getPixXFromLonNoRot(longitude);
+				int locationY = tb.getPixYFromLatNoRot(latitude);
+				canvas.rotate(-this.mapTileView.getRotate(), locationX, locationY);
+				canvas.drawBitmap(pointIcon, locationX - marginX, locationY - marginY, this.bitmapPaint);
+			}
 		}
 	}
 
@@ -103,9 +106,12 @@ public class PirattoPositionLayer extends OsmandMapLayer implements ContextMenuL
 
 	@Override
 	public LatLon getObjectLocation(Object o) {
-		if(o == getDestinationPoint()) {
-			return getDestinationPoint();
+		if (o instanceof DestinationPoint) {
+			return ((DestinationPoint) o).getPoint();
 		}
+//		if(o == getDestinationPoint()) {
+//			return getDestinationPoint();
+//		}
 		return null;
 	}
 
@@ -129,10 +135,12 @@ public class PirattoPositionLayer extends OsmandMapLayer implements ContextMenuL
 	/**
 	 * @param latitude
 	 * @param longitude
-	 * @return true if the destination point is located on a visible part of map
+	 * @return true if there is no destination points is located on a visible part of map
 	 */
 	private boolean isLocationVisible(RotatedTileBox tb, double latitude, double longitude){
-		if(this.getDestinationPoint() == null || mapTileView == null){
+		if(this.pirattoManager.getDestinationPoints() == null
+				|| this.pirattoManager.getDestinationPoints().isEmpty()
+				|| mapTileView == null){
 			return false;
 		}
 		return tb.containsLatLon(latitude, longitude);
@@ -140,23 +148,29 @@ public class PirattoPositionLayer extends OsmandMapLayer implements ContextMenuL
 
 	/**
 	 * @param point
-	 * @param destinationPoints
+	 * @param points
 	 *            is in this case not necessarily has to be a list, but it's also used in method
 	 *            <link>collectObjectsFromPoint(PointF point, List<Object> o)</link>
 	 */
-	private void getDestinationPointFromPoint(RotatedTileBox tb, PointF point, List<? super LatLon> destinationPoints) {
-		final LatLon destinationPoint = this.getDestinationPoint();
-		if (destinationPoint != null && mapTileView != null) {
-			int ex = (int) point.x;
-			int ey = (int) point.y;
-			LatLon position = plugin.getDestinationPoint();
+	private void getDestinationPointFromPoint(RotatedTileBox tb, PointF point, List<? super LatLon> points) {
+		List<DestinationPoint> destinationPoints = this.pirattoManager.getDestinationPoints();
+		if (destinationPoints == null
+				|| destinationPoints.isEmpty()
+				|| this.mapTileView == null) {
+			return;
+		}
+
+		int ex = (int) point.x;
+		int ey = (int) point.y;
+		for (DestinationPoint destinationPoint : destinationPoints) {
+			LatLon position = destinationPoint.getPoint();
 			int x = (int) tb.getPixXFromLatLon(position.getLatitude(), position.getLongitude());
 			int y = (int) tb.getPixYFromLatLon(position.getLatitude(), position.getLongitude());
 			// the width of an image is 40 px, the height is 60 px -> radius = 20,
 			// the position of a destination point relatively to the icon is at the center of the bottom line of the image
 			int rad = (int) (radius * tb.getDensity());
 			if (Math.abs(x - ex) <= rad && (ey - y) <= rad && (y - ey) <= 2.5 * rad) {
-				destinationPoints.add(destinationPoint);
+				points.add(position);
 			}
 		}
 	}

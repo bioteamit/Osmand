@@ -40,7 +40,6 @@ public class PirattoManager implements PointsRetrieverTask.OnRetrievingPointsCal
 	}
 
 	protected PirattoManager() {
-		this.timer = new Timer();
 		this.destinationPoints = new DestinationPoints();
 	}
 
@@ -70,13 +69,18 @@ public class PirattoManager implements PointsRetrieverTask.OnRetrievingPointsCal
 	public void refresh() {
 		this.cancelSchedule();
 		this.pointsRetrieverTask = new PointsRetrieverTask(this.carPlate, this);
+		this.timer = new Timer();
 		this.timer.scheduleAtFixedRate(this.pointsRetrieverTask, 0, TIME_INTERVAL);
 	}
 
 	public void cancelSchedule() {
-		this.pointsRetrieverTask.cancel();
-		this.timer.cancel();
-		this.timer.purge();
+		if (this.pointsRetrieverTask != null) {
+			this.pointsRetrieverTask.cancel();
+		}
+		if (this.timer != null) {
+			this.timer.cancel();
+			this.timer.purge();
+		}
 	}
 
 	public void removeDestinationPoint(DestinationPoint destinationPoint) {

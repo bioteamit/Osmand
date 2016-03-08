@@ -20,7 +20,7 @@ public class PirattoManager implements PointsRetrieverTask.OnRetrievingPointsCal
 
 	private static PirattoManager instance;
 
-	private final int TIME_INTERVAL = 3*60*1000;
+	private final int TIME_INTERVAL = 1*60*1000;
 
 	private Timer timer;
 	private PointsRetrieverTask pointsRetrieverTask;
@@ -41,6 +41,18 @@ public class PirattoManager implements PointsRetrieverTask.OnRetrievingPointsCal
 
 	protected PirattoManager() {
 		this.destinationPoints = new DestinationPoints();
+		this.addTestDestinationPoints();
+	}
+
+	private void addTestDestinationPoints() {
+		this.addTestDestinationPoint("Shoubra", 30.0906098, 31.2455468);
+		this.addTestDestinationPoint("Qalioub1", 30.1736758, 31.2250333);
+		this.addTestDestinationPoint("Qaliob2", 30.1796859, 31.2214284);
+		this.addTestDestinationPoint("DownTown", 30.0165934, 31.417473);
+	}
+
+	private void addTestDestinationPoint(String address, double latitude, double longitude) {
+		this.destinationPoints.addPoint(new DestinationPoint(address, latitude, longitude));
 	}
 
 	public void setCarPlate(OsmandApplication application, String newCarPlate) {

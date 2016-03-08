@@ -2,6 +2,8 @@ package net.osmand.plus.pirattoplugin;
 
 import android.content.Context;
 import android.graphics.Typeface;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -94,7 +96,11 @@ public class DashboardPointsAdapter extends ArrayAdapter<DestinationPoint> imple
 
 	private void onClickRemoveTag(View view) {
 		int position = (int) view.getTag(R.id.id_dashboard_piratto_point_tag);
-		PirattoDeleteDialog.newInstance(this.getItem(position)).show();
+		if (this.getContext() instanceof FragmentActivity) {
+			FragmentActivity activity = (FragmentActivity) this.getContext();
+			FragmentManager manager = activity.getSupportFragmentManager();
+			PirattoDeleteDialog.newInstance(this.getItem(position)).show(manager, PirattoDeleteDialog.TAG);
+		}
 	}
 
 	private void onClickShowPoint(View view) {

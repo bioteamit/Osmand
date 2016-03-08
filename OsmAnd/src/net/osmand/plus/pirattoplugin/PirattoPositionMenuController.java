@@ -1,6 +1,7 @@
 package net.osmand.plus.pirattoplugin;
 
 import android.graphics.drawable.Drawable;
+import android.support.v4.app.FragmentManager;
 
 import net.osmand.data.PointDescription;
 import net.osmand.plus.OsmandApplication;
@@ -16,9 +17,12 @@ public class PirattoPositionMenuController extends MenuController {
 
 	private boolean isPluginEnabled;
 	private String destinationPointDescription = "";
+	private MapActivity mapActivity;
 
-	public PirattoPositionMenuController(OsmandApplication app, MapActivity mapActivity, final PointDescription pointDescription) {
+	public PirattoPositionMenuController(OsmandApplication app, final MapActivity mapActivity, final PointDescription pointDescription) {
 		super(new MenuBuilder(app), pointDescription, mapActivity);
+
+		this.mapActivity = mapActivity;
 
 		PirattoPlugin plugin = OsmandPlugin.getPlugin(PirattoPlugin.class);
 		this.isPluginEnabled = plugin != null;
@@ -31,7 +35,8 @@ public class PirattoPositionMenuController extends MenuController {
 			public void buttonPressed() {
 				if (PirattoPositionMenuController.this.isPluginEnabled) {
 					DestinationPoint destinationPoint = new DestinationPoint(pointDescription);
-					PirattoDeleteDialog.newInstance(destinationPoint).show();
+					FragmentManager manager = PirattoPositionMenuController.this.mapActivity.getSupportFragmentManager();
+					PirattoDeleteDialog.newInstance(destinationPoint).show(manager, PirattoDeleteDialog.TAG);
 				}
 			}
 		};

@@ -5,9 +5,6 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
 
 import net.osmand.plus.R;
@@ -31,18 +28,6 @@ public class PirattoDeleteDialog extends DialogFragment {
 		args.putSerializable(ARG_DESTINATION_POINT, destinationPoint);
 		fragment.setArguments(args);
 		return fragment;
-	}
-
-	public void show() {
-		FragmentManager manager = this.getFragmentManager();
-		FragmentTransaction ft = manager.beginTransaction();
-		Fragment prev = manager.findFragmentByTag(TAG);
-		if (prev != null) {
-			ft.remove(prev);
-		}
-		ft.addToBackStack(null);
-
-		this.show(ft, TAG);
 	}
 
 	@Override

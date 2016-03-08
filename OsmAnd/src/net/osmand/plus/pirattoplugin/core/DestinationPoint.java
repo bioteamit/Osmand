@@ -1,5 +1,7 @@
 package net.osmand.plus.pirattoplugin.core;
 
+import android.text.TextUtils;
+
 import net.osmand.data.LatLon;
 import net.osmand.data.PointDescription;
 
@@ -58,7 +60,8 @@ public class DestinationPoint implements Comparable<DestinationPoint>, Serializa
 	public boolean equals(Object obj) {
 		if (obj == null || !(obj instanceof DestinationPoint)) return false;
 		DestinationPoint another = (DestinationPoint) obj;
-		if (!this.address.equalsIgnoreCase(another.address)) return false;
+		if (TextUtils.isEmpty(this.address) && !TextUtils.isEmpty(another.address)) return false;
+		if (!TextUtils.isEmpty(this.address) && !this.address.equalsIgnoreCase(another.address)) return false;
 		if (this.latLon.getLatitude() != another.getLatitude()) return false;
 		if (this.latLon.getLongitude() != another.getLongitude()) return false;
 		return true;

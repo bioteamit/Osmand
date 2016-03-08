@@ -10,7 +10,10 @@ import net.osmand.plus.R;
 import net.osmand.plus.dashboard.DashLocationFragment;
 import net.osmand.plus.dashboard.DashboardOnMap;
 import net.osmand.plus.dashboard.tools.DashFragmentData;
+import net.osmand.plus.pirattoplugin.core.DestinationPoint;
 import net.osmand.plus.pirattoplugin.core.PirattoManager;
+
+import java.util.List;
 
 public class DashPirattoFragment extends DashLocationFragment {
 
@@ -39,7 +42,16 @@ public class DashPirattoFragment extends DashLocationFragment {
 
 	@Override
 	public void onOpenDash() {
-		DashboardPointsAdapter pointsAdapter = new DashboardPointsAdapter(this.getActivity(), PirattoManager.getInstance().getDestinationPoints(), this.distances, this.getDefaultLocation());
+		List<DestinationPoint> points = PirattoManager.getInstance().getDestinationPoints();
+		if (points == null || points.isEmpty()) {
+			this.getView().setVisibility(View.GONE);
+			this.pointsListView.setAdapter(null);
+			return;
+		}
+
+		this.getView().setVisibility(View.VISIBLE);
+
+		DashboardPointsAdapter pointsAdapter = new DashboardPointsAdapter(this.getActivity(), points, this.distances, this.getDefaultLocation());
 		this.pointsListView.setAdapter(pointsAdapter);
 	}
 }

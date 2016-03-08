@@ -7,6 +7,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.PointF;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.WindowManager;
 
 import net.osmand.data.LatLon;
@@ -24,6 +25,7 @@ import java.util.List;
 
 public class PirattoPositionLayer extends OsmandMapLayer implements ContextMenuLayer.IContextMenuProvider {
 
+	private static final String TAG = "PirattoPositionLayer";
 	private static final int radius = 18;
 
 	private DisplayMetrics dm;
@@ -106,12 +108,10 @@ public class PirattoPositionLayer extends OsmandMapLayer implements ContextMenuL
 
 	@Override
 	public LatLon getObjectLocation(Object o) {
-		if (o instanceof DestinationPoint) {
+		Log.d(TAG, "getObjectLocation: " + o != null ? o.toString() : "null");
+		if (o != null && o instanceof DestinationPoint) {
 			return ((DestinationPoint) o).getPoint();
 		}
-//		if(o == getDestinationPoint()) {
-//			return getDestinationPoint();
-//		}
 		return null;
 	}
 

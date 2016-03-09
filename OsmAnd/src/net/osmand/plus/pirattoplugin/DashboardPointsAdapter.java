@@ -42,7 +42,7 @@ public class DashboardPointsAdapter extends ArrayAdapter<DestinationPoint> imple
 		if (view == null) {
 			view = this.createView(position, parent);
 		}
-		view.setTag(R.id.id_dashboard_piratto_point_tag, position);
+		view.setTag(R.id.tag_dashboard_piratto_point, Integer.valueOf(position));
 		this.bindView(position, view);
 		return view;
 	}
@@ -95,7 +95,7 @@ public class DashboardPointsAdapter extends ArrayAdapter<DestinationPoint> imple
 	}
 
 	private void onClickRemoveTag(View view) {
-		int position = (int) view.getTag(R.id.id_dashboard_piratto_point_tag);
+		Integer position = (Integer) view.getTag(R.id.tag_dashboard_piratto_point);
 		if (this.getContext() instanceof FragmentActivity) {
 			FragmentActivity activity = (FragmentActivity) this.getContext();
 			FragmentManager manager = activity.getSupportFragmentManager();
@@ -104,14 +104,14 @@ public class DashboardPointsAdapter extends ArrayAdapter<DestinationPoint> imple
 	}
 
 	private void onClickShowPoint(View view) {
-		int position = (int) view.getTag(R.id.id_dashboard_piratto_point_tag);
+		Integer position = (Integer) view.getTag(R.id.tag_dashboard_piratto_point);
 		DestinationPoint destinationPoint = this.getItem(position);
 		LatLon point = destinationPoint.getPoint();
 
 		OsmandSettings settings = ((OsmandApplication) this.getContext().getApplicationContext()).getSettings();
 
 		settings.setMapLocationToShow(point.getLatitude(), point.getLongitude(),
-				15, new PointDescription(PointDescription.POINT_TYPE_PIRATTO_MARKER, view.getContext().getString(R.string.osmand_oneteam_piratto_point_name)), false,
+				15, new PointDescription(PointDescription.POINT_TYPE_PIRATTO_MARKER, destinationPoint.getAddress()), false,
 				point); //$NON-NLS-1$
 		MapActivity.launchMapActivityMoveToTop(view.getContext());
 	}

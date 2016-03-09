@@ -114,6 +114,9 @@ public class PointDescription {
 				return getLocationName(ctx, lat, lon, true).replace('\n', ' ');
 			}
 		}
+		if (this.isPiratto()) {
+			return ctx.getString(R.string.osmand_oneteam_piratto_point_info, this.name, this.lat, this.lon);
+		}
 		if (!Algorithms.isEmpty(typeName)) {
 			if (Algorithms.isEmpty(name)) {
 				return typeName;

@@ -24,6 +24,7 @@ public class DestinationPoint implements Comparable<DestinationPoint>, Serializa
 			return;
 		}
 
+		this.address = pointDescription.getName();
 		this.latLon = new LatLon(pointDescription.getLat(), pointDescription.getLon());
 	}
 

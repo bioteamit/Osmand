@@ -3,6 +3,7 @@ package net.osmand.plus.pirattoplugin;
 import android.graphics.drawable.Drawable;
 import android.support.v4.app.FragmentManager;
 
+import net.osmand.data.LatLon;
 import net.osmand.data.PointDescription;
 import net.osmand.plus.OsmandApplication;
 import net.osmand.plus.OsmandPlugin;
@@ -19,7 +20,7 @@ public class PirattoPositionMenuController extends MenuController {
 	private String destinationPointDescription = "";
 	private MapActivity mapActivity;
 
-	public PirattoPositionMenuController(OsmandApplication app, final MapActivity mapActivity, final PointDescription pointDescription) {
+	public PirattoPositionMenuController(OsmandApplication app, final MapActivity mapActivity, final PointDescription pointDescription, final LatLon selectedPoint) {
 		super(new MenuBuilder(app), pointDescription, mapActivity);
 
 		this.mapActivity = mapActivity;
@@ -28,7 +29,7 @@ public class PirattoPositionMenuController extends MenuController {
 		this.isPluginEnabled = plugin != null;
 
 		if (this.isPluginEnabled) {
-			this.buildDestinationPointDescription(mapActivity);
+			this.buildDestinationPointDescription(mapActivity, pointDescription);
 		}
 		leftTitleButtonController = new TitleButtonController() {
 			@Override
@@ -44,17 +45,17 @@ public class PirattoPositionMenuController extends MenuController {
 		leftTitleButtonController.leftIconId = R.drawable.ic_action_delete_dark;
 	}
 
-	private void buildDestinationPointDescription(MapActivity mapActivity) {
-		// TODO: add destination point description 2
-		StringBuilder sb = new StringBuilder();
-		sb.append("destination point description 2");
-		destinationPointDescription = sb.toString();
+	private void buildDestinationPointDescription(MapActivity mapActivity, PointDescription pointDescription) {
+		if (pointDescription != null) {
+			this.destinationPointDescription = pointDescription.getSimpleName(mapActivity, false);
+		}
+		this.destinationPointDescription = "";
 	}
 
 	@Override
 	protected void setObject(Object object) {
 		if (this.isPluginEnabled) {
-			buildDestinationPointDescription(getMapActivity());
+			buildDestinationPointDescription(getMapActivity(), this.getPointDescription());
 		}
 	}
 

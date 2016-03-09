@@ -117,7 +117,7 @@ public abstract class MenuController extends BaseMenuController {
 				} else if (pointDescription.isMyLocation()) {
 					menuController = new MyLocationMenuController(app, mapActivity, pointDescription);
 				} else if (pointDescription.isPiratto()) {
-					menuController = new PirattoPositionMenuController(app, mapActivity, pointDescription);
+					menuController = new PirattoPositionMenuController(app, mapActivity, pointDescription, (LatLon) object);
 				}
 			} else if (object instanceof RouteDataObject) {
 				menuController = new ImpassibleRoadsMenuController(app, mapActivity,

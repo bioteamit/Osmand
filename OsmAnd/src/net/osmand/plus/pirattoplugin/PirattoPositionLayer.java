@@ -7,7 +7,6 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.PointF;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.WindowManager;
 
 import net.osmand.data.LatLon;
@@ -37,12 +36,10 @@ public class PirattoPositionLayer extends OsmandMapLayer implements ContextMenuL
 
 	private Bitmap pointIcon;
 
-	private PirattoPlugin plugin;
 	private PirattoManager pirattoManager;
 
-	public PirattoPositionLayer(MapActivity mapActivity, PirattoPlugin plugin) {
+	public PirattoPositionLayer(MapActivity mapActivity) {
 		this.mapActivity = mapActivity;
-		this.plugin = plugin;
 		this.pirattoManager = PirattoManager.getInstance();
 	}
 
@@ -108,22 +105,33 @@ public class PirattoPositionLayer extends OsmandMapLayer implements ContextMenuL
 
 	@Override
 	public LatLon getObjectLocation(Object o) {
-		Log.d(TAG, "getObjectLocation: " + o != null ? o.toString() : "null");
-		if (o != null && o instanceof DestinationPoint) {
-			return ((DestinationPoint) o).getPoint();
+		if (o != null && o instanceof LatLon) {
+			return (LatLon) o;
 		}
 		return null;
 	}
 
 	@Override
 	public String getObjectDescription(Object o) {
-		return plugin.getDestinationPointDescription(this.mapActivity);
+		PointDescription pointDescription = this.getObjectName(o);
+		if (pointDescription != null) {
+			return pointDescription.getSimpleName(this.mapActivity, false);
+		}
+		return null;
 	}
 
 	@Override
 	public PointDescription getObjectName(Object o) {
-		return new PointDescription(PointDescription.POINT_TYPE_PIRATTO_MARKER,
-				mapTileView.getContext().getString(R.string.osmand_oneteam_piratto_point_name));
+		if (o != null && o instanceof LatLon) {
+			DestinationPoint destinationPoint = this.pirattoManager.getDestinationPoint((LatLon) o);
+			if (destinationPoint != null) {
+				PointDescription pointDescription = new PointDescription(PointDescription.POINT_TYPE_PIRATTO_MARKER, destinationPoint.getAddress());
+				pointDescription.setLat(destinationPoint.getLatitude());
+				pointDescription.setLon(destinationPoint.getLongitude());
+				return pointDescription;
+			}
+		}
+		return null;
 	}
 
 	public void refresh() {

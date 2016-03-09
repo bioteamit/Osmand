@@ -3,6 +3,7 @@ package net.osmand.plus.pirattoplugin.core;
 import android.text.TextUtils;
 import android.util.Log;
 
+import net.osmand.data.LatLon;
 import net.osmand.plus.OsmandApplication;
 import net.osmand.plus.OsmandSettings;
 
@@ -72,6 +73,22 @@ public class PirattoManager implements PointsRetrieverTask.OnRetrievingPointsCal
 			return null;
 		}
 		return this.destinationPoints.getDestinationPoints();
+	}
+
+	public DestinationPoint getDestinationPoint(LatLon point) {
+		if (this.destinationPoints == null
+				|| this.destinationPoints.getDestinationPoints() == null
+				|| this.destinationPoints.getDestinationPoints().isEmpty()) {
+			return null;
+		}
+
+		for (DestinationPoint dstPoint : this.destinationPoints.getDestinationPoints()) {
+			if (dstPoint.getPoint().equals(point)) {
+				return dstPoint;
+			}
+		}
+
+		return null;
 	}
 
 	public void setOnUpdatePointsListener(OnUpdatePointsListener listener) {

@@ -81,7 +81,7 @@ public class PirattoPlugin extends OsmandPlugin implements PirattoManager.OnUpda
 		if(this.pirattoLayer != null) {
 			activity.getMapView().removeLayer(this.pirattoLayer);
 		}
-		this.pirattoLayer = new PirattoPositionLayer(activity, this);
+		this.pirattoLayer = new PirattoPositionLayer(activity);
 		activity.getMapView().addLayer(this.pirattoLayer, 5.5f);
 		registerWidgets(activity);
 	}
@@ -138,13 +138,6 @@ public class PirattoPlugin extends OsmandPlugin implements PirattoManager.OnUpda
 		pointInfoControl.setText(null, null);
 		pointInfoControl.setIcons(R.drawable.widget_piratto_day, R.drawable.widget_piratto_night);
 		return pointInfoControl;
-	}
-
-	public String getDestinationPointDescription(Activity ctx) {
-		// TODO: Set the description of selected destination point 1
-		StringBuilder description = new StringBuilder();
-		description.append("destination point description 1");
-		return description.toString();
 	}
 
 	@Override

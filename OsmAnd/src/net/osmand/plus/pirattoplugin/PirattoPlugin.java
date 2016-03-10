@@ -14,6 +14,7 @@ import net.osmand.plus.pirattoplugin.core.PirattoManager;
 import net.osmand.plus.views.MapInfoLayer;
 import net.osmand.plus.views.OsmandMapTileView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class PirattoPlugin extends OsmandPlugin implements PirattoManager.OnUpdatePointsListener {
@@ -118,10 +119,14 @@ public class PirattoPlugin extends OsmandPlugin implements PirattoManager.OnUpda
 		MapInfoLayer mapInfoLayer = activity.getMapLayers().getMapInfoLayer();
 		List<DestinationPoint> destinationPoints = this.pirattoManager.getDestinationPoints();
 		if (mapInfoLayer != null && destinationPoints != null) {
+			if (this.pirattoTextInfoWidgetList == null) {
+				this.pirattoTextInfoWidgetList = new ArrayList<>(destinationPoints.size());
+			}
 			for (DestinationPoint destinationPoint : destinationPoints) {
 				PirattoTextInfoWidget textInfoWidget = this.createPointInfoControl(activity, destinationPoint);
 				mapInfoLayer.registerSideWidget(textInfoWidget,
 						R.drawable.ic_action_piratto_dark, R.string.map_widget_piratto, KEY_PIRATTO_POINTS, false, 8);
+				this.pirattoTextInfoWidgetList.add(textInfoWidget);
 			}
 			mapInfoLayer.recreateControls();
 		}

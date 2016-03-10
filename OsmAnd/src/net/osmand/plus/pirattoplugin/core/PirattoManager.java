@@ -30,6 +30,11 @@ public class PirattoManager implements PointsRetrieverTask.OnRetrievingPointsCal
 	private String carPlate;
 	private DestinationPoints destinationPoints;
 
+	// Target destination point
+	private OsmandSettings.CommonPreference<String> targetPointAddressSettings;
+	private OsmandSettings.CommonPreference<Float> targetPointLatitudeSettings;
+	private OsmandSettings.CommonPreference<Float> targetPointLongitudeSettings;
+	///////
 	private OsmandSettings.CommonPreference<String> carPlateSettings;
 
 	public static PirattoManager getInstance() {
@@ -66,6 +71,11 @@ public class PirattoManager implements PointsRetrieverTask.OnRetrievingPointsCal
 		this.carPlateSettings.set(newCarPlate);
 		this.carPlate = newCarPlate;
 		this.refresh();
+	}
+
+	public void setDestinationPoint(OsmandApplication application, DestinationPoint destinationPoint) {
+		OsmandSettings settings = application.getSettings();
+//		this.destinationPointSettings = settings.registerStringPreference(PIRATTO_CAR_PLATE, null).makeGlobal();
 	}
 
 	public List<DestinationPoint> getDestinationPoints() {

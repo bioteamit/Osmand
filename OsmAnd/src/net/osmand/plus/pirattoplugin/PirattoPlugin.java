@@ -84,7 +84,10 @@ public class PirattoPlugin extends OsmandPlugin implements PirattoManager.OnUpda
 		}
 		this.pirattoLayer = new PirattoPositionLayer(activity);
 		activity.getMapView().addLayer(this.pirattoLayer, 5.5f);
-		registerWidgets(activity);
+		if (this.pirattoTextInfoWidgetList == null
+				|| this.pirattoTextInfoWidgetList.isEmpty()) {
+			this.registerWidgets(activity);
+		}
 	}
 
 	@Override
@@ -123,6 +126,8 @@ public class PirattoPlugin extends OsmandPlugin implements PirattoManager.OnUpda
 				this.pirattoTextInfoWidgetList = new ArrayList<>(destinationPoints.size());
 			}
 			for (DestinationPoint destinationPoint : destinationPoints) {
+				Log.d(TAG, "create point widget for " + destinationPoint.getAddress());
+
 				PirattoTextInfoWidget textInfoWidget = this.createPointInfoControl(activity, destinationPoint);
 				mapInfoLayer.registerSideWidget(textInfoWidget,
 						R.drawable.ic_action_piratto_dark, R.string.map_widget_piratto, KEY_PIRATTO_POINTS, false, 8);

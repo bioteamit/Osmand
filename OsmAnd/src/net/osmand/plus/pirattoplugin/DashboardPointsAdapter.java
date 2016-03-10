@@ -7,7 +7,6 @@ import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -24,27 +23,35 @@ import net.osmand.plus.pirattoplugin.core.DestinationPoint;
 
 import java.util.List;
 
-public class DashboardPointsAdapter extends ArrayAdapter<DestinationPoint> implements View.OnClickListener {
+public class DashboardPointsAdapter {
 
+	private Context context;
 	private LayoutInflater inflater;
+	private List<DestinationPoint> points;
 	private List<DashLocationFragment.DashLocationView> distancesViewList;
 	private LatLon defaultLocation;
+	private PirattoDeleteDialog.PirattoDeleteCallback pirattoDeleteCallback;
 
-	public DashboardPointsAdapter(Context context, List<DestinationPoint> points, List<DashLocationFragment.DashLocationView> distancesViewList, LatLon defaultLocation) {
-		super(context, R.layout.dash_piratto_item, points);
+	public DashboardPointsAdapter(Context context, List<DestinationPoint> points, List<DashLocationFragment.DashLocationView> distancesViewList, LatLon defaultLocation, PirattoDeleteDialog.PirattoDeleteCallback deleteCallback) {
+		this.context = context;
 		this.inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		this.points = points;
 		this.distancesViewList = distancesViewList;
 		this.defaultLocation = defaultLocation;
+		this.pirattoDeleteCallback = deleteCallback;
 	}
 
-	@Override
-	public View getView(int position, View view, ViewGroup parent) {
-		if (view == null) {
-			view = this.createView(position, parent);
+	public void addPointsViews(ViewGroup viewGroup) {
+		if (viewGroup == null) {
+			return;
 		}
-		view.setTag(R.id.tag_dashboard_piratto_point, Integer.valueOf(position));
-		this.bindView(position, view);
-		return view;
+
+		for(int i = 0; i < this.points.size(); i++) {
+			View view = this.createView(i, viewGroup);
+			this.bindView(i, view);
+			viewGroup.addView(view);
+		}
+		return;
 	}
 
 	private View createView(int position, ViewGroup parent) {
@@ -52,8 +59,8 @@ public class DashboardPointsAdapter extends ArrayAdapter<DestinationPoint> imple
 		return view;
 	}
 
-	private void bindView(int position, View view) {
-		DestinationPoint destinationPoint = this.getItem(position);
+	private void bindView(final int position, View view) {
+		DestinationPoint destinationPoint = this.points.get(position);
 		if (destinationPoint == null) {
 			view.setVisibility(View.GONE);
 			return;
@@ -63,8 +70,13 @@ public class DashboardPointsAdapter extends ArrayAdapter<DestinationPoint> imple
 
 		LatLon point = destinationPoint.getPoint();
 
-		String description = view.getContext().getString(R.string.osmand_oneteam_piratto_destination_point);
-		((TextView) view.findViewById(R.id.name)).setText(description);
+		PointDescription pointDescription = new PointDescription(PointDescription.POINT_TYPE_PIRATTO_MARKER, destinationPoint.getAddress());
+		pointDescription.setLat(point.getLatitude());
+		pointDescription.setLon(point.getLongitude());
+
+		String name = pointDescription.getSimpleName(this.context, false);
+		((TextView) view.findViewById(R.id.name)).setText(name);
+
 		ImageView direction = (ImageView) view.findViewById(R.id.direction_icon);
 		if (this.defaultLocation != null) {
 			DashLocationFragment.DashLocationView dv = new DashLocationFragment.DashLocationView(direction, (TextView) view.findViewById(R.id.distance), point);
@@ -75,44 +87,39 @@ public class DashboardPointsAdapter extends ArrayAdapter<DestinationPoint> imple
 
 		Typeface typeface = FontCache.getRobotoMedium(view.getContext());
 		Button remove = (Button) view.findViewById(R.id.remove_tag);
-		remove.setOnClickListener(this);
+		remove.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				DashboardPointsAdapter.this.onClickRemoveTag(position);
+			}
+		});
 		remove.setTypeface(typeface);
 
-		view.findViewById(R.id.destination_point_header).setOnClickListener(this);
+		view.findViewById(R.id.destination_point_header).setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				DashboardPointsAdapter.this.onClickShowPoint(position);
+			}
+		});
 	}
 
-	@Override
-	public void onClick(View view) {
-		int id = view.getId();
-		switch (id) {
-			case R.id.remove_tag:
-				this.onClickRemoveTag(view);
-				return;
-			case R.id.destination_point_header:
-				this.onClickShowPoint(view);
-				return;
-		}
-	}
-
-	private void onClickRemoveTag(View view) {
-		Integer position = (Integer) view.getTag(R.id.tag_dashboard_piratto_point);
-		if (this.getContext() instanceof FragmentActivity) {
-			FragmentActivity activity = (FragmentActivity) this.getContext();
+	private void onClickRemoveTag(int position) {
+		if (this.context instanceof FragmentActivity) {
+			FragmentActivity activity = (FragmentActivity) this.context;
 			FragmentManager manager = activity.getSupportFragmentManager();
-			PirattoDeleteDialog.newInstance(this.getItem(position)).show(manager, PirattoDeleteDialog.TAG);
+			PirattoDeleteDialog.newInstance(this.points.get(position), this.pirattoDeleteCallback).show(manager, PirattoDeleteDialog.TAG);
 		}
 	}
 
-	private void onClickShowPoint(View view) {
-		Integer position = (Integer) view.getTag(R.id.tag_dashboard_piratto_point);
-		DestinationPoint destinationPoint = this.getItem(position);
+	private void onClickShowPoint(int position) {
+		DestinationPoint destinationPoint = this.points.get(position);
 		LatLon point = destinationPoint.getPoint();
 
-		OsmandSettings settings = ((OsmandApplication) this.getContext().getApplicationContext()).getSettings();
+		OsmandSettings settings = ((OsmandApplication) this.context.getApplicationContext()).getSettings();
 
 		settings.setMapLocationToShow(point.getLatitude(), point.getLongitude(),
 				15, new PointDescription(PointDescription.POINT_TYPE_PIRATTO_MARKER, destinationPoint.getAddress()), false,
 				point); //$NON-NLS-1$
-		MapActivity.launchMapActivityMoveToTop(view.getContext());
+		MapActivity.launchMapActivityMoveToTop(this.context);
 	}
 }

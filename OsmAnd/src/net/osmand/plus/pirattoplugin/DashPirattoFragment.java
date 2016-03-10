@@ -4,7 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
+import android.widget.LinearLayout;
 
 import net.osmand.plus.R;
 import net.osmand.plus.dashboard.DashLocationFragment;
@@ -15,12 +15,12 @@ import net.osmand.plus.pirattoplugin.core.PirattoManager;
 
 import java.util.List;
 
-public class DashPirattoFragment extends DashLocationFragment {
+public class DashPirattoFragment extends DashLocationFragment implements PirattoDeleteDialog.PirattoDeleteCallback {
 
 	private static final String TAG = "DASH_PIRATTO_FRAGMENT";
 	private static final int TITLE_ID = R.string.osmand_oneteam_piratto_plugin_name;
 
-	private ListView pointsListView;
+	private LinearLayout pointsLayout;
 
 	private static final DashFragmentData.ShouldShowFunction SHOULD_SHOW_FUNCTION =
 			new DashboardOnMap.DefaultShouldShow() {
@@ -36,7 +36,7 @@ public class DashPirattoFragment extends DashLocationFragment {
 	@Override
 	public View initView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View view = getActivity().getLayoutInflater().inflate(R.layout.dash_piratto_fragment, container, false);
-		this.pointsListView = (ListView) view.findViewById(R.id.lst_piratto_points);
+		this.pointsLayout = (LinearLayout) view.findViewById(R.id.lyt_piratto_points);
 		return view;
 	}
 
@@ -45,13 +45,19 @@ public class DashPirattoFragment extends DashLocationFragment {
 		List<DestinationPoint> points = PirattoManager.getInstance().getDestinationPoints();
 		if (points == null || points.isEmpty()) {
 			this.getView().setVisibility(View.GONE);
-			this.pointsListView.setAdapter(null);
+			this.pointsLayout.removeAllViews();
 			return;
 		}
 
 		this.getView().setVisibility(View.VISIBLE);
 
-		DashboardPointsAdapter pointsAdapter = new DashboardPointsAdapter(this.getActivity(), points, this.distances, this.getDefaultLocation());
-		this.pointsListView.setAdapter(pointsAdapter);
+		DashboardPointsAdapter pointsAdapter = new DashboardPointsAdapter(this.getActivity(), points, this.distances, this.getDefaultLocation(), this);
+		this.pointsLayout.removeAllViews();
+		pointsAdapter.addPointsViews(this.pointsLayout);
+	}
+
+	@Override
+	public void onPointDeleted(DestinationPoint destinationPoint) {
+		this.onOpenDash();
 	}
 }

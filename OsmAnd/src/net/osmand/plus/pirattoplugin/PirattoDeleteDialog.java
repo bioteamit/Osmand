@@ -17,13 +17,27 @@ import java.util.List;
 
 public class PirattoDeleteDialog extends DialogFragment {
 
+	public interface PirattoDeleteCallback {
+		void onPointDeleted(DestinationPoint destinationPoint);
+	}
+
 	public static final String TAG = "PirattoDeleteDialog";
 	public static final String ARG_DESTINATION_POINT = "ARG_DESTINATION_POINT";
 
 	private DestinationPoint destinationPoint;
+	private PirattoDeleteCallback pirattoDeleteCallback;
 
 	public static PirattoDeleteDialog newInstance(DestinationPoint destinationPoint) {
 		PirattoDeleteDialog fragment = new PirattoDeleteDialog();
+		Bundle args = new Bundle();
+		args.putSerializable(ARG_DESTINATION_POINT, destinationPoint);
+		fragment.setArguments(args);
+		return fragment;
+	}
+
+	public static PirattoDeleteDialog newInstance(DestinationPoint destinationPoint, PirattoDeleteCallback pirattoDeleteCallback) {
+		PirattoDeleteDialog fragment = new PirattoDeleteDialog();
+		fragment.setPirattoDeleteCallback(pirattoDeleteCallback);
 		Bundle args = new Bundle();
 		args.putSerializable(ARG_DESTINATION_POINT, destinationPoint);
 		fragment.setArguments(args);
@@ -50,6 +64,10 @@ public class PirattoDeleteDialog extends DialogFragment {
 		return builder.create();
 	}
 
+	public void setPirattoDeleteCallback(PirattoDeleteCallback pirattoDeleteCallback) {
+		this.pirattoDeleteCallback = pirattoDeleteCallback;
+	}
+
 	private void deleteDestinationPoint() {
 		this.cancelDestinationPoint();
 		Activity activity = this.getActivity();
@@ -61,6 +79,10 @@ public class PirattoDeleteDialog extends DialogFragment {
 	private void cancelDestinationPoint() {
 		PirattoManager pirattoManager = PirattoManager.getInstance();
 		pirattoManager.removeDestinationPoint(this.destinationPoint);
+
+		if (this.pirattoDeleteCallback != null) {
+			this.pirattoDeleteCallback.onPointDeleted(this.destinationPoint);
+		}
 
 		Activity activity = this.getActivity();
 		if (!(activity instanceof MapActivity)) {

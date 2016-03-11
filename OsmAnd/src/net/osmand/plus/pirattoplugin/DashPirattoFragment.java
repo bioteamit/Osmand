@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import net.osmand.plus.R;
 import net.osmand.plus.dashboard.DashLocationFragment;
@@ -18,6 +19,7 @@ import java.util.List;
 public class DashPirattoFragment extends DashLocationFragment implements PirattoDeleteDialog.PirattoDeleteCallback {
 
 	private static final String TAG = "DASH_PIRATTO_FRAGMENT";
+	private static final String ROW_NUMBER_TAG = TAG + "_row_number";
 	private static final int TITLE_ID = R.string.osmand_oneteam_piratto_plugin_name;
 
 	private LinearLayout pointsLayout;
@@ -35,24 +37,30 @@ public class DashPirattoFragment extends DashLocationFragment implements Piratto
 
 	@Override
 	public View initView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		View view = getActivity().getLayoutInflater().inflate(R.layout.dash_piratto_fragment, container, false);
-		this.pointsLayout = (LinearLayout) view.findViewById(R.id.lyt_dash_piratto_point);
+		View view = getActivity().getLayoutInflater().inflate(R.layout.dash_common_fragment, container, false);
+		this.pointsLayout = (LinearLayout) view.findViewById(R.id.items);
+		view.findViewById(R.id.show_all).setVisibility(View.GONE);
 		return view;
 	}
 
 	@Override
 	public void onOpenDash() {
+		View view = this.getView();
 		List<DestinationPoint> points = PirattoManager.getInstance().getDestinationPoints();
 		if (points == null || points.isEmpty()) {
-			this.getView().setVisibility(View.GONE);
+			view.setVisibility(View.GONE);
 			this.pointsLayout.removeAllViews();
 			return;
 		}
 
-		this.getView().setVisibility(View.VISIBLE);
+		view.setVisibility(View.VISIBLE);
 
-		DashboardPointsAdapter pointsAdapter = new DashboardPointsAdapter(this.getActivity(), points, this.distances, this.getDefaultLocation(), this);
+		String title = view.getContext().getString(R.string.osmand_oneteam_piratto_dashboard_title, points.size());
+		((TextView) view.findViewById(R.id.fav_text)).setText(title);
+
 		this.pointsLayout.removeAllViews();
+		DashboardOnMap.handleNumberOfRows(points, getMyApplication().getSettings(), ROW_NUMBER_TAG);
+		DashboardPointsAdapter pointsAdapter = new DashboardPointsAdapter(this.getActivity(), points, this.distances, this.getDefaultLocation(), this);
 		pointsAdapter.addPointsViews(this.pointsLayout);
 	}
 

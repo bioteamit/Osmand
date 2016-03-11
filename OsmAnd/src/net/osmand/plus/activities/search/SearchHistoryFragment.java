@@ -298,9 +298,11 @@ public class SearchHistoryFragment extends OsmAndListFragment implements SearchA
 			iconId = R.drawable.ic_type_audio;
 		} else if (pd.isVideoNote()) {
 			iconId = R.drawable.ic_type_video;
-		}else if (pd.isPhotoNote()) {
+		} else if (pd.isPhotoNote()) {
 			iconId = R.drawable.ic_type_img;
-		}  else {
+		} else if (pd.isPiratto()) {
+			iconId = R.drawable.ic_type_piratto;
+		} else {
 			iconId = R.drawable.ic_type_address;
 		}
 		return iconId;

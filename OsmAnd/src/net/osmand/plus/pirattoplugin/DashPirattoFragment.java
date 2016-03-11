@@ -19,7 +19,6 @@ import java.util.List;
 public class DashPirattoFragment extends DashLocationFragment implements PirattoDeleteDialog.PirattoDeleteCallback {
 
 	private static final String TAG = "DASH_PIRATTO_FRAGMENT";
-	private static final String ROW_NUMBER_TAG = TAG + "_row_number";
 	private static final int TITLE_ID = R.string.osmand_oneteam_piratto_plugin_name;
 
 	private LinearLayout pointsLayout;
@@ -59,7 +58,6 @@ public class DashPirattoFragment extends DashLocationFragment implements Piratto
 		((TextView) view.findViewById(R.id.fav_text)).setText(title);
 
 		this.pointsLayout.removeAllViews();
-		DashboardOnMap.handleNumberOfRows(points, getMyApplication().getSettings(), ROW_NUMBER_TAG);
 		DashboardPointsAdapter pointsAdapter = new DashboardPointsAdapter(this.getActivity(), points, this.distances, this.getDefaultLocation(), this);
 		pointsAdapter.addPointsViews(this.pointsLayout);
 	}

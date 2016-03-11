@@ -6,8 +6,6 @@
 			  android:background="?attr/bg_card"
 			  android:layout_marginTop="@dimen/dash_margin"
     		  android:layout_marginBottom="@dimen/dash_margin"
-    		  android:layout_marginLeft="@dimen/dash_margin_h"
-    		  android:layout_marginRight="@dimen/dash_margin_h"
 			  android:orientation="vertical">
 
 	<LinearLayout

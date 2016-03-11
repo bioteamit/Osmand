@@ -14,7 +14,6 @@ import net.osmand.plus.pirattoplugin.core.PirattoManager;
 import net.osmand.plus.views.MapInfoLayer;
 import net.osmand.plus.views.OsmandMapTileView;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class PirattoPlugin extends OsmandPlugin implements PirattoManager.OnUpdatePointsListener {
@@ -33,7 +32,8 @@ public class PirattoPlugin extends OsmandPlugin implements PirattoManager.OnUpda
 
 	private PirattoPositionLayer pirattoLayer;
 
-	private List<PirattoTextInfoWidget> pirattoTextInfoWidgetList;
+	private PirattoTextInfoWidget targetDestinationPointWidget;
+	private DestinationPoint targetDestinationPoint;
 
 	public PirattoPlugin(OsmandApplication application) {
 		this.application = application;
@@ -84,8 +84,7 @@ public class PirattoPlugin extends OsmandPlugin implements PirattoManager.OnUpda
 		}
 		this.pirattoLayer = new PirattoPositionLayer(activity);
 		activity.getMapView().addLayer(this.pirattoLayer, 5.5f);
-		if (this.pirattoTextInfoWidgetList == null
-				|| this.pirattoTextInfoWidgetList.isEmpty()) {
+		if (this.targetDestinationPointWidget == null) {
 			this.registerWidgets(activity);
 		}
 	}
@@ -96,8 +95,7 @@ public class PirattoPlugin extends OsmandPlugin implements PirattoManager.OnUpda
 			if (this.pirattoLayer == null) {
 				registerLayers(activity);
 			}
-			if (this.pirattoTextInfoWidgetList == null
-					|| this.pirattoTextInfoWidgetList.isEmpty()) {
+			if (this.targetDestinationPointWidget == null) {
 				this.registerWidgets(activity);
 			}
 		} else {
@@ -107,13 +105,10 @@ public class PirattoPlugin extends OsmandPlugin implements PirattoManager.OnUpda
 			}
 			MapInfoLayer mapInfoLayer = activity.getMapLayers().getMapInfoLayer();
 			if (mapInfoLayer != null
-					&& this.pirattoTextInfoWidgetList != null) {
-				for (PirattoTextInfoWidget textInfoWidget : this.pirattoTextInfoWidgetList) {
-					mapInfoLayer.removeSideWidget(textInfoWidget);
-					mapInfoLayer.recreateControls();
-					this.pirattoTextInfoWidgetList.remove(textInfoWidget);
-				}
-				this.pirattoTextInfoWidgetList = null;
+					&& this.targetDestinationPointWidget != null) {
+				mapInfoLayer.removeSideWidget(this.targetDestinationPointWidget);
+				mapInfoLayer.recreateControls();
+				this.targetDestinationPointWidget = null;
 			}
 		}
 	}
@@ -122,18 +117,16 @@ public class PirattoPlugin extends OsmandPlugin implements PirattoManager.OnUpda
 		MapInfoLayer mapInfoLayer = activity.getMapLayers().getMapInfoLayer();
 		List<DestinationPoint> destinationPoints = this.pirattoManager.getDestinationPoints();
 		if (mapInfoLayer != null && destinationPoints != null) {
-			if (this.pirattoTextInfoWidgetList == null) {
-				this.pirattoTextInfoWidgetList = new ArrayList<>(destinationPoints.size());
-			}
-			for (DestinationPoint destinationPoint : destinationPoints) {
-				Log.d(TAG, "create point widget for " + destinationPoint.getAddress());
+			// TODO: check is index 0 valid for the first target point if it reached using navigator
+			DestinationPoint destinationPoint = destinationPoints.get(0);
+			Log.d(TAG, "create point widget for " + destinationPoint.getAddress());
 
-				PirattoTextInfoWidget textInfoWidget = this.createPointInfoControl(activity, destinationPoint);
-				mapInfoLayer.registerSideWidget(textInfoWidget,
-						R.drawable.ic_action_piratto_dark, R.string.map_widget_piratto, KEY_PIRATTO_POINTS, false, 8);
-				this.pirattoTextInfoWidgetList.add(textInfoWidget);
-			}
+			this.targetDestinationPoint = destinationPoint;
+			this.targetDestinationPointWidget = this.createPointInfoControl(activity, destinationPoint);
+			mapInfoLayer.registerSideWidget(this.targetDestinationPointWidget,
+					R.drawable.ic_action_piratto_dark, R.string.map_widget_piratto, KEY_PIRATTO_POINTS, false, 8);
 			mapInfoLayer.recreateControls();
+			this.pirattoManager.setTargetDestinationPoint(this.application, this.targetDestinationPoint);
 		}
 	}
 

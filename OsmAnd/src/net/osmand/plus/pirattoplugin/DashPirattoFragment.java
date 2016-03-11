@@ -36,7 +36,7 @@ public class DashPirattoFragment extends DashLocationFragment implements Piratto
 	@Override
 	public View initView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View view = getActivity().getLayoutInflater().inflate(R.layout.dash_piratto_fragment, container, false);
-		this.pointsLayout = (LinearLayout) view.findViewById(R.id.lyt_piratto_points);
+		this.pointsLayout = (LinearLayout) view.findViewById(R.id.lyt_dash_piratto_point);
 		return view;
 	}
 

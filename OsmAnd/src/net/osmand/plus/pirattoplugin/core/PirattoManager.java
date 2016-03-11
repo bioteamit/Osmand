@@ -13,6 +13,9 @@ import java.util.Timer;
 public class PirattoManager implements PointsRetrieverTask.OnRetrievingPointsCallback {
 
 	public final static String PIRATTO_CAR_PLATE = "piratto_car_plate"; //$NON-NLS-1$
+	public final static String PIRATTO_TARGET_POINT_ADDRESS = "piratto_target_point_address"; //$NON-NLS-1$
+	public final static String PIRATTO_TARGET_POINT_LATITUDE = "piratto_target_point_latitude"; //$NON-NLS-1$
+	public final static String PIRATTO_TARGET_POINT_LONGITUDE = "piratto_target_point_longitude"; //$NON-NLS-1$
 	private static final String TAG = "PirattoManager";
 
 	public interface OnUpdatePointsListener {
@@ -66,16 +69,46 @@ public class PirattoManager implements PointsRetrieverTask.OnRetrievingPointsCal
 			return;
 		}
 
-		OsmandSettings settings = application.getSettings();
-		this.carPlateSettings = settings.registerStringPreference(PIRATTO_CAR_PLATE, null).makeGlobal();
+		if (this.carPlateSettings == null) {
+			OsmandSettings settings = application.getSettings();
+			this.carPlateSettings = settings.registerStringPreference(PIRATTO_CAR_PLATE, null).makeGlobal();
+		}
 		this.carPlateSettings.set(newCarPlate);
 		this.carPlate = newCarPlate;
 		this.refresh();
 	}
 
-	public void setDestinationPoint(OsmandApplication application, DestinationPoint destinationPoint) {
+	public void setTargetDestinationPoint(OsmandApplication application, DestinationPoint destinationPoint) {
+		if (destinationPoint == null) {
+			Log.w(TAG, "Destination point is valid to be set as target point");
+			return;
+		}
+
 		OsmandSettings settings = application.getSettings();
-//		this.destinationPointSettings = settings.registerStringPreference(PIRATTO_CAR_PLATE, null).makeGlobal();
+		if (this.targetPointAddressSettings == null) {
+			this.targetPointAddressSettings = settings.registerStringPreference(PIRATTO_TARGET_POINT_ADDRESS, null).makeGlobal();
+		}
+		if (this.targetPointLatitudeSettings == null) {
+			this.targetPointLatitudeSettings = settings.registerFloatPreference(PIRATTO_TARGET_POINT_LATITUDE, 0f).makeGlobal();
+		}
+		if (this.targetPointLongitudeSettings == null) {
+			this.targetPointLongitudeSettings = settings.registerFloatPreference(PIRATTO_TARGET_POINT_LONGITUDE, 0f).makeGlobal();
+		}
+
+		this.targetPointAddressSettings.set(destinationPoint.getAddress());
+		this.targetPointLatitudeSettings.set((float) destinationPoint.getLatitude());
+		this.targetPointLongitudeSettings.set((float) destinationPoint.getLongitude());
+	}
+
+	public DestinationPoint getTargetDestinationPoints() {
+		if (this.targetPointAddressSettings == null
+				|| this.targetPointLatitudeSettings == null
+				|| this.targetPointLongitudeSettings == null) {
+			return null;
+		}
+
+		DestinationPoint targetPoint = new DestinationPoint(this.targetPointAddressSettings.get(), this.targetPointLatitudeSettings.get(), this.targetPointLongitudeSettings.get());
+		return targetPoint;
 	}
 
 	public List<DestinationPoint> getDestinationPoints() {

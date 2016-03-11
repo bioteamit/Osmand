@@ -74,7 +74,7 @@ public class DashboardPointsAdapter {
 		pointDescription.setLat(point.getLatitude());
 		pointDescription.setLon(point.getLongitude());
 
-		String name = pointDescription.getSimpleName(this.context, false);
+		String name = pointDescription.getName();
 		((TextView) view.findViewById(R.id.name)).setText(name);
 
 		ImageView direction = (ImageView) view.findViewById(R.id.direction_icon);

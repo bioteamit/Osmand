@@ -9,5 +9,4 @@
     		  android:layout_marginLeft="@dimen/dash_margin_h"
     		  android:layout_marginRight="@dimen/dash_margin_h"
 			  android:orientation="vertical">
-    <include layout="@layout/dash_piratto_points_layout" />
 </LinearLayout>

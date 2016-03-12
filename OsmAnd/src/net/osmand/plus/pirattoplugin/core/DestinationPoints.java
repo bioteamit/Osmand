@@ -66,7 +66,7 @@ public class DestinationPoints {
 			parser.setInput(inputStream, "UTF-8");
 			return parse(parser);
 		} catch (Exception e) {
-			throw new RuntimeException(e);
+			return null;
 		}
 	}
 
@@ -77,7 +77,7 @@ public class DestinationPoints {
 			parser.setInput(reader);
 			return parse(parser);
 		} catch (Exception e) {
-			throw new RuntimeException(e);
+			return null;
 		}
 	}
 

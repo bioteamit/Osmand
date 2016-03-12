@@ -54,10 +54,10 @@ public class PirattoManager implements PointsRetrieverTask.OnRetrievingPointsCal
 	}
 
 	private void addTestDestinationPoints() {
-		this.addTestDestinationPoint("Shoubra", 30.0906098, 31.2455468);
-		this.addTestDestinationPoint("Qalioub1", 30.1736758, 31.2250333);
-		this.addTestDestinationPoint("Qaliob2", 30.1796859, 31.2214284);
-		this.addTestDestinationPoint("DownTown", 30.0165934, 31.417473);
+		this.addTestDestinationPoint("Downtown", 30.0165934, 31.417473);
+		this.addTestDestinationPoint("19 Marca 19811", 53.1247962, 18.0043512);
+		this.addTestDestinationPoint("Aleksandrowska2", 53.0987161, 18.0235117);
+		this.addTestDestinationPoint("16 Pułku Ułanów Wielkopolskich2", 53.1192529, 17.9720179);
 	}
 
 	private void addTestDestinationPoint(String address, double latitude, double longitude) {

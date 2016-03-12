@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -38,7 +39,6 @@ public class DashPirattoFragment extends DashLocationFragment implements Piratto
 	public View initView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View view = getActivity().getLayoutInflater().inflate(R.layout.dash_common_fragment, container, false);
 		this.pointsLayout = (LinearLayout) view.findViewById(R.id.items);
-		view.findViewById(R.id.show_all).setVisibility(View.GONE);
 		return view;
 	}
 
@@ -56,6 +56,16 @@ public class DashPirattoFragment extends DashLocationFragment implements Piratto
 
 		String title = view.getContext().getString(R.string.osmand_oneteam_piratto_dashboard_title, points.size());
 		((TextView) view.findViewById(R.id.fav_text)).setText(title);
+
+		String update = view.getContext().getString(R.string.osmand_oneteam_piratto_dashboard_update);
+		Button manualUpdate = (Button) view.findViewById(R.id.show_all);
+		manualUpdate.setText(update);
+		manualUpdate.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				PirattoManager.getInstance().refresh();
+			}
+		});
 
 		this.pointsLayout.removeAllViews();
 		DashboardPointsAdapter pointsAdapter = new DashboardPointsAdapter(this.getActivity(), points, this.distances, this.getDefaultLocation(), this);

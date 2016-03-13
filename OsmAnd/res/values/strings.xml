@@ -2280,4 +2280,6 @@ If you need help with OsmAnd application, please contact our support team: suppo
     <string name="osmand_oneteam_piratto_point_info">%1$s\n Lat %2$s\n Lon %3$s</string>
     <string name="osmand_oneteam_piratto_dashboard_title">Piratto points (%1$d)</string>
     <string name="osmand_oneteam_piratto_dashboard_update">Update points</string>
+    <string name="osmand_oneteam_piratto_update_points">Update request is sent.</string>
+    <string name="osmand_oneteam_piratto_update_no_points">No new points</string>
 </resources>

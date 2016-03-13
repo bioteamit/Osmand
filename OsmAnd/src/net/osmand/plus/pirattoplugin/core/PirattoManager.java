@@ -8,9 +8,11 @@ import net.osmand.plus.OsmandApplication;
 import net.osmand.plus.OsmandSettings;
 
 import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
 import java.util.Timer;
 
-public class PirattoManager implements PointsRetrieverTask.OnRetrievingPointsCallback {
+public class PirattoManager extends Observable implements PointsRetrieverTask.OnRetrievingPointsCallback {
 
 	public final static String PIRATTO_CAR_PLATE = "piratto_car_plate"; //$NON-NLS-1$
 	public final static String PIRATTO_TARGET_POINT_ADDRESS = "piratto_target_point_address"; //$NON-NLS-1$
@@ -28,7 +30,6 @@ public class PirattoManager implements PointsRetrieverTask.OnRetrievingPointsCal
 
 	private Timer timer;
 	private PointsRetrieverTask pointsRetrieverTask;
-	private OnUpdatePointsListener onUpdatePointsListener;
 
 	private String carPlate;
 	private DestinationPoints destinationPoints;
@@ -134,8 +135,18 @@ public class PirattoManager implements PointsRetrieverTask.OnRetrievingPointsCal
 		return null;
 	}
 
-	public void setOnUpdatePointsListener(OnUpdatePointsListener listener) {
-		this.onUpdatePointsListener = listener;
+	public void addObserver(Observer observer) {
+		if (observer == null) {
+			return;
+		}
+		super.addObserver(observer);
+	}
+
+	public void deleteObserver(Observer observer) {
+		if (observer == null) {
+			return;
+		}
+		super.deleteObserver(observer);
 	}
 
 	public void refresh() {
@@ -162,16 +173,15 @@ public class PirattoManager implements PointsRetrieverTask.OnRetrievingPointsCal
 
 	@Override
 	public void onSuccess(String carPlate, DestinationPoints points) {
-		if (this.onUpdatePointsListener == null) {
-			return;
-		}
-
 		boolean updated = this.destinationPoints.updatePoints(points);
+		this.setChanged();
 		if (updated) {
 			Log.d(TAG, "Points are updated");
-			this.onUpdatePointsListener.updatePoints(this.destinationPoints.getDestinationPoints());
+			this.notifyObservers(this.destinationPoints.getDestinationPoints());
+			this.destinationPoints.commit();
+		} else {
+			this.notifyObservers();
 		}
-		this.destinationPoints.commit();
 	}
 
 	@Override

@@ -15,8 +15,10 @@ import net.osmand.plus.views.MapInfoLayer;
 import net.osmand.plus.views.OsmandMapTileView;
 
 import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
 
-public class PirattoPlugin extends OsmandPlugin implements PirattoManager.OnUpdatePointsListener {
+public class PirattoPlugin extends OsmandPlugin implements Observer {
 
 	private static final String TAG = "PirattoPlugin";
 
@@ -43,7 +45,6 @@ public class PirattoPlugin extends OsmandPlugin implements PirattoManager.OnUpda
 		// Registered cars
 		// "CB 763AU" "CB 060EG" "CB 077CN" "CB 201AX" "CB 8627W"
 		this.pirattoManager.setCarPlate(this.application, "CB 763AU");
-
 	}
 
 	@Override
@@ -148,12 +149,6 @@ public class PirattoPlugin extends OsmandPlugin implements PirattoManager.OnUpda
 		return DashPirattoFragment.FRAGMENT_DATA;
 	}
 
-	@Override
-	public void updatePoints(List<DestinationPoint> points) {
-		this.pirattoLayer.refresh();
-		this.mapActivity.getMapView().refreshMap();
-	}
-
 	// Synchronize plugin lifecycle with Map Activity lifecycle
 
 	@Override
@@ -162,6 +157,11 @@ public class PirattoPlugin extends OsmandPlugin implements PirattoManager.OnUpda
 		Log.d(TAG, "on activity created");
 
 		this.mapActivity = activity;
+		this.pirattoManager.addObserver(this);
+
+		// Registered cars
+		// "CB 763AU" "CB 060EG" "CB 077CN" "CB 201AX" "CB 8627W"
+		this.pirattoManager.setCarPlate(this.application, "CB 763AU");
 	}
 
 	@Override
@@ -188,5 +188,16 @@ public class PirattoPlugin extends OsmandPlugin implements PirattoManager.OnUpda
 		Log.d(TAG, "on activity destroy");
 
 		this.pirattoManager.cancelSchedule();
+		this.pirattoManager.deleteObserver(this);
+	}
+
+	@Override
+	public void update(Observable observable, Object data) {
+		if (!observable.hasChanged()) {
+			return;
+		}
+
+		this.pirattoLayer.refresh();
+		this.mapActivity.getMapView().refreshMap();
 	}
 }

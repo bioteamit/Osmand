@@ -14,7 +14,8 @@ import java.util.Timer;
 
 public class PirattoManager extends Observable implements PointsRetrieverTask.OnRetrievingPointsCallback {
 
-	public final static String PIRATTO_CAR_PLATE = "piratto_car_plate"; //$NON-NLS-1$
+	public final static String PIRATTO_CAR_PLATE = "pref_piratto_car_plate"; //$NON-NLS-1$
+	public final static String PIRATTO_UPDATE_INTERVAL = "pref_piratto_update_interval"; //$NON-NLS-1$
 	public final static String PIRATTO_TARGET_POINT_ADDRESS = "piratto_target_point_address"; //$NON-NLS-1$
 	public final static String PIRATTO_TARGET_POINT_LATITUDE = "piratto_target_point_latitude"; //$NON-NLS-1$
 	public final static String PIRATTO_TARGET_POINT_LONGITUDE = "piratto_target_point_longitude"; //$NON-NLS-1$
@@ -26,12 +27,12 @@ public class PirattoManager extends Observable implements PointsRetrieverTask.On
 
 	private static PirattoManager instance;
 
-	private final int TIME_INTERVAL = 1*60*1000;
+	private OsmandApplication application;
+	private OsmandSettings settings;
 
 	private Timer timer;
 	private PointsRetrieverTask pointsRetrieverTask;
 
-	private String carPlate;
 	private DestinationPoints destinationPoints;
 
 	// Target destination point
@@ -40,18 +41,29 @@ public class PirattoManager extends Observable implements PointsRetrieverTask.On
 	private OsmandSettings.CommonPreference<Float> targetPointLongitudeSettings;
 	///////
 	private OsmandSettings.CommonPreference<String> carPlateSettings;
+	private OsmandSettings.CommonPreference<Integer> updateIntervalSettings;
 
-	public static PirattoManager getInstance() {
+	public static PirattoManager initialize(OsmandApplication application) {
+		PirattoManager.instance = new PirattoManager(application);
+		return PirattoManager.instance;
+	}
+
+	public static PirattoManager getInstance() throws IllegalStateException {
 		if (PirattoManager.instance == null) {
-			PirattoManager.instance = new PirattoManager();
+			throw new IllegalStateException("Piratto manager is not initialized yet");
 		}
 
 		return PirattoManager.instance;
 	}
 
-	protected PirattoManager() {
+	protected PirattoManager(OsmandApplication application) {
+		this.application = application;
+		this.settings = application.getSettings();
 		this.destinationPoints = new DestinationPoints();
 		this.addTestDestinationPoints();
+
+		this.carPlateSettings = this.settings.registerStringPreference(PIRATTO_CAR_PLATE, null).makeGlobal();
+		this.updateIntervalSettings = this.settings.registerIntPreference(PIRATTO_UPDATE_INTERVAL, 2).makeGlobal();
 	}
 
 	private void addTestDestinationPoints() {
@@ -65,35 +77,38 @@ public class PirattoManager extends Observable implements PointsRetrieverTask.On
 		this.destinationPoints.addPoint(new DestinationPoint(address, latitude, longitude));
 	}
 
-	public void setCarPlate(OsmandApplication application, String newCarPlate) {
+	public void setCarPlate(String newCarPlate) {
 		if (!this.shouldChangeCarPlate(newCarPlate)) {
 			return;
 		}
-
-		if (this.carPlateSettings == null) {
-			OsmandSettings settings = application.getSettings();
-			this.carPlateSettings = settings.registerStringPreference(PIRATTO_CAR_PLATE, null).makeGlobal();
-		}
 		this.carPlateSettings.set(newCarPlate);
-		this.carPlate = newCarPlate;
+
 		this.refresh();
 	}
 
-	public void setTargetDestinationPoint(OsmandApplication application, DestinationPoint destinationPoint) {
+	public void setUpdateTimeInterval(int timeInMinutes) {
+		if (timeInMinutes <= 0) {
+			return;
+		}
+		this.updateIntervalSettings.set(timeInMinutes);
+
+		this.refresh();
+	}
+
+	public void setTargetDestinationPoint(DestinationPoint destinationPoint) {
 		if (destinationPoint == null) {
 			Log.w(TAG, "Destination point is valid to be set as target point");
 			return;
 		}
 
-		OsmandSettings settings = application.getSettings();
 		if (this.targetPointAddressSettings == null) {
-			this.targetPointAddressSettings = settings.registerStringPreference(PIRATTO_TARGET_POINT_ADDRESS, null).makeGlobal();
+			this.targetPointAddressSettings = this.settings.registerStringPreference(PIRATTO_TARGET_POINT_ADDRESS, null).makeGlobal();
 		}
 		if (this.targetPointLatitudeSettings == null) {
-			this.targetPointLatitudeSettings = settings.registerFloatPreference(PIRATTO_TARGET_POINT_LATITUDE, 0f).makeGlobal();
+			this.targetPointLatitudeSettings = this.settings.registerFloatPreference(PIRATTO_TARGET_POINT_LATITUDE, 0f).makeGlobal();
 		}
 		if (this.targetPointLongitudeSettings == null) {
-			this.targetPointLongitudeSettings = settings.registerFloatPreference(PIRATTO_TARGET_POINT_LONGITUDE, 0f).makeGlobal();
+			this.targetPointLongitudeSettings = this.settings.registerFloatPreference(PIRATTO_TARGET_POINT_LONGITUDE, 0f).makeGlobal();
 		}
 
 		this.targetPointAddressSettings.set(destinationPoint.getAddress());
@@ -149,11 +164,18 @@ public class PirattoManager extends Observable implements PointsRetrieverTask.On
 		super.deleteObserver(observer);
 	}
 
+	public synchronized void disable() {
+		this.cancelSchedule();
+		this.deleteObservers();
+		this.destinationPoints = new DestinationPoints();
+	}
+
 	public void refresh() {
 		this.cancelSchedule();
-		this.pointsRetrieverTask = new PointsRetrieverTask(this.carPlate, this);
+		this.pointsRetrieverTask = new PointsRetrieverTask(this.carPlateSettings.get(), this);
 		this.timer = new Timer();
-		this.timer.scheduleAtFixedRate(this.pointsRetrieverTask, 0, TIME_INTERVAL);
+		int period = this.updateIntervalSettings.get() * 60 * 1000;
+		this.timer.scheduleAtFixedRate(this.pointsRetrieverTask, 0, period);
 	}
 
 	public void cancelSchedule() {
@@ -198,8 +220,8 @@ public class PirattoManager extends Observable implements PointsRetrieverTask.On
 	}
 
 	private static boolean shouldChangeCarPlate(String carPlate) {
-		return TextUtils.isEmpty(PirattoManager.instance.carPlate)
+		return TextUtils.isEmpty(PirattoManager.instance.carPlateSettings.get())
 				|| (!TextUtils.isEmpty(carPlate)
-				&& !PirattoManager.instance.carPlate.equals(carPlate));
+				&& !PirattoManager.instance.carPlateSettings.get().equals(carPlate));
 	}
 }

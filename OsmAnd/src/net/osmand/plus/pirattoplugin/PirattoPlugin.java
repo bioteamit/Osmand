@@ -40,11 +40,16 @@ public class PirattoPlugin extends OsmandPlugin implements Observer {
 	public PirattoPlugin(OsmandApplication application) {
 		this.application = application;
 		ApplicationMode.regWidget(KEY_PIRATTO_POINTS, (ApplicationMode[]) null);
-		this.pirattoManager = PirattoManager.getInstance();
+		this.pirattoManager = PirattoManager.initialize(this.application);
 
-		// Registered cars
-		// "CB 763AU" "CB 060EG" "CB 077CN" "CB 201AX" "CB 8627W"
-		this.pirattoManager.setCarPlate(this.application, "CB 763AU");
+		this.pirattoManager.refresh();
+	}
+
+	@Override
+	public void disable(OsmandApplication app) {
+		super.disable(app);
+
+		this.pirattoManager.disable();
 	}
 
 	@Override
@@ -74,7 +79,7 @@ public class PirattoPlugin extends OsmandPlugin implements Observer {
 
 	@Override
 	public Class<? extends Activity> getSettingsActivity() {
-		return null;
+		return SettingsPirattoActivity.class;
 	}
 
 	@Override
@@ -117,7 +122,7 @@ public class PirattoPlugin extends OsmandPlugin implements Observer {
 	private void registerWidgets(MapActivity activity) {
 		MapInfoLayer mapInfoLayer = activity.getMapLayers().getMapInfoLayer();
 		List<DestinationPoint> destinationPoints = this.pirattoManager.getDestinationPoints();
-		if (mapInfoLayer != null && destinationPoints != null) {
+		if (mapInfoLayer != null && destinationPoints != null && !destinationPoints.isEmpty()) {
 			// TODO: check is index 0 valid for the first target point if it reached using navigator
 			DestinationPoint destinationPoint = destinationPoints.get(0);
 			Log.d(TAG, "create point widget for " + destinationPoint.getAddress());
@@ -127,7 +132,7 @@ public class PirattoPlugin extends OsmandPlugin implements Observer {
 			mapInfoLayer.registerSideWidget(this.targetDestinationPointWidget,
 					R.drawable.ic_action_piratto_dark, R.string.map_widget_piratto, KEY_PIRATTO_POINTS, false, 8);
 			mapInfoLayer.recreateControls();
-			this.pirattoManager.setTargetDestinationPoint(this.application, this.targetDestinationPoint);
+			this.pirattoManager.setTargetDestinationPoint(this.targetDestinationPoint);
 		}
 	}
 
@@ -159,9 +164,7 @@ public class PirattoPlugin extends OsmandPlugin implements Observer {
 		this.mapActivity = activity;
 		this.pirattoManager.addObserver(this);
 
-		// Registered cars
-		// "CB 763AU" "CB 060EG" "CB 077CN" "CB 201AX" "CB 8627W"
-		this.pirattoManager.setCarPlate(this.application, "CB 763AU");
+		this.pirattoManager.refresh();
 	}
 
 	@Override

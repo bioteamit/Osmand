@@ -2282,4 +2282,8 @@ If you need help with OsmAnd application, please contact our support team: suppo
     <string name="osmand_oneteam_piratto_dashboard_update">Update points</string>
     <string name="osmand_oneteam_piratto_update_points">Update request is sent.</string>
     <string name="osmand_oneteam_piratto_update_no_points">No new points</string>
+    <string name="piratto_car_plate_title">Car plate</string>
+    <string name="piratto_car_plate_descr">Set registered car plate (e.g. CB 763AU)</string>
+    <string name="piratto_update_interval_title">Update Points Interval</string>
+    <string name="piratto_update_interval_descr">Set update time interval in minutes (e.g. 2)</string>
 </resources>

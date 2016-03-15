@@ -50,7 +50,7 @@ public class SettingsPirattoActivity extends SettingsBaseActivity {
 		updateIntervalPref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
 			@Override
 			public boolean onPreferenceChange(Preference preference, Object newValue) {
-				updateIntervalSettings.set((Integer) newValue);
+				updateIntervalSettings.set(Integer.parseInt((String) newValue));
 				pirattoManager.refresh();
 				return true;
 			}

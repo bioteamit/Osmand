@@ -142,7 +142,7 @@ public class PirattoManager extends Observable implements PointsRetrieverTask.On
 		}
 
 		List<DestinationPoint> destinationPoints = this.destinationPoints.getDestinationPoints();
-		destinationPoints.remove(0);
+		this.removeDestinationPoint(0);
 		this.setRoutingPoint(null);
 	}
 
@@ -275,6 +275,11 @@ public class PirattoManager extends Observable implements PointsRetrieverTask.On
 
 	public void removeDestinationPoint(DestinationPoint destinationPoint) {
 		this.destinationPoints.removePoint(destinationPoint);
+		this.destinationPoints.commit();
+	}
+
+	protected void removeDestinationPoint(int index) {
+		this.destinationPoints.removePoint(index);
 		this.destinationPoints.commit();
 	}
 

@@ -60,6 +60,10 @@ public class DestinationPoints {
 		this.destinationPoints.remove(point);
 	}
 
+	protected void removePoint(int index) {
+		this.destinationPoints.remove(index);
+	}
+
 	public static DestinationPoints parse(InputStream inputStream) {
 		XmlPullParser parser = Xml.newPullParser();
 		try {

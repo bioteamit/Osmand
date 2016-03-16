@@ -93,6 +93,27 @@
                         android:background="?attr/dashboard_divider"/>
 
                     <Button
+                        android:id="@+id/btn_next_piratto_point"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginBottom="8dp"
+                        android:paddingLeft="8dp"
+                        android:paddingRight="8dp"
+                        android:drawableLeft="@drawable/ic_action_piratto_dark"
+                        android:drawablePadding="12dp"
+                        android:gravity="left|center_vertical"
+                        android:textColor="?android:textColorPrimary"
+                        style="@style/Widget.AppCompat.Button.Borderless"
+                        android:text="@string/osmand_oneteam_piratto_next_point"
+                        android:visibility="gone"/>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="?attr/dashboard_divider"/>
+
+                    <Button
                         android:id="@+id/recalcDestButton"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"

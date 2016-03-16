@@ -14,12 +14,15 @@ import android.widget.ImageButton;
 import net.osmand.AndroidUtils;
 import net.osmand.data.LatLon;
 import net.osmand.plus.IconsCache;
+import net.osmand.plus.OsmandPlugin;
 import net.osmand.plus.R;
 import net.osmand.plus.TargetPointsHelper;
 import net.osmand.plus.TargetPointsHelper.TargetPoint;
 import net.osmand.plus.activities.MapActivity;
 import net.osmand.plus.activities.search.SearchActivity;
 import net.osmand.plus.activities.search.SearchPOIActivity;
+import net.osmand.plus.pirattoplugin.PirattoPlugin;
+import net.osmand.plus.pirattoplugin.core.PirattoManager;
 import net.osmand.plus.poi.PoiFiltersHelper;
 import net.osmand.plus.poi.PoiUIFilter;
 
@@ -115,6 +118,24 @@ public class DestinationReachedMenuFragment extends Fragment {
 				dismissMenu();
 			}
 		});
+
+		Button routeNextPoint = (Button) view.findViewById(R.id.btn_next_piratto_point);
+		PirattoPlugin pirattoPlugin = OsmandPlugin.getEnabledPlugin(PirattoPlugin.class);
+		final PirattoManager pirattoManager = PirattoManager.getInstance();
+		if (pirattoPlugin != null && pirattoManager.isRoutingPoint()) {
+			routeNextPoint.setVisibility(View.VISIBLE);
+			routeNextPoint.setCompoundDrawablesWithIntrinsicBounds(
+					iconsCache.getContentIcon(R.drawable.ic_action_piratto_dark), null, null, null);
+			routeNextPoint.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					pirattoManager.routeNextPoint();
+					dismissMenu();
+				}
+			});
+		} else {
+			routeNextPoint.setVisibility(View.GONE);
+		}
 
 		View mainView = view.findViewById(R.id.main_view);
 		if (menu.isLandscapeLayout()) {

@@ -80,6 +80,13 @@ public class PirattoDeleteDialog extends DialogFragment {
 		PirattoManager pirattoManager = PirattoManager.getInstance();
 		pirattoManager.removeDestinationPoint(this.destinationPoint);
 
+		DestinationPoint oldRoutingPoint = pirattoManager.getRoutingPoint();
+		if (!pirattoManager.isRoutingPoint()
+				|| oldRoutingPoint == null
+				|| this.destinationPoint.equals(oldRoutingPoint)) {
+			pirattoManager.routeNextPoint();
+		}
+
 		if (this.pirattoDeleteCallback != null) {
 			this.pirattoDeleteCallback.onPointDeleted(this.destinationPoint);
 		}

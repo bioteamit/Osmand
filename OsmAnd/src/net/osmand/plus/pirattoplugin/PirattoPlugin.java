@@ -3,22 +3,24 @@ package net.osmand.plus.pirattoplugin;
 import android.app.Activity;
 import android.util.Log;
 
+import net.osmand.ValueHolder;
 import net.osmand.plus.ApplicationMode;
 import net.osmand.plus.OsmandApplication;
 import net.osmand.plus.OsmandPlugin;
 import net.osmand.plus.R;
+import net.osmand.plus.TargetPointsHelper;
 import net.osmand.plus.activities.MapActivity;
 import net.osmand.plus.dashboard.tools.DashFragmentData;
 import net.osmand.plus.pirattoplugin.core.DestinationPoint;
 import net.osmand.plus.pirattoplugin.core.PirattoManager;
+import net.osmand.plus.routing.RoutingHelper;
 import net.osmand.plus.views.MapInfoLayer;
 import net.osmand.plus.views.OsmandMapTileView;
 
-import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
-public class PirattoPlugin extends OsmandPlugin implements Observer {
+public class PirattoPlugin extends OsmandPlugin implements Observer, RoutingHelper.IRouteInformationListener {
 
 	private static final String TAG = "PirattoPlugin";
 
@@ -35,14 +37,19 @@ public class PirattoPlugin extends OsmandPlugin implements Observer {
 	private PirattoPositionLayer pirattoLayer;
 
 	private PirattoTextInfoWidget targetDestinationPointWidget;
-	private DestinationPoint targetDestinationPoint;
 
 	public PirattoPlugin(OsmandApplication application) {
 		this.application = application;
 		ApplicationMode.regWidget(KEY_PIRATTO_POINTS, (ApplicationMode[]) null);
 		this.pirattoManager = PirattoManager.initialize(this.application);
 
-		this.pirattoManager.refresh();
+		this.pirattoManager.enable();
+	}
+
+	@Override
+	public boolean init(OsmandApplication app, Activity activity) {
+		this.pirattoManager.enable();
+		return super.init(app, activity);
 	}
 
 	@Override
@@ -121,18 +128,17 @@ public class PirattoPlugin extends OsmandPlugin implements Observer {
 
 	private void registerWidgets(MapActivity activity) {
 		MapInfoLayer mapInfoLayer = activity.getMapLayers().getMapInfoLayer();
-		List<DestinationPoint> destinationPoints = this.pirattoManager.getDestinationPoints();
-		if (mapInfoLayer != null && destinationPoints != null && !destinationPoints.isEmpty()) {
-			// TODO: check is index 0 valid for the first target point if it reached using navigator
-			DestinationPoint destinationPoint = destinationPoints.get(0);
-			Log.d(TAG, "create point widget for " + destinationPoint.getAddress());
+		if (!this.pirattoManager.isRoutingPoint()) {
+			DestinationPoint destinationPoint = this.pirattoManager.getNextRoutingPoint();
+			if (mapInfoLayer != null && destinationPoint != null) {
+				Log.d(TAG, "create point widget for " + destinationPoint.getAddress());
 
-			this.targetDestinationPoint = destinationPoint;
-			this.targetDestinationPointWidget = this.createPointInfoControl(activity, destinationPoint);
-			mapInfoLayer.registerSideWidget(this.targetDestinationPointWidget,
-					R.drawable.ic_action_piratto_dark, R.string.map_widget_piratto, KEY_PIRATTO_POINTS, false, 8);
-			mapInfoLayer.recreateControls();
-			this.pirattoManager.setTargetDestinationPoint(this.targetDestinationPoint);
+				this.targetDestinationPointWidget = this.createPointInfoControl(activity, destinationPoint);
+				mapInfoLayer.registerSideWidget(this.targetDestinationPointWidget,
+						R.drawable.ic_action_piratto_dark, R.string.map_widget_piratto, KEY_PIRATTO_POINTS, false, 8);
+				mapInfoLayer.recreateControls();
+				this.pirattoManager.routeNextPoint();
+			}
 		}
 	}
 
@@ -196,11 +202,26 @@ public class PirattoPlugin extends OsmandPlugin implements Observer {
 
 	@Override
 	public void update(Observable observable, Object data) {
-		if (!observable.hasChanged()) {
-			return;
+		PirattoManager pirattoManager = PirattoManager.getInstance();
+		if (!pirattoManager.isRoutingPoint()) {
+			pirattoManager.routeNextPoint();
 		}
 
 		this.pirattoLayer.refresh();
 		this.mapActivity.getMapView().refreshMap();
+	}
+
+	@Override
+	public void newRouteIsCalculated(boolean newRoute, ValueHolder<Boolean> showToast) {
+	}
+
+	@Override
+	public void routeWasCancelled() {
+		this.pirattoManager.setRoutingPoint(false);
+		this.pirattoManager.setRoutingPoint(null);
+	}
+
+	@Override
+	public void routeWasFinished() {
 	}
 }

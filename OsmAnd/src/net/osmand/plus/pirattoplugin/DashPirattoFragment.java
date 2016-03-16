@@ -102,6 +102,11 @@ public class DashPirattoFragment extends DashLocationFragment implements Observe
 		}
 
 		this.onOpenDash();
+
+		PirattoManager pirattoManager = PirattoManager.getInstance();
+		if (!pirattoManager.isRoutingPoint()) {
+			pirattoManager.routeNextPoint();
+		}
 	}
 
 	@Override

@@ -129,7 +129,8 @@ public class DestinationReachedMenuFragment extends Fragment {
 			routeNextPoint.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					pirattoManager.routeNextPoint();
+					pirattoManager.removeOldTargetPoint();
+					pirattoManager.routeNextPoint(DestinationReachedMenuFragment.this.getActivity());
 					dismissMenu();
 				}
 			});

@@ -43,12 +43,12 @@ public class PirattoPlugin extends OsmandPlugin implements Observer, RoutingHelp
 		ApplicationMode.regWidget(KEY_PIRATTO_POINTS, (ApplicationMode[]) null);
 		this.pirattoManager = PirattoManager.initialize(this.application);
 
-		this.pirattoManager.enable();
+		this.pirattoManager.enable(this.mapActivity);
 	}
 
 	@Override
 	public boolean init(OsmandApplication app, Activity activity) {
-		this.pirattoManager.enable();
+		this.pirattoManager.enable(this.mapActivity);
 		return super.init(app, activity);
 	}
 
@@ -137,7 +137,8 @@ public class PirattoPlugin extends OsmandPlugin implements Observer, RoutingHelp
 				mapInfoLayer.registerSideWidget(this.targetDestinationPointWidget,
 						R.drawable.ic_action_piratto_dark, R.string.map_widget_piratto, KEY_PIRATTO_POINTS, false, 8);
 				mapInfoLayer.recreateControls();
-				this.pirattoManager.routeNextPoint();
+				this.pirattoManager.removeOldTargetPoint();
+				this.pirattoManager.routeNextPoint(this.mapActivity);
 			}
 		}
 	}
@@ -204,7 +205,8 @@ public class PirattoPlugin extends OsmandPlugin implements Observer, RoutingHelp
 	public void update(Observable observable, Object data) {
 		PirattoManager pirattoManager = PirattoManager.getInstance();
 		if (!pirattoManager.isRoutingPoint()) {
-			pirattoManager.routeNextPoint();
+			pirattoManager.removeOldTargetPoint();
+			pirattoManager.routeNextPoint(this.mapActivity);
 		}
 
 		this.pirattoLayer.refresh();

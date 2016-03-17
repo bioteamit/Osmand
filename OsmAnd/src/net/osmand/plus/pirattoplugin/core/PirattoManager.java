@@ -1,7 +1,9 @@
 package net.osmand.plus.pirattoplugin.core;
 
-import android.content.Intent;
+import android.app.Activity;
+import android.content.Context;
 import android.os.AsyncTask;
+import android.support.v4.app.FragmentActivity;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -10,6 +12,7 @@ import net.osmand.data.PointDescription;
 import net.osmand.plus.OsmandApplication;
 import net.osmand.plus.OsmandSettings;
 import net.osmand.plus.TargetPointsHelper;
+import net.osmand.plus.dialogs.DirectionsDialogs;
 
 import java.util.List;
 import java.util.Observable;
@@ -124,49 +127,43 @@ public class PirattoManager extends Observable implements PointsRetrieverTask.On
 		return destinationPoints.get(0);
 	}
 
-	public synchronized void routeNextPoint() {
-		this.isRoutingPoint = false;
-		this.removeOldTargetPoint();
+	public synchronized void routeNextPoint(Context context) {
 		DestinationPoint targetPoint = this.getNextRoutingPoint();
 		if (targetPoint != null) {
-			this.navigateTo(targetPoint);
-			this.isRoutingPoint = true;
+			this.navigateTo(context, targetPoint);
 		}
 	}
 
-	private void removeOldTargetPoint() {
+	public void removeOldTargetPoint() {
 		if (this.destinationPoints == null
 				|| this.destinationPoints.getDestinationPoints() == null
 				|| this.destinationPoints.getDestinationPoints().isEmpty()) {
 			return;
 		}
 
-		List<DestinationPoint> destinationPoints = this.destinationPoints.getDestinationPoints();
 		this.removeDestinationPoint(0);
 		this.setRoutingPoint(null);
+		this.targetPointsHelper.clearPointToNavigate(false);
 	}
 
-	private void navigateTo(DestinationPoint destinationPoint) {
+	public void navigateTo(Context context, DestinationPoint destinationPoint) {
 		if (destinationPoint == null) {
 			return;
 		}
+		this.isRoutingPoint = false;
 
 		PointDescription description = new PointDescription(PointDescription.POINT_TYPE_PIRATTO_MARKER, destinationPoint.getAddress());
 		description.setLat(destinationPoint.getLatitude());
 		description.setLon(destinationPoint.getLongitude());
 
 		this.application.getSettings().navigateDialog();
-		this.targetPointsHelper.clearPointToNavigate(false);
-		this.targetPointsHelper.navigateToPoint(new LatLon(destinationPoint.getLatitude(), destinationPoint.getLongitude()), true, -1, description);
 
-		try {
-			Intent intent = new Intent(this.application, this.application.getAppCustomization().getMapActivity());
-			intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-			this.application.startActivity(intent);
-		} catch (Exception e) {
+		if (context instanceof Activity) {
+			DirectionsDialogs.directionsToDialogAndLaunchMap((FragmentActivity) context, destinationPoint.getLatitude(), destinationPoint.getLongitude(), description);
 		}
 
 		this.setRoutingPoint(destinationPoint);
+		this.isRoutingPoint = true;
 	}
 
 	public void setRoutingPoint(DestinationPoint destinationPoint) {
@@ -237,12 +234,13 @@ public class PirattoManager extends Observable implements PointsRetrieverTask.On
 		super.deleteObserver(observer);
 	}
 
-	public synchronized void enable() {
+	public synchronized void enable(final Context context) {
 		new AsyncTask<Void, Void, Void>() {
 			@Override
 			protected Void doInBackground(Void... params) {
 				PirattoManager.this.refresh();
-				PirattoManager.this.routeNextPoint();
+				PirattoManager.this.targetPointsHelper.clearPointToNavigate(false);
+				PirattoManager.this.routeNextPoint(context);
 				return null;
 			}
 		}.execute();

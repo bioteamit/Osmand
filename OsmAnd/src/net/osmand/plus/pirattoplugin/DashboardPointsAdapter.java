@@ -17,8 +17,8 @@ import net.osmand.plus.OsmandSettings;
 import net.osmand.plus.R;
 import net.osmand.plus.activities.MapActivity;
 import net.osmand.plus.dashboard.DashLocationFragment;
-import net.osmand.plus.dialogs.DirectionsDialogs;
 import net.osmand.plus.pirattoplugin.core.DestinationPoint;
+import net.osmand.plus.pirattoplugin.core.PirattoManager;
 
 import java.util.List;
 
@@ -154,11 +154,7 @@ public class DashboardPointsAdapter {
 			return;
 		}
 
-		PointDescription description = new PointDescription(PointDescription.POINT_TYPE_PIRATTO_MARKER, destinationPoint.getAddress());
-		description.setLat(destinationPoint.getLatitude());
-		description.setLon(destinationPoint.getLongitude());
-
-		DirectionsDialogs.directionsToDialogAndLaunchMap((FragmentActivity) this.context, destinationPoint.getLatitude(), destinationPoint.getLongitude(), description);
+		PirattoManager.getInstance().navigateTo(this.context, destinationPoint);
 	}
 
 	private OsmandApplication getMyApplication() {

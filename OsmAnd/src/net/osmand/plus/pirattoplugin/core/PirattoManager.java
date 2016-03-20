@@ -69,7 +69,7 @@ public class PirattoManager extends Observable implements PointsRetrieverTask.On
 		this.settings = application.getSettings();
 		this.targetPointsHelper = application.getTargetPointsHelper();
 		this.destinationPoints = new DestinationPoints();
-		this.addTestDestinationPoints();
+//		this.addTestDestinationPoints();
 
 		this.carPlateSettings = this.settings.registerStringPreference(PIRATTO_CAR_PLATE, null).makeGlobal();
 		this.updateIntervalSettings = this.settings.registerIntPreference(PIRATTO_UPDATE_INTERVAL, 2).makeGlobal();

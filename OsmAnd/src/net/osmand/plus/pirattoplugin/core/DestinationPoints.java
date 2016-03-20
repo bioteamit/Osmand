@@ -56,8 +56,8 @@ public class DestinationPoints {
 		this.destinationPoints.add(point);
 	}
 
-	public void removePoint(DestinationPoint point) {
-		this.destinationPoints.remove(point);
+	public boolean removePoint(DestinationPoint point) {
+		return this.destinationPoints.remove(point);
 	}
 
 	protected void removePoint(int index) {

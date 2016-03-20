@@ -101,7 +101,12 @@ public class DashPirattoFragment extends DashLocationFragment implements Observe
 			return;
 		}
 
-		this.onOpenDash();
+		this.getActivity().runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				DashPirattoFragment.this.onOpenDash();
+			}
+		});
 
 		PirattoManager pirattoManager = PirattoManager.getInstance();
 		if (!pirattoManager.isRoutingPoint()) {

@@ -63,8 +63,11 @@ public class DestinationPoint implements Comparable<DestinationPoint>, Serializa
 		DestinationPoint another = (DestinationPoint) obj;
 		if (TextUtils.isEmpty(this.address) && !TextUtils.isEmpty(another.address)) return false;
 		if (!TextUtils.isEmpty(this.address) && !this.address.equalsIgnoreCase(another.address)) return false;
-		if (this.latLon.getLatitude() != another.getLatitude()) return false;
-		if (this.latLon.getLongitude() != another.getLongitude()) return false;
+
+		float[] distance = new float[1];
+		net.osmand.Location.distanceBetween(this.latLon.getLatitude(), this.latLon.getLongitude(), another.getLatitude(), another.getLongitude(), distance);
+		if (distance[0] >= 1) return false;
+
 		return true;
 	}
 
@@ -72,8 +75,11 @@ public class DestinationPoint implements Comparable<DestinationPoint>, Serializa
 	public int compareTo(DestinationPoint another) {
 		if (another == null) return 1;
 		if (!this.address.equalsIgnoreCase(another.address)) return 1;
-		if (this.latLon.getLatitude() != another.getLatitude()) return 1;
-		if (this.latLon.getLongitude() != another.getLongitude()) return 1;
+
+		float[] distance = new float[1];
+		net.osmand.Location.distanceBetween(this.latLon.getLatitude(), this.latLon.getLongitude(), another.getLatitude(), another.getLongitude(), distance);
+		if (distance[0] >= 2) return 1;
+
 		return 0;
 	}
 }

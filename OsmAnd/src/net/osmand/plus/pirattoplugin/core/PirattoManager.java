@@ -3,7 +3,6 @@ package net.osmand.plus.pirattoplugin.core;
 import android.app.Activity;
 import android.content.Context;
 import android.os.AsyncTask;
-import android.support.v4.app.FragmentActivity;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -77,6 +76,9 @@ public class PirattoManager extends Observable implements PointsRetrieverTask.On
 	}
 
 	private void addTestDestinationPoints() {
+		this.addTestDestinationPoint("Qalioub5", 30.182147, 31.226800);
+		this.addTestDestinationPoint("Qalioub3", 30.182015, 31.226545);
+		this.addTestDestinationPoint("Qalioub4", 30.182256, 31.226191);
 		this.addTestDestinationPoint("Shoubra", 30.0906098, 31.2455468);
 		this.addTestDestinationPoint("Qalioub1", 30.1736758, 31.2250333);
 		this.addTestDestinationPoint("Qaliob2", 30.1796859, 31.2214284);
@@ -141,29 +143,40 @@ public class PirattoManager extends Observable implements PointsRetrieverTask.On
 			return;
 		}
 
-		this.removeDestinationPoint(0);
-		this.setRoutingPoint(null);
-		this.targetPointsHelper.clearPointToNavigate(false);
-	}
-
-	public void navigateTo(Context context, DestinationPoint destinationPoint) {
+		DestinationPoint destinationPoint = this.getRoutingPoint();
 		if (destinationPoint == null) {
 			return;
 		}
-		this.isRoutingPoint = false;
 
-		PointDescription description = new PointDescription(PointDescription.POINT_TYPE_PIRATTO_MARKER, destinationPoint.getAddress());
+		if (this.removeDestinationPoint(destinationPoint)) {
+			this.isRoutingPoint = false;
+			this.setRoutingPoint(null);
+			this.targetPointsHelper.clearPointToNavigate(false);
+		}
+	}
+
+	public void navigateTo(final Context context, final DestinationPoint destinationPoint) {
+		if (destinationPoint == null) {
+			return;
+		}
+
+		final PointDescription description = new PointDescription(PointDescription.POINT_TYPE_PIRATTO_MARKER, destinationPoint.getAddress());
 		description.setLat(destinationPoint.getLatitude());
 		description.setLon(destinationPoint.getLongitude());
 
 		this.application.getSettings().navigateDialog();
 
 		if (context instanceof Activity) {
-			DirectionsDialogs.directionsToDialogAndLaunchMap((FragmentActivity) context, destinationPoint.getLatitude(), destinationPoint.getLongitude(), description);
+			final Activity activity = (Activity) context;
+			activity.runOnUiThread(new Runnable() {
+				@Override
+				public void run() {
+					DirectionsDialogs.directionsToDialogAndLaunchMap(activity, destinationPoint.getLatitude(), destinationPoint.getLongitude(), description);
+					PirattoManager.this.setRoutingPoint(destinationPoint);
+					PirattoManager.this.isRoutingPoint = true;
+				}
+			});
 		}
-
-		this.setRoutingPoint(destinationPoint);
-		this.isRoutingPoint = true;
 	}
 
 	public void setRoutingPoint(DestinationPoint destinationPoint) {
@@ -189,9 +202,9 @@ public class PirattoManager extends Observable implements PointsRetrieverTask.On
 			return null;
 		}
 
-		DestinationPoint targetPoint = new DestinationPoint(this.targetPointAddressSettings.get(), this.targetPointLatitudeSettings.get(), this.targetPointLongitudeSettings.get());
+		DestinationPoint targetPoint = new DestinationPoint(this.targetPointAddressSettings.get(), Double.parseDouble(this.targetPointLatitudeSettings.get().toString()), Double.parseDouble(this.targetPointLongitudeSettings.get().toString()));
 
-		if (targetPoint.equals(new DestinationPoint(null, 0f, 0f))) {
+		if (targetPoint.equals(new DestinationPoint(null, 0, 0))) {
 			return null;
 		}
 		return targetPoint;
@@ -271,14 +284,10 @@ public class PirattoManager extends Observable implements PointsRetrieverTask.On
 		}
 	}
 
-	public void removeDestinationPoint(DestinationPoint destinationPoint) {
-		this.destinationPoints.removePoint(destinationPoint);
+	public boolean removeDestinationPoint(DestinationPoint destinationPoint) {
+		boolean state = this.destinationPoints.removePoint(destinationPoint);
 		this.destinationPoints.commit();
-	}
-
-	protected void removeDestinationPoint(int index) {
-		this.destinationPoints.removePoint(index);
-		this.destinationPoints.commit();
+		return state;
 	}
 
 	@Override

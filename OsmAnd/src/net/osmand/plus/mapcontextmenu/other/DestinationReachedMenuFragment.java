@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -121,19 +122,25 @@ public class DestinationReachedMenuFragment extends Fragment {
 
 		Button routeNextPoint = (Button) view.findViewById(R.id.btn_next_piratto_point);
 		PirattoPlugin pirattoPlugin = OsmandPlugin.getEnabledPlugin(PirattoPlugin.class);
-		final PirattoManager pirattoManager = PirattoManager.getInstance();
-		if (pirattoPlugin != null && pirattoManager.isRoutingPoint()) {
-			routeNextPoint.setVisibility(View.VISIBLE);
-			routeNextPoint.setCompoundDrawablesWithIntrinsicBounds(
-					iconsCache.getContentIcon(R.drawable.ic_action_piratto_dark), null, null, null);
-			routeNextPoint.setOnClickListener(new View.OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					pirattoManager.removeOldTargetPoint();
-					pirattoManager.routeNextPoint(DestinationReachedMenuFragment.this.getActivity());
-					dismissMenu();
+		if (pirattoPlugin != null) {
+			try {
+				final PirattoManager pirattoManager = PirattoManager.getInstance();
+				if (pirattoManager.isRoutingPoint()) {
+					routeNextPoint.setVisibility(View.VISIBLE);
+					routeNextPoint.setCompoundDrawablesWithIntrinsicBounds(
+							iconsCache.getContentIcon(R.drawable.ic_action_piratto_dark), null, null, null);
+					routeNextPoint.setOnClickListener(new View.OnClickListener() {
+						@Override
+						public void onClick(View v) {
+							pirattoManager.removeOldTargetPoint();
+							pirattoManager.routeNextPoint(DestinationReachedMenuFragment.this.getActivity());
+							dismissMenu();
+						}
+					});
 				}
-			});
+			} catch (Exception e) {
+				Log.e("Piratto", "failed to showssss", e);
+			}
 		} else {
 			routeNextPoint.setVisibility(View.GONE);
 		}

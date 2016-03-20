@@ -8,7 +8,6 @@ import net.osmand.plus.ApplicationMode;
 import net.osmand.plus.OsmandApplication;
 import net.osmand.plus.OsmandPlugin;
 import net.osmand.plus.R;
-import net.osmand.plus.TargetPointsHelper;
 import net.osmand.plus.activities.MapActivity;
 import net.osmand.plus.dashboard.tools.DashFragmentData;
 import net.osmand.plus.pirattoplugin.core.DestinationPoint;
@@ -197,6 +196,8 @@ public class PirattoPlugin extends OsmandPlugin implements Observer, RoutingHelp
 		super.mapActivityDestroy(activity);
 		Log.d(TAG, "on activity destroy");
 
+		this.pirattoManager.setRoutingPoint(false);
+		this.pirattoManager.removeOldTargetPoint();
 		this.pirattoManager.cancelSchedule();
 		this.pirattoManager.deleteObserver(this);
 	}

@@ -99,6 +99,11 @@ public class PirattoPositionLayer extends OsmandMapLayer implements ContextMenuL
 	}
 
 	@Override
+	public boolean isObjectClickable(Object o) {
+		return o instanceof LatLon;
+	}
+
+	@Override
 	public void collectObjectsFromPoint(PointF point, RotatedTileBox tileBox, List<Object> o) {
 		this.getDestinationPointFromPoint(tileBox, point, o);
 	}

@@ -143,7 +143,7 @@ public class DestinationReachedMenuFragment extends Fragment {
 					});
 				}
 			} catch (Exception e) {
-				Log.e("Piratto", "failed to showssss", e);
+				Log.e("Piratto", "failed to navigate to next point", e);
 			}
 		} else {
 			routeNextPoint.setVisibility(View.GONE);

@@ -31,6 +31,8 @@ public class PirattoPlugin extends OsmandPlugin implements Observer, RoutingHelp
 
 	private MapActivity mapActivity;
 
+	private RoutingHelper routingHelper;
+
 	private PirattoManager pirattoManager;
 
 	private PirattoPositionLayer pirattoLayer;
@@ -43,6 +45,7 @@ public class PirattoPlugin extends OsmandPlugin implements Observer, RoutingHelp
 		this.pirattoManager = PirattoManager.initialize(this.application);
 
 		this.pirattoManager.enable(this.mapActivity);
+		this.routingHelper = this.application.getRoutingHelper();
 	}
 
 	@Override
@@ -177,12 +180,14 @@ public class PirattoPlugin extends OsmandPlugin implements Observer, RoutingHelp
 	public void mapActivityResume(MapActivity activity) {
 		super.mapActivityResume(activity);
 		Log.d(TAG, "on activity resumed");
+		this.routingHelper.addListener(this);
 	}
 
 	@Override
 	public void mapActivityPause(MapActivity activity) {
 		super.mapActivityPause(activity);
 		Log.d(TAG, "on activity paused");
+		this.routingHelper.removeListener(this);
 	}
 
 	@Override
@@ -196,8 +201,6 @@ public class PirattoPlugin extends OsmandPlugin implements Observer, RoutingHelp
 		super.mapActivityDestroy(activity);
 		Log.d(TAG, "on activity destroy");
 
-		this.pirattoManager.setRoutingPoint(false);
-		this.pirattoManager.removeOldTargetPoint();
 		this.pirattoManager.cancelSchedule();
 		this.pirattoManager.deleteObserver(this);
 	}
@@ -220,8 +223,11 @@ public class PirattoPlugin extends OsmandPlugin implements Observer, RoutingHelp
 
 	@Override
 	public void routeWasCancelled() {
-		this.pirattoManager.setRoutingPoint(false);
-		this.pirattoManager.setRoutingPoint(null);
+//		Log.d(TAG, "Routing is cancelled");
+//		this.pirattoManager.setRoutingPoint(false);
+//		this.pirattoManager.setRoutingPoint(null);
+//		this.pirattoManager.removeOldTargetPoint();
+//		this.pirattoManager.routeNextPoint(this.mapActivity);
 	}
 
 	@Override

@@ -152,6 +152,7 @@ public class PirattoManager extends Observable implements PointsRetrieverTask.On
 			this.isRoutingPoint = false;
 			this.setRoutingPoint(null);
 			this.targetPointsHelper.clearPointToNavigate(false);
+			Log.d(TAG, "Old target point is removed: " + destinationPoint.getAddress() + " @ " + destinationPoint.getPoint().toString());
 		}
 	}
 
@@ -174,6 +175,7 @@ public class PirattoManager extends Observable implements PointsRetrieverTask.On
 					DirectionsDialogs.directionsToDialogAndLaunchMap(activity, destinationPoint.getLatitude(), destinationPoint.getLongitude(), description);
 					PirattoManager.this.setRoutingPoint(destinationPoint);
 					PirattoManager.this.isRoutingPoint = true;
+					Log.d(TAG, "Navigate to: " + destinationPoint.getAddress() + " @ " + destinationPoint.getPoint().toString());
 				}
 			});
 		}

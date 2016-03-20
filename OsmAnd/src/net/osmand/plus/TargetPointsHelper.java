@@ -138,10 +138,12 @@ public class TargetPointsHelper {
 			AddressLookupRequest lookupRequest = new AddressLookupRequest(targetPoint.point, new GeocodingLookupService.OnAddressLookupResult() {
 				@Override
 				public void geocodingDone(String address) {
-					targetPoint.pointDescription.setName(address);
-					settings.updateIntermediatePoint(targetPoint.point.getLatitude(), targetPoint.point.getLongitude(),
-							targetPoint.pointDescription);
-					updateRouteAndRefresh(false);
+					if (intermediatePoints.contains(targetPoint)) {
+						targetPoint.pointDescription.setName(address);
+						settings.updateIntermediatePoint(targetPoint.point.getLatitude(), targetPoint.point.getLongitude(),
+								targetPoint.pointDescription);
+						updateRouteAndRefresh(false);
+					}
 				}
 			}, null);
 			ctx.getGeocodingLookupService().lookupAddress(lookupRequest);
@@ -156,10 +158,12 @@ public class TargetPointsHelper {
 				@Override
 				public void geocodingDone(String address) {
 					startPointRequest = null;
-					pointToStart.pointDescription.setName(address);
-					settings.setPointToStart(pointToStart.point.getLatitude(), pointToStart.point.getLongitude(),
-							pointToStart.pointDescription);
-					updateRouteAndRefresh(false);
+					if (pointToStart != null) {
+						pointToStart.pointDescription.setName(address);
+						settings.setPointToStart(pointToStart.point.getLatitude(), pointToStart.point.getLongitude(),
+								pointToStart.pointDescription);
+						updateRouteAndRefresh(false);
+					}
 				}
 			}, null);
 			ctx.getGeocodingLookupService().lookupAddress(startPointRequest);
@@ -174,10 +178,12 @@ public class TargetPointsHelper {
 				@Override
 				public void geocodingDone(String address) {
 					targetPointRequest = null;
-					pointToNavigate.pointDescription.setName(address);
-					settings.setPointToNavigate(pointToNavigate.point.getLatitude(), pointToNavigate.point.getLongitude(),
-							pointToNavigate.pointDescription);
-					updateRouteAndRefresh(false);
+					if (pointToNavigate != null) {
+						pointToNavigate.pointDescription.setName(address);
+						settings.setPointToNavigate(pointToNavigate.point.getLatitude(), pointToNavigate.point.getLongitude(),
+								pointToNavigate.pointDescription);
+						updateRouteAndRefresh(false);
+					}
 				}
 			}, null);
 			ctx.getGeocodingLookupService().lookupAddress(targetPointRequest);
@@ -257,10 +263,16 @@ public class TargetPointsHelper {
 		return null;
 	}
 
-	/**
-	 * Clear the local and persistent waypoints list and destination.
-	 */
-	public void removeAllWayPoints(boolean updateRoute){
+	public void restoreTargetPoints(boolean updateRoute) {
+		settings.restoreTargetPoints();
+		readFromSettings();
+		updateRouteAndRefresh(updateRoute);
+	}
+
+		/**
+		 * Clear the local and persistent waypoints list and destination.
+		 */
+	public void removeAllWayPoints(boolean updateRoute, boolean clearBackup){
 		cancelStartPointAddressRequest();
 		cancelTargetPointAddressRequest();
 		cancelAllIntermediatePointsAddressRequests();
@@ -268,6 +280,9 @@ public class TargetPointsHelper {
 		settings.clearIntermediatePoints();
 		settings.clearPointToNavigate();
 		settings.clearPointToStart();
+		if (clearBackup) {
+			settings.backupTargetPoints();
+		}
 		pointToNavigate = null;
 		pointToStart = null;
 		intermediatePoints.clear();

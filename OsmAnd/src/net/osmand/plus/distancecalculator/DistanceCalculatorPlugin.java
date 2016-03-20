@@ -588,6 +588,11 @@ public class DistanceCalculatorPlugin extends OsmandPlugin {
 		}
 
 		@Override
+		public boolean isObjectClickable(Object o) {
+			return false;
+		}
+
+		@Override
 		public void collectObjectsFromPoint(PointF point, RotatedTileBox tileBox, List<Object> o) {
 			getMPointsFromPoint(tileBox, point, o);
 		}
@@ -635,8 +640,8 @@ public class DistanceCalculatorPlugin extends OsmandPlugin {
 		}
 		
 		@Override
-		public void populateObjectContextMenu(Object o, ContextMenuAdapter adapter) {
-			if(o instanceof WptPt) {
+		public void populateObjectContextMenu(LatLon latLon, Object o, ContextMenuAdapter adapter) {
+			if (o != null && o instanceof WptPt) {
 				final WptPt p = (WptPt) o;
 				boolean containsPoint = false;
 				for (int i = 0; i < measurementPoints.size(); i++) {

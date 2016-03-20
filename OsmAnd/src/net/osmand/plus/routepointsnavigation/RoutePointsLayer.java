@@ -41,6 +41,11 @@ public class RoutePointsLayer  extends OsmandMapLayer implements ContextMenuLaye
 	}
 
 	@Override
+	public boolean isObjectClickable(Object o) {
+		return false;
+	}
+
+	@Override
 	public void collectObjectsFromPoint(PointF point, RotatedTileBox tileBox, List<Object> o) {
 
 	}
@@ -81,8 +86,8 @@ public class RoutePointsLayer  extends OsmandMapLayer implements ContextMenuLaye
 	}
 
 	@Override
-	public void populateObjectContextMenu(Object o, ContextMenuAdapter adapter) {
-		if (o instanceof GPXUtilities.WptPt && plugin.getCurrentRoute() != null){
+	public void populateObjectContextMenu(LatLon latLon, Object o, ContextMenuAdapter adapter) {
+		if (o != null && o instanceof GPXUtilities.WptPt && plugin.getCurrentRoute() != null){
 			final GPXUtilities.WptPt point = (GPXUtilities.WptPt) o;
 			ContextMenuAdapter.OnContextMenuClick listener = new ContextMenuAdapter.OnContextMenuClick() {
 				@Override

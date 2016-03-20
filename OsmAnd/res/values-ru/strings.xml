@@ -1,6 +1,10 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources>
-
+    <string name="select_map_markers">Выберите маркеры</string>
+    <string name="shared_string_topbar">Верхняя панель</string>
+    <string name="osm_user_stat">Правок: %1$s, ранг: %2$s, всего правок: %3$s</string>
+    <string name="osm_editors_ranking">Рейтинг картографов OSM</string>
+    <string name="show_transparency_seekbar">Отображать регулировку прозрачности</string>
     <string name="show_polygons">Отображать полигоны</string>
     <string name="rendering_attr_showMtbRoutes_name">Отображать MTB маршруты</string>
     <string name="shared_string_select">Выбрать</string>
@@ -29,7 +33,7 @@
 	<string name="osn_bug_name">Заметка OSM</string>
 	<string name="osn_add_dialog_title">Создать заметку</string>
 	<string name="osn_comment_dialog_title">Добавить комментарий</string>
-	<string name="osn_reopen_dialog_title">Повторное открыть заметку</string>
+	<string name="osn_reopen_dialog_title">Повторно открыть заметку</string>
 	<string name="osn_close_dialog_title">Закрыть заметку</string>
 	<string name="osn_add_dialog_success">Заметка успешно создана</string>
 	<string name="osn_add_dialog_error">Ошибка: заметка не была создана</string>
@@ -189,7 +193,7 @@
     <string name="global_settings">Общие настройки</string>
     <string name="global_app_settings">Общие настройки приложения</string>
     <string name="download_files_not_enough_space">Недостаточно места на диске для загрузки %1$s MB (свободно: %2$s).</string>
-    <string name="download_files_question_space">Свободное место {2} MB! Загрузить {0} файл(ов) ({1} MB)?</string>
+    <string name="download_files_question_space">Загрузить {0} файл(ов)? Необходимо {1} Мб на постоянной основе. В настоящее время доступно {2} Мб свободного места.</string>
     <string name="use_transparent_map_theme">Прозрачная тема</string>
     <string name="native_library_not_supported">Нативная библиотека не поддерживается на этом устройстве.</string>
     <string name="init_native_library">Инициализация нативной библиотеки…</string>
@@ -603,7 +607,7 @@
     <string name="save_track_to_gpx">Запись трека в файл GPX во время навигации</string>
     <string name="update_tile">Обновить карту</string>
     <string name="reload_tile">Обновить часть карты</string>
-    <string name="user_name_descr">Укажите имя пользователя (требуется для работы с OSM)</string>
+    <string name="open_street_map_login_descr">Укажите имя пользователя (требуется для работы с OSM)</string>
     <string name="user_name">Имя пользователя</string>
     <string name="mark_point">Цель</string>
     <string name="use_english_names_descr">Использовать английские названия вместо местных</string>
@@ -941,7 +945,7 @@
     <string name="recording_context_menu_show">Отобразить</string>
     <string name="av_def_action_picture">Сделать фото</string>
     <string name="recording_context_menu_precord">Сделать фото</string>
-    <string name="dropbox_plugin_description">Плагин Dropbox позволяет синхронизировать треки и видео/аудио заметки с вашим аккаунтом dropbox.</string>
+    <string name="dropbox_plugin_description">Плагин Dropbox позволяет синхронизировать треки и видео/аудио заметки с вашим аккаунтом Dropbox.</string>
     <string name="dropbox_plugin_name">Плагин Dropbox</string>
     <string name="osmand_srtm_long_description_1000_chars">"Плагин обеспечивает наложение контурных линии и (рельефа) затемняющего слоя, которые будут отображаться поверх стандартных карт OsmAnd. Эта функция высоко оценится спортсменами, туристами, путешественниками и всеми, кто заинтересован в рельефной структуре ландшафта.\n\nГлобальные данные (между 70 градусов на севере и 70 градусов на юге) основываются на измерениях SRTM (Shuttle Radar Topography Mission) и ASTER (Advanced Spaceborne Thermal Emission and Reflection Radiometer), инструментом визуализации Terra, флагманского спутника Земли системы наблюдения NASA. ASTER является результатом совместных усилий NASA, министерства экономики Японии, торговли и промышленности (METI), космических систем Японии (J-spacesystems). "</string>
     <string name="recording_photo_description">Фото %1$s %2$s</string>
@@ -1096,8 +1100,8 @@
     <string name="routing_attr_short_way_description">Использовать кратчайший путь</string>
     <string name="routing_attr_avoid_toll_name">Избегать платных дорог</string>
     <string name="routing_attr_avoid_toll_description">Избегать платных дорог</string>
-    <string name="routing_attr_avoid_unpaved_name">Избегать грунтовые дороги</string>
-    <string name="routing_attr_avoid_unpaved_description">Избегать грунтовые дороги</string>
+    <string name="routing_attr_avoid_unpaved_name">Избегать грунтовых дорог</string>
+    <string name="routing_attr_avoid_unpaved_description">Избегать грунтовых дорог</string>
     <string name="routing_attr_avoid_ferries_name">Избегать паромов</string>
     <string name="routing_attr_avoid_ferries_description">Избегать паромов</string>
     <string name="routing_attr_weight_name">Максимальная масса</string>
@@ -1193,7 +1197,7 @@
     <string name="osmo_settings_uuid">Ключ доступа</string>
     <string name="osmo_settings_descr">Настройка параметров мониторинга и установка персонального канала мониторинга</string>
     <string name="osmo_plugin_description">"Плагин обеспечивает функциональность для расширенного живого мониторинга OsMo, см. http://osmo.mobi.\n\nОн позволяет отслеживать другие устройства и отслеживаться самому. Вы можете создавать анонимные группы, делиться друг с другом местоположением и общаться. Возможны различные варианты опций для отслеживания сессии или постоянного слежения.\n\nАнонимные группы создаются для указанного количества дней и ограниченным функционалом, то есть нет дистанционного управления и нет администратора группы. Полностью функциональные группы, с другой стороны, могут быть созданы на веб-сайте и только зарегистрированные пользователи имеют к ним доступ. "</string>
-    <string name="osmo_plugin_name">OsMo (OSM мониторинг)</string>
+    <string name="osmo_plugin_name">OpenStreetMap Мониторинг</string>
     <string name="osmo_settings">OsMo</string>
     <string name="navigation_intent_invalid">Неправильный формат: %s</string>
     <string name="share_route_subject">Маршрут предоставленный через OsmAnd</string>
@@ -1209,7 +1213,7 @@
     <string name="use_points_as_intermediates">Рассчитать маршрут между точками</string>
     <string name="osmo_connect_to_device_name">Имя пользователя</string>
     <string name="osmo_connected_devices">Устройства</string>
-    <string name="osmo_groups">Управление OsMo</string>
+    <string name="osmo_groups">Группы OsMo</string>
     <string name="osmo_connect_to_device">Подключиться к устройству</string>
     <string name="osmo_auth_pending">Ожидание авторизации…</string>
     <string name="osmo_conn_successfull">Соединение установлено: %1$s </string>
@@ -1221,13 +1225,12 @@
     <string name="osmo_mode_on">Остановить сессию</string>
     <string name="osmo_mode_off">Старт сессии</string>
     <string name="osmo_settings_debug">Отладочная информация</string>
-    <string name="osmo_connect_to_device_tracker_id">ID трекера</string>
-    <string name="osmo_auto_send_locations_descr">Автоматически стартовать сессию трекера и отправлять местоположение после запуска приложения</string>
-    <string name="osmo_auto_send_locations">Автоматически запускать мониторинг</string>
-    <string name="osmo_tracker_id">Персональный ID</string>
+    <string name="osmo_connect_to_device_tracker_id">Трекер ID</string>
+    <string name="osmo_auto_send_locations_descr">Автоматический старт поездки и отправка местоположения после запуска приложения</string>
+    <string name="osmo_auto_send_locations">Автоматический старт поездки</string>
+    <string name="osmo_tracker_id">ID трекера</string>
     <string name="osmo_session_token">Токен сессии: %1$s</string>
-    <string name="osmo_tracker_id_descr">Выберите чтобы посмотреть или поделиться ID трекера.
-	Используя ID трекера присоединённые устройства будут доступны для мониторинга всех передвижений этого устройства! Для отключения выберите опцию восстановления.</string>
+    <string name="osmo_tracker_id_descr">Нажмите для посмотра ID трекера</string>
     <string name="index_item_world_bitcoin_payments">Мировые пункты обмена bitcoin</string>
     <string name="osmo_connect_to_group_id">ID группы</string>
     <string name="osmo_group_name">Название группы</string>
@@ -1247,13 +1250,13 @@
     <string name="osmo_group_share">Чтобы подключиться к группе %2$s, укажите ID группы (%1$s) или нажмите %3$s.</string>
     <string name="osmo_share_connect_device">Поделиться ID трекера</string>
     <string name="osmo_connect_menu">Соединение</string>
-    <string name="osmo_connect">Подключиться к</string>
+    <string name="osmo_connect">Войти</string>
     <string name="osmo_server_operation_failed">OsMo: не удалось правильно обработать команду</string>
     <string name="import_file_favourites">Сохранить точки как файл GPX или импортировать их в избранное?</string>
     
-    <string name="rendering_value_pink_name">розовый</string>
+    <string name="rendering_value_pink_name">Розовый</string>
     
-    <string name="rendering_value_brown_name">коричневый</string>
+    <string name="rendering_value_brown_name">Коричневый</string>
     
     
     
@@ -1262,7 +1265,7 @@
     <string name="osmo_regenerate_login_ids_confirm">Вы уверены, что хотите пересоздать персональные ID? Все устройства, связанные с Вами, больше не будут отслеживать Вас.</string>
     <string name="osmo_regenerate_login_ids">Регенерировать ID пользователя</string>
     <string name="osmo_use_server_name">Зарегистрированное имя</string>
-    <string name="osmo_connect_to_my_nickname">Мой ник</string>
+    <string name="osmo_connect_to_my_nickname">Ник</string>
     <string name="osmo_user_name">Пользователь</string>
     
     <string name="osmo_credentials_not_valid">Ваши учётные данные OsMo не верны.</string>
@@ -1425,7 +1428,7 @@
     <string name="local_index_description">Нажмите на любой элемент списка для просмотра более подробной информации, нажмите и удерживайте, чтобы поместить в архив или удалить. Текущие данные на устройстве (%1$s свободно):</string>
     <string name="osmo_device_not_found">Устройство не обнаружено</string>
     <string name="anonymous_user">Анонимный пользователь</string>
-    <string name="osmo_no_connection_msg">Сервис OsMo не доступен:\n- проверьте соединение;\n- проверьте настройки;\n- проверьте наш Twitter: https://twitter.com/OsMomobi</string>
+    <string name="osmo_no_connection_msg">Сервис OsMo не доступен:\n- проверьте интернет соединение;\n- проверьте настройки;\n- проверьте наш Twitter: https://twitter.com/OsMomobi</string>
     <string name="anonymous_user_hint">Анонимному пользователю недоступно:\n- создание групп;\n- синхронизация групп и устройств с сервером;\n- управление группами и устройствами в личном кабинете.</string>
     <string name="logged_as">Вы вошли как %1$s</string>
     <string name="rendering_category_routes">Маршруты</string>
@@ -1649,7 +1652,7 @@
     <string name="search_poi_category_hint">Напечатайте для поиска</string>
     <string name="rendering_attr_hideHouseNumbers_name">Скрыть номера домов</string>
     
-    <string name="routing_attr_avoid_borders_description">Избегать пересечение границы с другой страной</string>
+    <string name="routing_attr_avoid_borders_description">Избегать пересечения границы с другой страной</string>
     <string name="routing_attr_height_name">Ограничение высоты</string>
     <string name="routing_attr_height_description">Укажите высоту автомобиля для учёта при построении маршрута</string>
     <string name="use_fast_recalculation">Умный перерасчет маршрута</string>
@@ -1658,7 +1661,7 @@
     <string name="rendering_value_disabled_name">Отключено</string>
     <string name="rendering_value_walkingRoutesScopeOSMC_name">Раскраска в соответствии с легендой маршрута</string>
     <string name="rendering_value_walkingRoutesOSMC_name">Раскраска в соответствии с OSMC</string>
-    <string name="osmo_share_my_location">Поделиться моим местоположением</string>
+    <string name="osmo_share_my_location">Передача местоположения</string>
     <string name="shared_string_logoff">Выход</string>
     <string name="index_name_netherlands">Европа - Нидерланды</string>
     <string name="shared_string_wikipedia">Википедия</string>
@@ -1869,7 +1872,7 @@
     <string name="context_menu_item_edit_waypoint">Редактировать точку GPX</string>
     <string name="routing_attr_avoid_stairs_name">Избегать лестниц</string>
     <string name="routing_attr_avoid_stairs_description">Избегать лестниц</string>
-    <string name="routing_attr_avoid_borders_name">Избегать пересечение бордюра</string>
+    <string name="routing_attr_avoid_borders_name">Избегать пересечения границы</string>
     <string name="update">Обновлять каждые</string>
     <string name="only_download_over_wifi">Загружать только через WiFi</string>
     <string name="update_now">Обновить сейчас</string>
@@ -1899,7 +1902,7 @@
     <string name="night">Ночь</string>
     <string name="morning">Утро</string>
     <string name="rec_split_storage_size_desc">Объём памяти, который может быть занят всеми видеоклипами</string>
-    <string name="rec_split_clip_length">Продолжительность видеоклипа</string>
+    <string name="rec_split_clip_length">Длина ролика</string>
     <string name="rec_split_clip_length_desc">Продолжительность каждого записанного клипа не будет больше выбранного значения</string>
     <string name="rec_split">Разбиение на клипы</string>
     <string name="rec_split_title">Использовать разбиение на клипы</string>
@@ -1920,8 +1923,8 @@
     <string name="osm_live_hide_user_name">Не показывать мое имя в отчетах</string>
     <string name="osm_live_month_cost">Стоимость в месяц</string>
     <string name="osm_live_month_cost_desc">Ежемесячный платеж</string>
-    <string name="osm_live_enter_email">Пожалуйста, введите действительный адрес электронной почты</string>
-    <string name="osm_live_thanks"/>
+    <string name="osm_live_enter_email">Пожалуйста, введите корректный адрес электронной почты</string>
+    <string name="osm_live_thanks">Благодарим вас за подписку на живые обновления!</string>
     <string name="osm_live_subscription_settings">Параметры подписки</string>
     <string name="osm_live_ask_for_purchase">Пожалуйста сначала приобретите подписку OSM Live</string>
 
@@ -1929,7 +1932,7 @@
     
     <string name="select_map_marker">Выберите маркер</string>
     <string name="map_markers_other">Другие маркеры</string>
-    <string name="upload_anonymously">Добавлено анонимно</string>
+    <string name="upload_anonymously">Загрузить анонимно</string>
     <string name="map_marker_1st">Первый маркер</string>
     <string name="map_marker_2nd">Второй маркер</string>
     <string name="shared_string_toolbar">Панель инструментов</string>
@@ -1946,8 +1949,34 @@
     <string name="shared_string_save_changes">Сохранить изменения</string>
     <string name="shared_string_email_address">Адрес электронной почты</string>
     <string name="shared_string_read_more">Подробнее</string>
-    <string name="item_removed">Элемент удален</string>
+    <string name="item_removed">Запись удалена</string>
     <string name="n_items_removed">элементы удалены</string>
-    <string name="live_updates">Live обновления</string>
-    <string name="select_voice_provider_descr">Выберите или скачайте голосовые подсказки для вашего языка</string>
+    <string name="live_updates">Живые обновления</string>
+    <string name="select_voice_provider_descr">Выберите или скачайте голосовое сопровождение для вашего языка</string>
+    <string name="full_report">Полный отчет</string>
+    <string name="recalculate_route">Пересчитать маршрут</string>
+    <string name="open_street_map_login_and_pass">Имя пользователя и пароль OpenStreetMap</string>
+    <string name="number_of_recipients">Количество получателей</string>
+    <string name="osm_live_active">Активные</string>
+    <string name="osm_live_not_active">Неактивные</string>
+    <string name="osm_live_region_desc">Часть вашего пожертвования будет направляться пользователям OpenStreetMap внесшим изменения в карту этого региона</string>
+    <string name="download_files_error_not_enough_space">Недостаточно места! Необходимо {3} Мб временно и {1} Мб на постоянной основе. В настоящее время доступно только {2} Мб свободного места.</string>
+    <string name="upload_osm_note_description">Вы можете загрузить вашу OSM заметку анонимно, или используя свой профиль OpenStreetMap.org</string>
+    <string name="upload_osm_note">Загрузить OSM заметку</string>
+    <string name="use_drawer_btn">Использовать меню</string>
+    <string name="use_dashboard_btn">Использовать домашнюю страницу</string>
+    <string name="dashboard_or_drawer_title">Домашняя страница или меню</string>
+    <string name="live_update">Live обновление</string>
+    <string name="updates_size">Размер обновления</string>
+    <string name="reports_for">Отчет для</string>
+<string name="storage_permission_restart_is_required">Приложение получило разрешение на запись во внешнее хранилище. Требуется перезагрузка приложения.</string>
+    <string name="release_2_3">" • OSM Live. Поддержка авторов и разработчиков карт и получение почасовых обновлений карты.\n\n• Маркеры. Новый способ для быстрого выбора мест на карте.\n\n• Более подробные OSM карты со специфическими дорожными знаками стран и с большим количеством новых функций.\n\n• Улучшен внешний вид и подготовка маршрута.\n\n• Множество улучшений в контекстном меню карты таких как поиск адреса.\n\nИ многое другое... "</string>
+    <string name="report">Отчёт</string>
+    <string name="shared_string_move_up">Переместить вверх</string>
+    <string name="shared_string_move_down">Переместить вниз</string>
+    <string name="finish_navigation">Завершить навигацию</string>
+    <string name="avoid_road">Избегать дорог</string>
+    <string name="osm_live_user_public_name">Публичное имя</string>
+    <string name="osm_live_support_region">Поддерживаемый регион</string>
+    <string name="osm_live_enter_user_name">Пожалуйста введите имя</string>
     </resources>

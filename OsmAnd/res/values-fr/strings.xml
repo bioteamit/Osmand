@@ -58,7 +58,7 @@
     <string name="general_settings_descr">Configurer l\'affichage et les paramètres généraux de l\'application</string>
     <string name="global_app_settings">Paramètres globaux de l\'application</string>
     <string name="user_name">Votre identifiant OSM</string>
-    <string name="user_name_descr">Nécessaire pour les contributions openstreetmap.org</string>
+    <string name="open_street_map_login_descr">Nécessaire pour les contributions openstreetmap.org</string>
     <string name="user_password">Votre mot de passe OSM</string>
     <string name="user_password_descr">Nécessaire pour les contributions openstreetmap.org</string>
     <string name="osmand_service">Mode tâche de fond</string>
@@ -138,7 +138,7 @@
     <string name="shared_string_others">Autres</string>
     <string name="shared_string_no_thanks">Pas nécessaire</string>
     <string name="basemap_missing">La carte mondiale de base est absente (couvrant le monde entier à faible zoom). Pensez à télécharger World_basemap_x.obf pour avoir un environnement complet.</string>
-    <string name="vector_data_missing">Il n\'y a pas de cartes (\'hors-ligne\') sur la carte SD. Pensez à en télécharger pour utiliser OsmAnd hors-ligne.</string>
+    <string name="vector_data_missing">Il n\'y a aucune carte hors-ligne sur la carte SD. Pensez à télécharger des cartes pour utiliser OsmAnd hors-ligne.</string>
 
 
     <string name="local_index_installed">Version locale</string>
@@ -682,7 +682,7 @@
     <string name="online_map_settings_descr">Configurer la source de la carte en ligne ou en cache</string>
 
 
-    <string name="osmand_rastermaps_plugin_description">"Ce greffon permet d\'accéder à une grande gamme de cartes en ligne (aussi appelées tuiles ou cartes raster) qui vont de cartes OpenStreetMap (comme les tuiles Mapnik) jusqu\'aux images satellites en passant par des cartes spécialisées comme des cartes météo, des cartes de climat, des cartes géologiques, etc …\n\nChacune de ces cartes est utilisable soit comme carte principale soit comme sur ou sous couche d\'une autre carte. Afin de gérer au mieux la superposition des cartes, vous pouvez masquer certains éléments des cartes vectorielles hors ligne depuis le menu \"Configurer la carte\".\n\nCes cartes tuiles peuvent être obtenues directement en ligne et peuvent également être préparées grâce à des outils tiers puis copiées dans le dossier de données d\'OsmAnd sous forme de base de données sqlite. "</string>
+    <string name="osmand_rastermaps_plugin_description">"Ce greffon permet d\'accéder à une grande gamme de cartes en ligne (aussi appelées tuiles ou cartes raster) qui vont de cartes OpenStreetMap (comme les tuiles Mapnik) jusqu\'aux images satellites en passant par des cartes spécialisées comme des cartes météo, des cartes de climat, des cartes géologiques, etc …\n\nChacune de ces cartes est utilisable soit comme carte principale soit comme sur ou sous couche d\'une autre carte. Afin de gérer au mieux la superposition des cartes, vous pouvez masquer certains éléments des cartes vectorielles hors ligne depuis le menu \"Configurer la carte\".\n\nCes cartes tuiles peuvent être obtenues directement en ligne et peuvent également être préparées grâce à des outils tiers puis copiées dans le dossier de données d\'OsmAnd sous forme de base de données SQLite. "</string>
     <string name="osmand_background_plugin_description">Affiche les préférences afin d\'activer le suivi et la navigation en tâche de fond (écran éteint) en réveillant périodiquement le GPS.</string>
     <string name="osmand_accessibility_description">Ce greffon donne accès directement dans OsmAnd aux options d\'accessibilité de votre appareil (réglage de la vitesse des voix TTS, utilisation du trackball pour zoomer ou annonce automatique de votre position).</string>
 
@@ -945,7 +945,7 @@
     <string name="non_optimal_route_calculation">Calcule un itinéraire éventuellement non optimal pour les trajets longues distances</string>
     <string name="rendering_attr_roadColors_description">Sélectionnez un thème de couleurs pour les routes :</string>
     <string name="rendering_attr_roadColors_name">Thème de couleurs pour les routes</string>
-    <string name="zxing_barcode_scanner_not_found">L’application ZXing Barcode Scanner n\'est pas installée. Souhaitez-vous l\'installer depuis la boutique ?</string>
+    <string name="zxing_barcode_scanner_not_found">L’application ZXing Barcode Scanner n\'est pas installée. Souhaitez-vous l\'installer depuis Google Play ?</string>
     <string name="close_changeset">Clôturer les modifications</string>
     <string name="background_service_is_enabled_question">Le service OsmAnd s\'exécute toujours en tâche de fond. Voulez-vous également l\'arrêter ?</string>
 
@@ -1024,7 +1024,7 @@
 
     <string name="intermediate_points_change_order">Modifier l\'ordre</string>
     <string name="dropbox_plugin_name">Greffon Dropbox</string>
-    <string name="dropbox_plugin_description">Le greffon Dropbox permet de synchroniser des pistes et des notes audio / vidéo avec votre compte Dropbox.</string>
+    <string name="dropbox_plugin_description">Le greffon Dropbox permet de synchroniser des itinéraires et des notes audio / vidéo avec votre compte Dropbox.</string>
     <string name="recording_context_menu_show">Afficher</string>
     <string name="recording_photo_description">Photo %1$s %2$s</string>
     <string name="av_def_action_picture">Prendre une photo</string>
@@ -2152,4 +2152,26 @@
     <string name="osm_live_subscription_settings">Paramétrage de l\'abonnement</string>
     <string name="show_transparency_seekbar">Afficher la barre de recherche transparente</string>
     <string name="recalculate_route">Recalculer l\'itinéraire</string>
+    <string name="storage_directory_shared">Mémoire partagée</string>
+    <string name="shared_string_topbar">Topbar</string>
+    <string name="osm_live_ask_for_purchase">Au préalable achetez un abonnement à OMS Live</string>
+
+    <string name="osm_live_region_desc">Vos dons seront distribués aux utilisateurs ayant soumis des mises à jour pour la carte de cette région</string>
+    <string name="avoid_road">Éviter la route</string>
+    <string name="osm_editors_ranking">Classement OSM</string>
+    <string name="osm_live_email_desc">Ces informations sont requises pour afficher les contributions</string>
+    <string name="osm_live_user_public_name">Nom affiché</string>
+    <string name="osm_live_hide_user_name">Ne pas afficher mon nom dans les signalements</string>
+    <string name="osm_live_support_region">Région supportée</string>
+    <string name="osm_live_enter_user_name">Merci de saisir le nom sous lequel vous souhaitez apparaître</string>
+    <string name="shared_string_move_up">Monter</string>
+    <string name="shared_string_move_down">Descendre</string>
+    <string name="finish_navigation">Terminer la navigation</string>
+    <string name="storage_permission_restart_is_required">Désormais l\'application est autorisée à écrire sur le stockage externe. Redémarrez l\'application pour prendre en compte cette modification.</string>
+    <string name="full_report">Rapport complet</string>
+    <string name="open_street_map_login_and_pass">Identifiant et mot de passe OpenStreetMap</string>
+    <string name="release_2_3">" • OSM Live. Soutenez les contributeurs de carte et les développeurs pour obtenir des mises à jour horaires.\n\n • Map markers. Une nouvelle façon de marquer des emplacements sur les cartes.\n\n • Cartes OSM plus détaillées avec des spécificités par pays et beaucoup de nouvelles fonctionnalités.\n\n • Amélioration de l\'expérience utilisateur lors de la préparation d\'un trajet.\n\n • Plein d\'autres améliorations sur les cartes ou encore la recherche d\'adresses contextuelles.\n\net bien plus encore... "</string>
+    <string name="storage_directory_readonly_desc">L\'emplacement de stockage sélectionné est en lecture seule. L\'emplacement de stockage a donc été modifié pour utiliser la mémoire interne. Merci de sélectionner un dossier valide.</string>
+    <string name="osm_user_stat">Modifications %1$s, classement %2$s, nombre total de modifications %3$s</string>
+    <string name="osm_live_subscription">Abonnement à OSM Live</string>
     </resources>

@@ -472,7 +472,7 @@ public class MapContextMenu extends MenuTitleController implements StateChangedL
 					latLon.getLongitude(), getPointDescriptionForTarget());
 		} else if (targets.getIntermediatePoints().isEmpty()) {
 			targets.navigateToPoint(latLon, true, -1, getPointDescriptionForTarget());
-			mapActivity.getMapActions().enterRoutePlanningModeGivenGpx(null, null, null, true);
+			mapActivity.getMapActions().enterRoutePlanningModeGivenGpx(null, null, null, true, true);
 			close();
 		} else {
 			Builder bld = new AlertDialog.Builder(mapActivity);
@@ -492,13 +492,13 @@ public class MapContextMenu extends MenuTitleController implements StateChangedL
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
 					if (defaultVls[0] == 0) {
-						targets.removeAllWayPoints(false);
+						targets.removeAllWayPoints(false, true);
 						targets.navigateToPoint(latLon, true, -1, getPointDescriptionForTarget());
-						mapActivity.getMapActions().enterRoutePlanningModeGivenGpx(null, null, null, true);
+						mapActivity.getMapActions().enterRoutePlanningModeGivenGpx(null, null, null, true, true);
 						close();
 					} else {
 						targets.navigateToPoint(latLon, true, -1, getPointDescriptionForTarget());
-						mapActivity.getMapActions().enterRoutePlanningModeGivenGpx(null, null, null, true);
+						mapActivity.getMapActions().enterRoutePlanningModeGivenGpx(null, null, null, true, true);
 						close();
 					}
 				}
@@ -554,10 +554,8 @@ public class MapContextMenu extends MenuTitleController implements StateChangedL
 
 	public void buttonMorePressed() {
 		final ContextMenuAdapter menuAdapter = new ContextMenuAdapter(mapActivity);
-		if (object != null) {
-			for (OsmandMapLayer layer : mapActivity.getMapView().getLayers()) {
-				layer.populateObjectContextMenu(object, menuAdapter);
-			}
+		for (OsmandMapLayer layer : mapActivity.getMapView().getLayers()) {
+			layer.populateObjectContextMenu(latLon, object, menuAdapter);
 		}
 
 		mapActivity.getMapActions().contextMenuPoint(latLon.getLatitude(), latLon.getLongitude(), menuAdapter, object);
@@ -737,6 +735,10 @@ public class MapContextMenu extends MenuTitleController implements StateChangedL
 		} else {
 			return null;
 		}
+	}
+
+	public boolean supportZoomIn() {
+		return menuController == null || menuController.supportZoomIn();
 	}
 
 	public boolean fabVisible() {

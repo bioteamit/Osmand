@@ -2,6 +2,7 @@ package net.osmand.plus.download;
 
 import android.Manifest;
 import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -81,7 +82,7 @@ public class DownloadActivity extends AbstractDownloadActivity implements Downlo
 	public static final int UPDATES_TAB_NUMBER = 2;
 	public static final int LOCAL_TAB_NUMBER = 1;
 	public static final int DOWNLOAD_TAB_NUMBER = 0;
-	private static final int PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE = 0;
+	public static final int PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE = 0;
 
 
 	private List<LocalIndexInfo> localIndexInfos = new ArrayList<>();
@@ -599,12 +600,9 @@ public class DownloadActivity extends AbstractDownloadActivity implements Downlo
 	}
 
 	private void showFirstTimeExternalStorage() {
-		final boolean firstTime = getMyApplication().getAppInitializer().isFirstTime(this);
-		final boolean externalExists =
-				getMyApplication().getSettings().getSecondaryStorage() != null;
-		if (firstTime && (externalExists || !hasPermissionToWriteExternalStorage())
-				&& DataStoragePlaceDialogFragment.isInterestedInFirstTime) {
-			if (!hasPermissionToWriteExternalStorage()) {
+		final boolean firstTime = getMyApplication().getAppInitializer().isFirstTime();
+		if (firstTime && DataStoragePlaceDialogFragment.isInterestedInFirstTime) {
+			if (!hasPermissionToWriteExternalStorage(this)) {
 				ActivityCompat.requestPermissions(this,
 						new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
 						PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE);
@@ -616,13 +614,11 @@ public class DownloadActivity extends AbstractDownloadActivity implements Downlo
 	}
 
 	private void chooseDataStorage() {
-		if (getMyApplication().getSettings().getSecondaryStorage() != null) {
-			new DataStoragePlaceDialogFragment().show(getSupportFragmentManager(), null);
-		}
+		DataStoragePlaceDialogFragment.showInstance(getSupportFragmentManager(), false);
 	}
 
-	private boolean hasPermissionToWriteExternalStorage() {
-		return ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+	public static boolean hasPermissionToWriteExternalStorage(Context ctx) {
+		return ContextCompat.checkSelfPermission(ctx, Manifest.permission.WRITE_EXTERNAL_STORAGE)
 				== PackageManager.PERMISSION_GRANTED;
 	}
 

@@ -391,10 +391,13 @@ public class MapControlsLayer extends OsmandMapLayer {
 		RoutingHelper routingHelper = mapActivity.getRoutingHelper();
 		if (!routingHelper.isFollowingMode() && !routingHelper.isRoutePlanningMode()) {
 			if (settings.USE_MAP_MARKERS.get() && !hasTargets) {
-				mapActivity.getMapActions().setFirstMapMarkerAsTarget();
+				getTargets().restoreTargetPoints(false);
+				if (getTargets().getPointToNavigate() == null) {
+					mapActivity.getMapActions().setFirstMapMarkerAsTarget();
+				}
 			}
 			TargetPoint start = getTargets().getPointToStart();
-			if (hasTargets && start != null) {
+			if (start != null) {
 				mapActivity.getMapActions().enterRoutePlanningMode(
 						new LatLon(start.getLatitude(), start.getLongitude()), start.getOriginalPointDescription());
 			} else {
@@ -461,11 +464,15 @@ public class MapControlsLayer extends OsmandMapLayer {
 		RoutingHelper routingHelper = app.getRoutingHelper();
 		if (routingHelper.isFollowingMode()) {
 			switchToRouteFollowingLayout();
+			if (app.getSettings().APPLICATION_MODE.get() != routingHelper.getAppMode()) {
+				app.getSettings().APPLICATION_MODE.set(routingHelper.getAppMode());
+			}
 		} else {
 			if (!app.getTargetPointsHelper().checkPointToNavigateShort()) {
 				mapRouteInfoMenu.show();
 			} else {
 				touchEvent = 0;
+				app.getSettings().APPLICATION_MODE.set(routingHelper.getAppMode());
 				mapActivity.getMapViewTrackingUtilities().backToLocationImpl();
 				app.getSettings().FOLLOW_THE_ROUTE.set(true);
 				routingHelper.setFollowingMode(true);
@@ -512,8 +519,11 @@ public class MapControlsLayer extends OsmandMapLayer {
 		updateMyLocation(rh, dialogOpened);
 		boolean showButtons = (showRouteCalculationControls || !routeFollowingMode);
 		//routePlanningBtn.setIconResId(routeFollowingMode ? R.drawable.ic_action_gabout_dark : R.drawable.map_directions);
-		if (routePlanningMode || routeFollowingMode) {
+		if (rh.isFollowingMode()) {
 			routePlanningBtn.setIconResId(R.drawable.map_start_navigation);
+			routePlanningBtn.setIconColorId(R.color.color_myloc_distance);
+		} else if (routePlanningMode) {
+			routePlanningBtn.setIconResId(R.drawable.map_directions);
 			routePlanningBtn.setIconColorId(R.color.color_myloc_distance);
 		} else {
 			routePlanningBtn.setIconResId(R.drawable.map_directions);
@@ -741,9 +751,14 @@ public class MapControlsLayer extends OsmandMapLayer {
 			return true;
 		}
 
-		public void resetIconColors() {
+		public boolean resetIconColors() {
+			if (resClrLight == R.color.icon_color && resClrDark == 0) {
+				return false;
+			}
 			resClrLight = R.color.icon_color;
 			resClrDark = 0;
+			f = true;
+			return true;
 		}
 
 		public MapHudButton setIconColorId(int clr) {

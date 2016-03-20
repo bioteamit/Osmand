@@ -423,6 +423,21 @@ public class GeoPointParserUtil {
 		actual = GeoPointParserUtil.parse(url);
 		assertGeoPoint(actual, new GeoParsedPoint(dlat, dlon, z));
 
+		// whatsapp
+		// https://maps.google.com/maps?q=loc:34.99393,-106.61568 (USER NAME)
+		z = GeoParsedPoint.NO_ZOOM;
+		url = "https://maps.google.com/maps?q=loc:" + dlat + "," + dlon + " (+55 99 99999-9999)";
+		System.out.println("url: " + url);
+		actual = GeoPointParserUtil.parse(url);
+		assertGeoPoint(actual, new GeoParsedPoint(dlat, dlon, z));
+
+		// whatsapp
+		// https://www.google.com/maps/search/34.99393,-106.61568/data=!4m4!2m3!3m1!2s-23.2776,-45.8443128!4b1
+		url = "https://maps.google.com/maps?q=loc:" + dlat + "," + dlon + "/data=!4m4!2m3!3m1!2s-23.2776,-45.8443128!4b1";
+		System.out.println("url: " + url);
+		actual = GeoPointParserUtil.parse(url);
+		assertGeoPoint(actual, new GeoParsedPoint(dlat, dlon, z));
+
 		// http://www.google.com/maps/search/food/34,-106,14z
 		url = "http://www.google.com/maps/search/food/" + ilat + "," + ilon + "," + z + "z";
 		System.out.println("url: " + url);
@@ -794,7 +809,7 @@ public class GeoPointParserUtil {
 	private static Map<String, String> getQueryParameters(String query) {
 		final LinkedHashMap<String, String> map = new LinkedHashMap<String, String>();
 		if (query != null && !query.equals("")) {
-			String[] params = query.split("&");
+			String[] params = query.split("[&/]");
 			for (String p : params) {
 				String[] keyValue = p.split("=");
 				if (keyValue.length == 1)
@@ -936,6 +951,7 @@ public class GeoPointParserUtil {
 					String z = String.valueOf(GeoParsedPoint.NO_ZOOM);
 					Map<String, String> params = getQueryParameters(uri);
 					if (params.containsKey("q")) {
+						System.out.println("q=" + params.get("q"));
 						Matcher matcher = commaSeparatedPairPattern.matcher(params.get("q"));
 						if (matcher.matches()) {
 							latString = matcher.group(1);
@@ -964,7 +980,7 @@ public class GeoPointParserUtil {
 						if(opath.contains(pref)) {
 							opath = opath.substring(opath.lastIndexOf(pref) + pref.length());
 						}
-						final String postf = "\\s\\((\\p{L}|\\s)*\\)$";
+						final String postf = "\\s\\((\\p{L}|\\p{M}|\\p{Z}|\\p{S}|\\p{N}|\\p{P}|\\p{C})*\\)$";
 						opath = opath.replaceAll(postf, "");
 						System.out.println("opath=" + opath);
 						return parseGoogleMapsPath(opath, params);

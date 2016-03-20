@@ -163,7 +163,7 @@ public class TransportStopsLayer extends OsmandMapLayer implements ContextMenuLa
 
 	@Override
 	public boolean drawInScreenPixels() {
-		return false;
+		return true;
 	}
 
 	@Override
@@ -195,6 +195,11 @@ public class TransportStopsLayer extends OsmandMapLayer implements ContextMenuLa
 
 	@Override
 	public boolean disableLongPressOnMap() {
+		return false;
+	}
+
+	@Override
+	public boolean isObjectClickable(Object o) {
 		return false;
 	}
 

@@ -62,7 +62,7 @@
 
 	<string name="poi_books">Librería (libros)</string>
 	<string name="poi_bicycle">Bicicletería</string>
-	<string name="poi_anime">Tienda de anime</string>
+	<string name="poi_anime">Artículos de anime</string>
 	<string name="poi_antiques">Antigüedades</string>
 	<string name="poi_art">Venta de arte</string>
 	<string name="poi_baby_goods">Artículos para bebés</string>
@@ -86,11 +86,11 @@
 	<string name="poi_erotic">Sexshop</string>
 	<string name="poi_fishing">Equipos de pesca</string>
 	<string name="poi_florist">Florería</string>
-	<string name="poi_frame">Tienda de marcos</string>
+	<string name="poi_frame">Marcos para cuadros</string>
 	<string name="poi_furniture">Mueblería</string>
 	<string name="poi_garden_centre">Vivero (venta)</string>
 	<string name="poi_gas">Gas líquido</string>
-	<string name="poi_general">Pulpería</string>
+	<string name="poi_shop_yes">Pulpería</string>
 	<string name="poi_gift">Regalería</string>
 	<string name="poi_glaziery">Vidriería</string>
 	<string name="poi_hardware">Ferretería</string>
@@ -114,7 +114,7 @@
 	<string name="poi_paint">Pinturería</string>
 	<string name="poi_pet">Mascotas</string>
 	<string name="poi_photo">Servicio fotográfico</string>
-	<string name="poi_radiotechnics">Tienda de radiotecnia</string>
+	<string name="poi_radiotechnics">Venta de radiotecnia</string>
 	<string name="poi_second_hand">Local de segunda mano</string>
 	<string name="poi_ship_chandler">Proveedor naval</string>
 	<string name="poi_sports">Artículos deportivos</string>
@@ -127,7 +127,7 @@
 	<string name="poi_vacuum_cleaner">Aspiradoras</string>
 	<string name="poi_variety_store">Todo por $2</string>
 	<string name="poi_video">Videoclub</string>
-	<string name="poi_window_blind">Tienda de persianas</string>
+	<string name="poi_window_blind">Persianas</string>
 	<string name="poi_department_store">Grandes almacenes</string>
 	<string name="poi_electronics">Electrónicos</string>
 	<string name="poi_car">Concesionario de automóviles</string>
@@ -163,7 +163,7 @@
 	<string name="poi_traffic_calming_chicane">Chicana</string>
 	<string name="poi_traffic_calming_rumble_strip">Banda sonora</string>
 	<string name="poi_traffic_calming_table">Peatonal elevada</string>
-	<string name="poi_traffic_calming_choker">Gargantilla</string>
+	<string name="poi_traffic_calming_choker">Calzada reducida</string>
 	<string name="poi_traffic_signals">Semáforo</string>
 
 	<string name="poi_car_repair">Taller mecánico</string>
@@ -171,7 +171,7 @@
 	<string name="poi_vehicle_inspection">Inspección de vehículos</string>
 	<string name="poi_car_wash">Lavadero de automóviles</string>
 	<string name="poi_fuel">Estación de servicio</string>
-	<string name="poi_fuel_diesel">Diésel</string>
+	<string name="poi_fuel_diesel">Euro diésel (grado 3; euro V)</string>
 	<string name="poi_fuel_gtl_diesel">Diésel GTL</string>
 	<string name="poi_fuel_hgv_diesel">Diésel de vehículos pesados</string>
 	<string name="poi_fuel_biodiesel">Biodiésel</string>
@@ -179,8 +179,8 @@
 	<string name="poi_fuel_octane_80">80 octanos</string>
 	<string name="poi_fuel_octane_91">91 octanos</string>
 	<string name="poi_fuel_octane_92">92 octanos</string>
-	<string name="poi_fuel_octane_95">95 octanos</string>
-	<string name="poi_fuel_octane_98">98 octanos</string>
+	<string name="poi_fuel_octane_95">Nafta súper (grado 2)</string>
+	<string name="poi_fuel_octane_98">Nafta premium (grado 3)</string>
 	<string name="poi_fuel_octane_100">100 octanos</string>
 	<string name="poi_fuel_cng">GNC</string>
 	<string name="poi_fuel_1_25">Combustible 1:25</string>
@@ -371,7 +371,7 @@
 	<string name="poi_psychotherapist">Psicoterapeuta</string>
 	<string name="poi_healthcare_rehabilitation">Rehabilitación</string>
 	<string name="poi_speech_therapist">Fonoaudiólogo</string>
-	<string name="poi_healthcare_yes">Centro médico</string>
+	<string name="poi_healthcare_yes">Atención médica</string>
 
 	<string name="poi_company">Empresa</string>
 	<string name="poi_insurance">Aseguradora</string>
@@ -434,7 +434,7 @@
 	<string name="poi_ice_stock">Curling bávaro</string>
 	<string name="poi_korfbal">Balonkorf</string>
 	<string name="poi_sport_motor">Deporte de motor</string>
-	<string name="poi_sport_multi">Deportes múltiples</string>
+	<string name="poi_sport_multi">Polideportivo</string>
 	<string name="poi_orienteering">Orientación</string>
 	<string name="poi_paddle_tennis">Pádel</string>
 	<string name="poi_paragliding">Parapente</string>
@@ -621,7 +621,7 @@
 	<string name="poi_pub">Pub</string>
 	<string name="poi_food_court">Patio de comidas</string>
 	<string name="poi_drinking_water">Agua potable</string>
-	<string name="poi_barbecue">Parrilla</string>
+	<string name="poi_barbecue">Parrillero</string>
 
 	<string name="poi_craft_agricultural_engines">Motores agrícolas</string>
 	<string name="poi_craft_basket_maker">Mimbrería</string>
@@ -855,7 +855,7 @@
 
 <string name="poi_cheese">Quesería</string>
 	<string name="poi_chocolate">Chocolatería</string>
-	<string name="poi_coffee">Tienda de café</string>
+	<string name="poi_coffee">Venta de café en granos</string>
 	<string name="poi_pasta">Fábrica de pastas</string>
 	<string name="poi_pastry">Pastelería</string>
 	<string name="poi_furnace">Artículos de calefacción</string>
@@ -1778,7 +1778,7 @@
 	<string name="poi_wetland_marsh">Marisma</string>
 	<string name="poi_wetland_reedbed">Cañaveral</string>
 	<string name="poi_wetland_tidalflat">Humedal costero</string>
-	<string name="poi_wetland_saltmarsh">Salina</string>
+	<string name="poi_wetland_saltmarsh">Marisma de sal</string>
 	<string name="poi_wetland_mangrove">Manglar</string>
 	<string name="poi_wetland_mud">Lodazal</string>
 
@@ -1870,7 +1870,7 @@
 	<string name="poi_bridge_bicycle">Puente para bicicletas</string>
 	<string name="poi_bridge_railway">Puente ferroviario</string>
 	<string name="poi_bridge_waterway">Puente fluvial</string>
-	<string name="poi_wetland_saltern">Salina</string>
+	<string name="poi_wetland_saltern">Salar</string>
 	<string name="poi_bridge_structure_beam">Estructura del puente: Viga</string>
 	<string name="poi_bridge_structure_simple_suspension">Estructura del puente: Suspensión simple</string>
 	<string name="poi_bridge_structure_suspension">Estructura del puente: Suspensión</string>
@@ -1934,7 +1934,7 @@
 <string name="poi_bridge_structure_simple_wooden">Estructura del puente: Madera simple</string>
 	<string name="poi_historic_yes">Objeto histórico</string>
 	<string name="poi_surveillance_yes">Vigilado</string>
-	<string name="poi_shop_yes">Con negocio</string>
+	<string name="poi_shop_additional_yes">Con negocio</string>
 
 	<string name="poi_service_bicycle_retail_yes">Vende bicicletas</string>
 	<string name="poi_service_bicycle_retail_no">No vende bicicletas</string>
@@ -2399,7 +2399,7 @@
 	<string name="poi_bathing_yes">Permitido bañarse</string>
 	<string name="poi_bathing_no">Prohibido bañarse</string>
 
-<string name="poi_traffic_calming_island">Mediana (tráfico)</string>
+<string name="poi_traffic_calming_island">Calzada dividida</string>
 	<string name="poi_boat_storage">Guardería náutica</string>
 
 
@@ -2484,7 +2484,7 @@
 
 	<string name="poi_craft_electronics">Reparación de electrónicos</string>
 
-<string name="poi_fireworks">Artificios pirotécnicos</string>
+<string name="poi_fireworks">Fuegos artificiales</string>
 
 <string name="poi_aerialway_length">Longitud</string>
 
@@ -2565,7 +2565,7 @@
 <string name="poi_building_type_pyramid">Pirámide</string>
 
 <string name="poi_fitness_centre">Gimnasio</string>
-	<string name="poi_fitness">Gimnasio (deporte)</string>
+	<string name="poi_fitness">Ejercicio físico</string>
 
 	<string name="poi_billiards">Billar</string>
 
@@ -2684,5 +2684,39 @@
 	<string name="poi_vacuum_cleaner_yes">Con aspiradora</string>
 	<string name="poi_vacuum_cleaner_no">Sin aspiradora</string>
 	<string name="poi_amenity_vacuum_cleaner">Aspiradoras</string>
+
+<string name="poi_sport_free_flying">Vuelo libre (deporte)</string>
+<string name="poi_bicycle_repair_station">Estación de reparación para bicicletas</string>
+	<string name="poi_water_tap">Canilla pública</string>
+
+<string name="poi_button_operated_yes">Activado por botón</string>
+	<string name="poi_button_operated_no">No activado por botón</string>
+
+<string name="poi_free_flying_site_takeoff">Sitio de despegue para vuelo libre</string>
+	<string name="poi_free_flying_site_landing">Sitio de aterrizaje para vuelo libre</string>
+	<string name="poi_free_flying_site_toplanding">Sitio de aterrizaje en la cima para vuelo libre</string>
+	<string name="poi_free_flying_site_towing">Sitio de vuelo libre: Remolque</string>
+	<string name="poi_free_flying_site_training">Sitio de capacitación en vuelo libre</string>
+	<string name="poi_free_flying_official_yes">Sitio permitido para vuelo libre</string>
+	<string name="poi_free_flying_official_no">Sitio no permitido para vuelo libre</string>
+	<string name="poi_free_flying_paragliding_yes">Parapente: Sí</string>
+	<string name="poi_free_flying_paragliding_no">Parapente: No</string>
+	<string name="poi_free_flying_hanggliding_yes">Ala delta: Sí</string>
+	<string name="poi_free_flying_hanggliding_no">Ala delta: No</string>
+	<string name="poi_free_flying_rigid_yes">Ala delta rígido: Sí</string>
+	<string name="poi_free_flying_rigid_no">Ala delta rígido: No</string>
+	<string name="poi_free_flying_site_orientation_n">Orientación del sitio en vuelo libre: N</string>
+	<string name="poi_free_flying_site_orientation_ne">Orientación del sitio en vuelo libre: NE</string>
+	<string name="poi_free_flying_site_orientation_e">Orientación del sitio en vuelo libre: E</string>
+	<string name="poi_free_flying_site_orientation_se">Orientación del sitio en vuelo libre: SE</string>
+	<string name="poi_free_flying_site_orientation_s">Orientación del sitio en vuelo libre: S</string>
+	<string name="poi_free_flying_site_orientation_sw">Orientación del sitio en vuelo libre: SO</string>
+	<string name="poi_free_flying_site_orientation_w">Orientación del sitio en vuelo libre: O</string>
+	<string name="poi_free_flying_site_orientation_nw">Orientación del sitio en vuelo libre: NO</string>
+	<string name="poi_free_flying_no_flight_time">Sin horario de vuelo (vuelo libre)</string>
+	<string name="poi_free_flying_guest_guidelines_yes">Con directrices de invitado en vuelo libre</string>
+	<string name="poi_free_flying_guest_guidelines_no">Sin directrices de invitado en vuelo libre</string>
+
+	<string name="poi_solarium">Centro de bronceado (solarium)</string>
 
 </resources>

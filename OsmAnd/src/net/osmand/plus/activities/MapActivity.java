@@ -1,14 +1,18 @@
 package net.osmand.plus.activities;
 
+import android.Manifest;
 import android.app.Activity;
+import android.app.AlarmManager;
 import android.app.Dialog;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.media.AudioManager;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -17,9 +21,11 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.NotificationCompat.Builder;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.NotificationCompat;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
@@ -71,8 +77,11 @@ import net.osmand.plus.dashboard.DashboardOnMap;
 import net.osmand.plus.dialogs.ErrorBottomSheetDialog;
 import net.osmand.plus.dialogs.RateUsBottomSheetDialog;
 import net.osmand.plus.dialogs.WhatsNewDialogFragment;
+import net.osmand.plus.download.DownloadActivity;
 import net.osmand.plus.download.DownloadIndexesThread.DownloadEvents;
+import net.osmand.plus.download.ui.DataStoragePlaceDialogFragment;
 import net.osmand.plus.helpers.AndroidUiHelper;
+import net.osmand.plus.helpers.ExternalApiHelper;
 import net.osmand.plus.helpers.GpxImportHelper;
 import net.osmand.plus.helpers.WakeLockHelper;
 import net.osmand.plus.mapcontextmenu.MapContextMenu;
@@ -158,6 +167,10 @@ public class MapActivity extends AccessibleActivity implements DownloadEvents,
 	private DrawerLayout drawerLayout;
 	private boolean drawerDisabled;
 
+	private static boolean permissionDone;
+	private boolean permissionAsked;
+	private boolean permissionGranted;
+
 	private Notification getNotification() {
 		Intent notificationIndent = new Intent(this, getMyApplication().getAppCustomization().getMapActivity());
 		notificationIndent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -207,7 +220,7 @@ public class MapActivity extends AccessibleActivity implements DownloadEvents,
 		int h = dm.heightPixels - statusBarHeight;
 
 		mapView = new OsmandMapTileView(this, w, h);
-		if (app.getAppInitializer().checkAppVersionChanged(this) && WhatsNewDialogFragment.SHOW) {
+		if (app.getAppInitializer().checkAppVersionChanged() && WhatsNewDialogFragment.SHOW) {
 			WhatsNewDialogFragment.SHOW = false;
 			new WhatsNewDialogFragment().show(getSupportFragmentManager(), null);
 		}
@@ -255,7 +268,7 @@ public class MapActivity extends AccessibleActivity implements DownloadEvents,
 				&& !settings.FOLLOW_THE_ROUTE.get()
 				&& app.getTargetPointsHelper().getAllPoints().size() > 0) {
 			app.getRoutingHelper().clearCurrentRoute(null, new ArrayList<LatLon>());
-			app.getTargetPointsHelper().removeAllWayPoints(false);
+			app.getTargetPointsHelper().removeAllWayPoints(false, false);
 		}
 
 		if (!settings.isLastKnownMapLocation()) {
@@ -276,7 +289,7 @@ public class MapActivity extends AccessibleActivity implements DownloadEvents,
 		}
 		mapView.refreshMap(true);
 
-		if (getMyApplication().getAppInitializer().isFirstTime(this) && FirstUsageFragment.SHOW) {
+		if (getMyApplication().getAppInitializer().isFirstTime() && FirstUsageFragment.SHOW) {
 			FirstUsageFragment.SHOW = false;
 			getSupportFragmentManager().beginTransaction()
 					.add(R.id.fragmentContainer, new FirstUsageFragment(),
@@ -473,6 +486,8 @@ public class MapActivity extends AccessibleActivity implements DownloadEvents,
 						new RateUsBottomSheetDialog().show(getSupportFragmentManager(), "dialog");
 					}
 				}
+			} else {
+				dashboardOnMap.updateDashboard();
 			}
 		}
 		dashboardOnMap.updateLocation(true, true, false);
@@ -531,6 +546,8 @@ public class MapActivity extends AccessibleActivity implements DownloadEvents,
 
 		readLocationToShow();
 
+		OsmandPlugin.onMapActivityResume(this);
+
 		final Intent intent = getIntent();
 		if (intent != null) {
 			if (Intent.ACTION_VIEW.equals(intent.getAction())) {
@@ -545,6 +562,13 @@ public class MapActivity extends AccessibleActivity implements DownloadEvents,
 						setIntent(null);
 					} else if ("google.navigation".equals(scheme) || "osmand.navigation".equals(scheme)) {
 						parseNavigationIntent(data);
+					} else if ("osmand.api".equals(scheme)) {
+						ExternalApiHelper apiHelper = new ExternalApiHelper(this);
+						Intent result = apiHelper.processApiRequest(intent);
+						setResult(apiHelper.getResultCode(), result);
+						if (apiHelper.needFinish()) {
+							finish();
+						}
 					}
 				}
 			}
@@ -558,9 +582,6 @@ public class MapActivity extends AccessibleActivity implements DownloadEvents,
 			app.getResourceManager().setBusyIndicator(new BusyIndicator(this, progress));
 		}
 
-		getMapLayers().getDownloadedRegionsLayer().updateObjects();
-
-		OsmandPlugin.onMapActivityResume(this);
 		mapView.refreshMap(true);
 		if (atlasMapRendererView != null) {
 			atlasMapRendererView.handleOnResume();
@@ -580,6 +601,89 @@ public class MapActivity extends AccessibleActivity implements DownloadEvents,
 		if (System.currentTimeMillis() - tm > 50) {
 			System.err.println("OnCreate for MapActivity took " + (System.currentTimeMillis() - tm) + " ms");
 		}
+
+		if (!permissionDone) {
+			if (!permissionAsked) {
+				if (app.isExternalStorageDirectoryReadOnly()
+						&& getSupportFragmentManager().findFragmentByTag(DataStoragePlaceDialogFragment.TAG) == null) {
+					if (DownloadActivity.hasPermissionToWriteExternalStorage(this)) {
+						DataStoragePlaceDialogFragment.showInstance(getSupportFragmentManager(), true);
+					} else {
+						ActivityCompat.requestPermissions(this,
+								new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+								DownloadActivity.PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE);
+					}
+				}
+			} else {
+				if (permissionGranted) {
+					restartApp();
+				} else if (getSupportFragmentManager().findFragmentByTag(DataStoragePlaceDialogFragment.TAG) == null) {
+					DataStoragePlaceDialogFragment.showInstance(getSupportFragmentManager(), true);
+				}
+				permissionAsked = false;
+				permissionGranted = false;
+				permissionDone = true;
+			}
+		}
+	}
+
+	private void restartApp() {
+		AlertDialog.Builder bld = new AlertDialog.Builder(this);
+		bld.setMessage(R.string.storage_permission_restart_is_required);
+		bld.setPositiveButton(R.string.shared_string_ok, new DialogInterface.OnClickListener() {
+
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				doRestart(MapActivity.this);
+				//android.os.Process.killProcess(android.os.Process.myPid());
+			}
+		});
+		bld.show();
+	}
+
+	public static void doRestart(Context c) {
+		boolean res = false;
+		try {
+			//check if the context is given
+			if (c != null) {
+				//fetch the packagemanager so we can get the default launch activity
+				// (you can replace this intent with any other activity if you want
+				PackageManager pm = c.getPackageManager();
+				//check if we got the PackageManager
+				if (pm != null) {
+					//create the intent with the default start activity for your application
+					Intent mStartActivity = pm.getLaunchIntentForPackage(
+							c.getPackageName()
+					);
+					if (mStartActivity != null) {
+						mStartActivity.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+						//create a pending intent so the application is restarted after System.exit(0) was called.
+						// We use an AlarmManager to call this intent in 100ms
+						int mPendingIntentId = 84523443;
+						PendingIntent mPendingIntent = PendingIntent
+								.getActivity(c, mPendingIntentId, mStartActivity,
+										PendingIntent.FLAG_CANCEL_CURRENT);
+						AlarmManager mgr = (AlarmManager) c.getSystemService(Context.ALARM_SERVICE);
+						mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 100, mPendingIntent);
+						//kill the application
+						res = true;
+						android.os.Process.killProcess(android.os.Process.myPid());
+						//System.exit(0);
+					} else {
+						LOG.error("Was not able to restart application, mStartActivity null");
+					}
+				} else {
+					LOG.error("Was not able to restart application, PM null");
+				}
+			} else {
+				LOG.error("Was not able to restart application, Context null");
+			}
+		} catch (Exception ex) {
+			LOG.error("Was not able to restart application");
+		}
+		if (!res) {
+			android.os.Process.killProcess(android.os.Process.myPid());
+		}
 	}
 
 	private void parseNavigationIntent(final Uri data) {
@@ -594,7 +698,7 @@ public class MapActivity extends AccessibleActivity implements DownloadEvents,
 
 				getMyApplication().getTargetPointsHelper().navigateToPoint(new LatLon(lat, lon), false,
 						-1);
-				getMapActions().enterRoutePlanningModeGivenGpx(null, null, null, false);
+				getMapActions().enterRoutePlanningModeGivenGpx(null, null, null, false, true);
 			} catch (NumberFormatException e) {
 				AccessibleToast.makeText(this,
 						getString(R.string.navigation_intent_invalid, schemeSpecificPart),
@@ -619,7 +723,7 @@ public class MapActivity extends AccessibleActivity implements DownloadEvents,
 			Location loc = new Location("map");
 			loc.setLatitude(mapView.getLatitude());
 			loc.setLongitude(mapView.getLongitude());
-			getMapActions().enterRoutePlanningModeGivenGpx(null, null, null, true);
+			getMapActions().enterRoutePlanningModeGivenGpx(null, null, null, true, true);
 			if (dashboardOnMap.isVisible()) {
 				dashboardOnMap.hideDashboard();
 			}
@@ -635,7 +739,21 @@ public class MapActivity extends AccessibleActivity implements DownloadEvents,
 				mapContextMenu.setMapCenter(latLonToShow);
 				mapContextMenu.setMapPosition(mapView.getMapPosition());
 				mapContextMenu.setCenterMarker(true);
-				mapContextMenu.setMapZoom(settings.getMapZoomToShow());
+
+				RotatedTileBox tb = mapView.getCurrentRotatedTileBox().copy();
+				LatLon prevCenter = tb.getCenterLatLon();
+
+				double border = 0.8;
+				int tbw = (int) (tb.getPixWidth() * border);
+				int tbh = (int) (tb.getPixHeight() * border);
+				tb.setPixelDimensions(tbw, tbh);
+
+				tb.setLatLonCenter(latLonToShow.getLatitude(), latLonToShow.getLongitude());
+				while (!tb.containsLatLon(prevCenter.getLatitude(), prevCenter.getLongitude())) {
+					tb.setZoom(tb.getZoom() - 1);
+				}
+				//mapContextMenu.setMapZoom(settings.getMapZoomToShow());
+				mapContextMenu.setMapZoom(tb.getZoom());
 				if (mapLayers.getMapControlsLayer().getMapRouteInfoMenu().isVisible()) {
 					mapContextMenu.showMinimized(latLonToShow, mapLabelToShow, toShow);
 					mapLayers.getMapControlsLayer().getMapRouteInfoMenu().updateMenu();
@@ -838,7 +956,7 @@ public class MapActivity extends AccessibleActivity implements DownloadEvents,
 		changeKeyguardFlags();
 		updateMapSettings();
 		mapViewTrackingUtilities.updateSettings();
-		app.getRoutingHelper().setAppMode(settings.getApplicationMode());
+		//app.getRoutingHelper().setAppMode(settings.getApplicationMode());
 		if (mapLayers.getMapInfoLayer() != null) {
 			mapLayers.getMapInfoLayer().recreateControls();
 		}
@@ -1136,9 +1254,7 @@ public class MapActivity extends AccessibleActivity implements DownloadEvents,
 		if (fragmentRef != null) {
 			fragmentRef.get().newDownloadIndexes();
 		}
-		if (getMapLayers().getDownloadedRegionsLayer().updateObjects()) {
-			refreshMap();
-		}
+		refreshMap();
 	}
 
 	@Override
@@ -1146,9 +1262,6 @@ public class MapActivity extends AccessibleActivity implements DownloadEvents,
 		WeakReference<MapContextMenuFragment> fragmentRef = getContextMenu().findMenuFragment();
 		if (fragmentRef != null) {
 			fragmentRef.get().downloadInProgress();
-		}
-		if (getMapLayers().getDownloadedRegionsLayer().updateObjects()) {
-			refreshMap();
 		}
 	}
 
@@ -1158,18 +1271,25 @@ public class MapActivity extends AccessibleActivity implements DownloadEvents,
 		if (fragmentRef != null) {
 			fragmentRef.get().downloadHasFinished();
 		}
-		if (getMapLayers().getDownloadedRegionsLayer().updateObjects()) {
-			refreshMap();
-		}
+		refreshMap();
 	}
 
 	@Override
-	public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+	public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
 		OsmandPlugin.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
 		MapControlsLayer mcl = mapView.getLayerByClass(MapControlsLayer.class);
 		if (mcl != null) {
 			mcl.onRequestPermissionsResult(requestCode, permissions, grantResults);
 		}
+
+		if (requestCode == DownloadActivity.PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE
+				&& grantResults.length > 0 && permissions.length > 0
+				&& Manifest.permission.WRITE_EXTERNAL_STORAGE.equals(permissions[0])) {
+			permissionAsked = true;
+			permissionGranted = grantResults[0] == PackageManager.PERMISSION_GRANTED;
+		}
+
 		super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 	}
 

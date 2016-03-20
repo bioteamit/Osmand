@@ -9,8 +9,55 @@
          3. All your modified/created strings are in the top of the file (to make easier find what\'s translated).
     PLEASE: Have a look at http://code.google.com/p/osmand/wiki/UIConsistency, it may really improve your and our work  :-)  Thx - Hardy
     -->
+    <string name="no_map_markers_found">Please add map markers via map</string>
+    <string name="no_waypoints_found">No waypoints found</string>
+    <string name="osmo_group_information_desc">
+        - Creating a group please give it a name and fill in description\n
+        - From the application group are created only with Simple type, read more on the website https://osmo.mobi/g/new \n
+        - Through a website you can manage a group, to place tracks and points available all\n
+        - We do not endorse the use of the group only one user, if this is not the POI group\n
+        - Private groups are limited to 8 persons \n
+        - Detailed terms and conditions always have an on website OsMo.mobi\n
+        - If you need special conditions - please contact support: osmo.mobi@gmail.com
+    </string>
+    <string name="osmo_specify_tracker_id">Please specify ID</string>
+    <string name="osmo_no_connection_msg">Cannot connect to the server OsMo:\n- check your internet connection;\n- check the settings;\n- check out our Twitter: https://twitter.com/OsMomobi</string>
+    <string name="anonymous_user_hint">An anonymous user can not:\n- create groups;\n- synchronize groups and devices with the server;\n- manage groups and devices in a personal dashboard on website.</string>
+    <string name="report">Report</string>
+    <string name="osmo_connect_to_device_tracker_id">Tracker ID</string>
+    <string name="osmo_connect_to_group_id">Group ID</string>
+    <string name="osmo_connect">Join</string>
+    <string name="osmo_groups">OsMo Groups</string>
+    <string name="osmo_auto_send_locations_descr">Automatically start trip and send locations after application startup</string>
+    <string name="osmo_auto_send_locations">Automatically start trip</string>
+    <string name="osmo_tracker_id">Tracker ID</string>
+    <string name="osmo_tracker_id_descr">Click to view tracker ID</string>
+    <string name="osmo_connect_to_my_nickname">Nick</string>
+    <string name="osmo_share_my_location">Transmit the location</string>
+    <string name="osmo_plugin_name">OpenStreetMap Monitoring</string>
+    <string name="osmo_plugin_description">This plugin partially provides the functionality of the OpenStreetMap Monitoring, see https://osmo.mobi
+    \n\nYou can track all devices of a participating group in real time. You can also see the point and tracks uploaded to the group to which you belong.
+    \n\nThe group has not been removed after months, bring it in line with the rules you create groups on the website OsMo.mobi
+    </string>
+    <string name="storage_permission_restart_is_required">Now the application is allowed to write to external storage. A manual application restart is required.</string>
+    <string name="release_2_3">
+	\u2022 OSM Live. Support map contributors and developers and get hourly map updates. \n\n
+	\u2022 Map markers. A new way to quickly select places on the map.\n\n
+	\u2022 More detailed OSM maps with country specific road shields and lots of new map features.\n\n
+	\u2022 Improved Look and Feel of Route preparation. \n\n
+	\u2022 Many improvements in the map context menu such as contextual address lookup.\n\n
+	and more…
+        </string>
+    <string name="shared_string_move_up">Move up</string>
+    <string name="shared_string_move_down">Move down</string>
+    <string name="finish_navigation">Finish navigation</string>
+    <string name="avoid_road">Avoid road</string>
+    <string name="storage_directory_readonly_desc">Currently selected Data storage folder is readonly. The storage folder was temporarily switched to Internal memory. Please choose valid storage directory.</string>
+    <string name="storage_directory_shared">Shared memory</string>
     <string name="shared_string_topbar">Topbar</string>
+    <string name="full_report">Full report</string>
     <string name="recalculate_route">Recalculate route</string>
+    <string name="open_street_map_login_and_pass">OpenStreetMap login and password</string>
     <string name="donations">Donations</string>
     <string name="number_of_recipients">Number of recipients</string>
     <string name="osm_user_stat">Edits %1$s, rank %2$s, total edits %3$s</string>
@@ -197,7 +244,7 @@
     <string name="favorite_category_select">Select category</string>
     <string name="default_speed_system_descr">Define speed measurement system</string>
     <string name="default_speed_system">Speed measurement</string>
-    <string name="nm">nm</string>
+    <string name="nm">nmi</string>
     <string name="si_nm">Nautical miles</string>
     <string name="si_kmh">Kilometers per hour</string>
     <string name="si_mph">Miles per hour</string>
@@ -205,7 +252,7 @@
     <string name="si_min_km">Minutes per kilometer</string>
     <string name="si_min_m">Minutes per mile</string>
     <string name="si_nm_h">Nautical miles per hour (knot)</string>
-    <string name="nm_h">nmh</string>
+    <string name="nm_h">nmi/h</string>
     <string name="min_mile">min/m</string>
     <string name="min_km">min/km</string>
     <string name="m_s">m/s</string>
@@ -297,7 +344,6 @@
     <string name="rendering_value_disabled_name">Disabled</string>
     <string name="rendering_value_walkingRoutesScopeOSMC_name">Coloring according to route scope</string>
     <string name="rendering_value_walkingRoutesOSMC_name">Coloring according to OSMC</string>
-    <string name="osmo_share_my_location">Share my position</string>
     <string name="shared_string_logoff">Log Off</string>
     <string name="rendering_attr_hideHouseNumbers_name">Hide house numbers</string>
     <string name="application_dir_change_warning3">Do you want OsmAnd to also copy its data files to the new destination?</string>
@@ -443,12 +489,6 @@
 	<string name="record_plugin_description">This plugin activates the functionality to record and save your tracks by manually touching the GPX logging widget on the map screen, or also to automatically log all of your navigation routes to a GPX file.
 		\n\nRecorded tracks can be shared with your friends or be used for OSM contributions. Athletes can use recorded tracks to monitor their trainings. Some basic track analysis can be performed directly in OsmAnd, like lap times, average speed etc., and tracks can of course also later be analyzed in special 3rd party analysis tools.
 	</string>
-    <string name="osmo_plugin_name">OsMo (OSM Monitoring)</string>
-	<string name="osmo_plugin_description">This plugin provides the functionality of the so-called OsMo advanced live monitoring, see http://osmo.mobi.
-		\n\nYou can track all devices of a participating group in real time, and communicate with each other. Comes with various options for session tracking or permanent tracking.
-		\n\nAnonymous groups can be created spontaneously for a specified number of days and are limited to defined features, i.e. there is no remote control and no group administrator.
-		Fully functional groups, on the other hand, can be created on the website and only registered users have access to them.
-	</string>
     <string name="srtm_paid_version_title">Contour lines plugin</string>
     <string name="osmand_srtm_short_description_80_chars">OsmAnd plugin for offline contour lines</string>
 	<string name="osmand_srtm_long_description_1000_chars">This plugin provides both a contour line overlay and a (relief) hillshade layer to be displayed on top of OsmAnd\'s standard maps. This functionality will be much appreciated by athletes, hikers, trekkers, and anybody interested in the relief structure of a landscape.
@@ -549,8 +589,6 @@
     <string name="use_opengl_render_descr">Use hardware accelerated OpenGL rendering (may not work on some devices)</string>
     <string name="error_avoid_specific_road">No bypass found</string>
     <string name="home_button">Home</string>
-    <string name="osmo_use_https_descr">Use secure connection to server</string>
-    <string name="osmo_use_https">Use HTTPS</string>
     <string name="map_update">Updates available for %1$s maps</string>
     <string name="search_for">Search for</string>
     <string name="coordinates">Coordinates</string>
@@ -579,8 +617,6 @@
     <string name="configure_map">Configure map</string>
     <string name="search_radius_proximity">In proximity of</string>
     <string name="osmo_device_not_found">Device not found</string>
-    <string name="osmo_no_connection_msg">OsMo service is not available:\n- check the connection;\n- check the settings;\n- check out our Twitter: https://twitter.com/OsMomobi</string>
-    <string name="anonymous_user_hint">An anonymous user can not:\n- create groups;\n- synchronize groups and devices with the server;\n- manage groups and devices in a private office.</string>
     <string name="anonymous_user">Anonymous user</string>
     <string name="logged_as">Logged in as %1$s</string>
     <string name="speed_limit_exceed">Speed limit tolerance</string>
@@ -646,7 +682,6 @@
     <string name="rendering_attr_coloredBuildings_name">Color-code buildings by type</string>
     <string name="osmo_invite">Invite…</string>
     <string name="osmo_leave_confirmation_msg">Do you want to leave group %1$s?</string>
-    <string name="osmo_specify_tracker_id">Please specify id</string>
     <string name="continue_navigation">Continue Navigation</string>
     <string name="pause_navigation">Pause Navigation</string>
     <string name="keep_navigation_service">Keep</string>
@@ -681,12 +716,6 @@
         It could be a temporary service down or your registration expired.\n
         Do you want to proceed with new registration?</string>
     <string name="osmo_group_by_invite">Enter by invite</string>
-    <string name="osmo_group_information_desc">
-        - All created groups are public! If you want to be anonymous, connect devices directly via Tracker ids.\n
-        - Private groups are limited to 8 persons \n
-        - In case of inactivity or only 1 person activity for 2 weeks, group will be deleted.\n
-        - You can restrict group entrance, as only by invite, but to control group you need to go to admin console.\n
-        - If you need to create a group, but with other conditions please contact http://osmo.mobi</string>
     <string name="osmo_group_information">Please read before creating a group!</string>
     <string name="osmo_not_signed_in">OsMo login failed</string>
     <string name="osmo_gpx_points_downloaded">OsMo points %1$s downloaded.</string>
@@ -746,7 +775,6 @@
     <string name="osmo_center_location">Center on the screen</string>
     <string name="osmo_set_moving_target">Set as moving target</string>
     <string name="osmo_use_server_name">Registered name</string>
-    <string name="osmo_connect_to_my_nickname">My nickname</string>
     <string name="osmo_user_name">User</string>
     <string name="osmo_edit_device">Change user properties</string>
     <string name="osmo_edit_color">Display color</string>
@@ -766,13 +794,10 @@
     <string name="osmo_expire_group">Expires in</string>
     <string name="osmo_group_description">Description</string>
     <string name="osmo_group_policy">Policy</string>
-    <string name="osmo_connect_to_device_tracker_id">Tracker id</string>
     <string name="osmo_connect_to_device_name">User name</string>
-    <string name="osmo_connect_to_group_id">Group id</string>
     <string name="osmo_group_name">Group name</string>
     <string name="osmo_connect_to_device">Link with device</string>
     <string name="osmo_connect_to_group">Link with group</string>
-    <string name="osmo_connect">Connect to</string>
     <string name="osmo_create_group">Create group</string>
     <string name="osmo_server_operation_failed">OsMo Server operation failed</string>
     <string name="osmo_activity">OpenStreetMap Monitoring</string>
@@ -782,12 +807,6 @@
     <string name="minutes_ago">min ago</string>
     <string name="seconds_ago">sec ago</string>
     <string name="osmo_connected_devices">Connected devices</string>
-    <string name="osmo_groups">OsMo Groups/Devices</string>
-    <string name="osmo_auto_send_locations_descr">Automatically start tracker session and send locations after application startup</string>
-    <string name="osmo_auto_send_locations">Automatically start tracker session</string>
-    <string name="osmo_tracker_id">Personal tracker id</string>
-    <string name="osmo_tracker_id_descr">Click to view or share tracker id.
-        Using tracker id connected devices will be able to monitor all movements of this device! To disconnect select Regenerate option.</string>
     <string name="osmo_session_token">Session token: %1$s</string>
     <string name="osmo_auth_pending">Waiting for authorization…</string>
     <string name="osmo_locations_sent">Locations sent %1$d (in buffer %2$d) </string>
@@ -1647,9 +1666,8 @@ If you need help with OsmAnd application, please contact our support team: suppo
     <string name="general_settings_descr">Configure display and common settings for the application</string>
     <string name="global_app_settings">Global app settings</string>
     <string name="user_name">Your OSM user name</string>
-    <string name="user_name_descr">Needed for openstreetmap.org submissions</string>
+    <string name="open_street_map_login_descr">Needed for openstreetmap.org submissions</string>
     <string name="user_password">Your OSM password</string>
-    <string name="user_password_descr">Needed for openstreetmap.org submissions</string>
     <string name="osmand_service">Background mode</string>
     <string name="osmand_service_descr">OsmAnd runs in background while screen is off</string>
     <string name="download_files_not_enough_space">There is not enough free space to download %1$s MB (free: %2$s).</string>
@@ -2267,6 +2285,7 @@ If you need help with OsmAnd application, please contact our support team: suppo
     <string name="number_of_contributors">Number of contributors</string>
     <string name="number_of_edits">Number of edits</string>
     <string name="reports_for">Report for</string>
+    <string name="file_name_containes_illegal_char">File name contains illegal character</string>
 
     <!-- piratto-pl plugin -->
     <string name="osmand_oneteam_piratto_plugin_name">Piratto Delivery</string>

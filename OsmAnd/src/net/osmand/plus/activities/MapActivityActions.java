@@ -370,7 +370,7 @@ public class MapActivityActions implements DialogProvider {
 				bld.setPositiveButton(R.string.shared_string_yes, new DialogInterface.OnClickListener() {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
-						enterRoutePlanningModeGivenGpx(gpxFiles.get(0), from, fromName, useIntermediatePointsByDefault);
+						enterRoutePlanningModeGivenGpx(gpxFiles.get(0), from, fromName, useIntermediatePointsByDefault, true);
 					}
 				});
 			} else {
@@ -392,7 +392,7 @@ public class MapActivityActions implements DialogProvider {
 				bld.setAdapter(adapter, new DialogInterface.OnClickListener() {
 					@Override
 					public void onClick(DialogInterface dialogInterface, int i) {
-						enterRoutePlanningModeGivenGpx(gpxFiles.get(i), from, fromName, useIntermediatePointsByDefault);
+						enterRoutePlanningModeGivenGpx(gpxFiles.get(i), from, fromName, useIntermediatePointsByDefault, true);
 					}
 				});
 			}
@@ -400,22 +400,23 @@ public class MapActivityActions implements DialogProvider {
 			bld.setNegativeButton(R.string.shared_string_no, new DialogInterface.OnClickListener() {
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
-					enterRoutePlanningModeGivenGpx(null, from, fromName, useIntermediatePointsByDefault);
+					enterRoutePlanningModeGivenGpx(null, from, fromName, useIntermediatePointsByDefault, true);
 				}
 			});
 			bld.show();
 		} else {
-			enterRoutePlanningModeGivenGpx(null, from, fromName, useIntermediatePointsByDefault);
+			enterRoutePlanningModeGivenGpx(null, from, fromName, useIntermediatePointsByDefault, true);
 		}
 	}
 
-	public void enterRoutePlanningModeGivenGpx(GPXFile gpxFile, LatLon from, PointDescription fromName, boolean useIntermediatePointsByDefault) {
+	public void enterRoutePlanningModeGivenGpx(GPXFile gpxFile, LatLon from, PointDescription fromName,
+											   boolean useIntermediatePointsByDefault, boolean showDialog) {
 		settings.USE_INTERMEDIATE_POINTS_NAVIGATION.set(useIntermediatePointsByDefault);
 		OsmandApplication app = mapActivity.getMyApplication();
 		TargetPointsHelper targets = app.getTargetPointsHelper();
 
 		ApplicationMode mode = getRouteMode(from);
-		app.getSettings().APPLICATION_MODE.set(mode);
+		//app.getSettings().APPLICATION_MODE.set(mode);
 		app.getRoutingHelper().setAppMode(mode);
 		app.initVoiceCommandPlayer(mapActivity);
 		// save application mode controls
@@ -431,7 +432,9 @@ public class MapActivityActions implements DialogProvider {
 
 		mapActivity.getMapViewTrackingUtilities().switchToRoutePlanningMode();
 		mapActivity.getMapView().refreshMap(true);
-		mapActivity.getMapLayers().getMapControlsLayer().showDialog();
+		if (showDialog) {
+			mapActivity.getMapLayers().getMapControlsLayer().showDialog();
+		}
 		if (targets.hasTooLongDistanceToNavigate()) {
 			app.showToastMessage(R.string.route_is_too_long);
 		}
@@ -443,7 +446,7 @@ public class MapActivityActions implements DialogProvider {
 		TargetPointsHelper targets = app.getTargetPointsHelper();
 
 		ApplicationMode mode = getRouteMode(null);
-		app.getSettings().APPLICATION_MODE.set(mode);
+		//app.getSettings().APPLICATION_MODE.set(mode);
 		app.getRoutingHelper().setAppMode(mode);
 		app.initVoiceCommandPlayer(mapActivity);
 		// save application mode controls
@@ -813,7 +816,7 @@ public class MapActivityActions implements DialogProvider {
 		settings.LAST_ROUTING_APPLICATION_MODE = settings.APPLICATION_MODE.get();
 		settings.APPLICATION_MODE.set(settings.DEFAULT_APPLICATION_MODE.get());
 		if (settings.USE_MAP_MARKERS.get()) {
-			getMyApplication().getTargetPointsHelper().removeAllWayPoints(false);
+			getMyApplication().getTargetPointsHelper().removeAllWayPoints(false, false);
 		}
 		mapActivity.updateApplicationModeSettings();
 		mapActivity.getDashboard().clearDeletedPoints();

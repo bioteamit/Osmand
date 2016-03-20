@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.TextView;
 
 import net.osmand.AndroidUtils;
 import net.osmand.data.LatLon;
@@ -53,7 +54,7 @@ public class DestinationReachedMenuFragment extends Fragment {
 		IconsCache iconsCache = getMapActivity().getMyApplication().getIconsCache();
 
 		ImageButton closeImageButton = (ImageButton) view.findViewById(R.id.closeImageButton);
-		closeImageButton.setImageDrawable(iconsCache.getContentIcon(R.drawable.ic_action_remove_dark));
+		closeImageButton.setImageDrawable(iconsCache.getContentIcon(R.drawable.ic_action_remove_dark, menu.isLight()));
 		closeImageButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -63,7 +64,8 @@ public class DestinationReachedMenuFragment extends Fragment {
 
 		Button removeDestButton = (Button) view.findViewById(R.id.removeDestButton);
 		removeDestButton.setCompoundDrawablesWithIntrinsicBounds(
-				iconsCache.getContentIcon(R.drawable.ic_action_delete_dark), null, null, null);
+				iconsCache.getContentIcon(R.drawable.ic_action_done, menu.isLight()), null, null, null);
+		AndroidUtils.setTextPrimaryColor(view.getContext(), removeDestButton, !menu.isLight());
 		removeDestButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -82,7 +84,8 @@ public class DestinationReachedMenuFragment extends Fragment {
 
 		Button recalcDestButton = (Button) view.findViewById(R.id.recalcDestButton);
 		recalcDestButton.setCompoundDrawablesWithIntrinsicBounds(
-				iconsCache.getContentIcon(R.drawable.ic_action_gdirections_dark), null, null, null);
+				iconsCache.getContentIcon(R.drawable.ic_action_gdirections_dark, menu.isLight()), null, null, null);
+		AndroidUtils.setTextPrimaryColor(view.getContext(), recalcDestButton, !menu.isLight());
 		recalcDestButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -103,7 +106,8 @@ public class DestinationReachedMenuFragment extends Fragment {
 
 		Button findParkingButton = (Button) view.findViewById(R.id.findParkingButton);
 		findParkingButton.setCompoundDrawablesWithIntrinsicBounds(
-				iconsCache.getContentIcon(R.drawable.ic_action_parking_dark), null, null, null);
+				iconsCache.getContentIcon(R.drawable.ic_action_parking_dark, menu.isLight()), null, null, null);
+		AndroidUtils.setTextPrimaryColor(view.getContext(), findParkingButton, !menu.isLight());
 		findParkingButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -153,6 +157,8 @@ public class DestinationReachedMenuFragment extends Fragment {
 			AndroidUtils.setBackground(view.getContext(), mainView, !menu.isLight(),
 					R.drawable.bg_bottom_menu_light, R.drawable.bg_bottom_menu_dark);
 		}
+		TextView title = (TextView) view.findViewById(R.id.titleTextView);
+		AndroidUtils.setTextPrimaryColor(view.getContext(), title, !menu.isLight());
 
 		return view;
 	}

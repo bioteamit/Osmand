@@ -11,6 +11,7 @@ import android.support.annotation.AttrRes;
 import android.support.annotation.ColorInt;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -24,6 +25,7 @@ import android.widget.TextView;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 
+import net.osmand.AndroidUtils;
 import net.osmand.PlatformUtil;
 import net.osmand.osm.io.NetworkUtils;
 import net.osmand.plus.R;
@@ -38,7 +40,7 @@ import java.util.Calendar;
 import java.util.Locale;
 
 public class ReportsFragment extends BaseOsmAndFragment implements CountrySelectionFragment.OnFragmentInteractionListener {
-	public static final String TITLE = "Report";
+	public static final int TITLE = R.string.report;
 	public static final String DOMAIN = "http://download.osmand.net/";
 	public static final String TOTAL_CHANGES_BY_MONTH_URL_PATTERN = DOMAIN +
 			"reports/query_report.php?report=total_changes_by_month&month=%s&region=%s";
@@ -49,13 +51,14 @@ public class ReportsFragment extends BaseOsmAndFragment implements CountrySelect
 
 
 	private static final Log LOG = PlatformUtil.getLog(ReportsFragment.class);
+	public static final String OSM_LIVE_URL = "http://osmand.net/osm_live";
 
 	private TextView contributorsTextView;
 	private TextView editsTextView;
 	private TextView donationsTextView;
 	private TextView recipientsTextView;
 
-	private Spinner montReportsSpinner;
+	private Spinner monthReportsSpinner;
 	private MonthsForReportsAdapter monthsForReportsAdapter;
 
 	private CountrySelectionFragment countrySelectionFragment = new CountrySelectionFragment();
@@ -72,7 +75,6 @@ public class ReportsFragment extends BaseOsmAndFragment implements CountrySelect
 	private TextView numberOfRecipientsTitle;
 	private TextView donationsTitle;
 	private ProgressBar progressBar;
-	private View dividerToHide;
 
 	private int inactiveColor;
 	private int textColorPrimary;
@@ -82,18 +84,35 @@ public class ReportsFragment extends BaseOsmAndFragment implements CountrySelect
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 							 Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.fragment_reports, container, false);
-		montReportsSpinner = (Spinner) view.findViewById(R.id.montReportsSpinner);
+		monthReportsSpinner = (Spinner) view.findViewById(R.id.monthReportsSpinner);
+		final View monthButton = view.findViewById(R.id.monthButton);
+		monthReportsSpinner.setOnTouchListener(new View.OnTouchListener() {
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				event.offsetLocation(AndroidUtils.dpToPx(getActivity(), 48f), 0);
+				monthButton.onTouchEvent(event);
+				return true;
+			}
+		});
 		monthsForReportsAdapter = new MonthsForReportsAdapter(getActivity());
-		montReportsSpinner.setAdapter(monthsForReportsAdapter);
-		
+		monthReportsSpinner.setAdapter(monthsForReportsAdapter);
+
+		monthButton.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				monthReportsSpinner.performClick();
+			}
+		});
+
 		view.findViewById(R.id.show_all).setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
-				Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://osmand.net/osm_live"));
+				Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(OSM_LIVE_URL));
 				startActivity(intent);
 			}
 		});
+		((TextView) view.findViewById(R.id.osm_live_url_label)).setText(OSM_LIVE_URL);
 
 		View regionReportsButton = view.findViewById(R.id.reportsButton);
 		regionReportsButton.setOnClickListener(new View.OnClickListener() {
@@ -105,7 +124,7 @@ public class ReportsFragment extends BaseOsmAndFragment implements CountrySelect
 		OnClickListener listener = new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				int monthItemPosition = montReportsSpinner.getSelectedItemPosition();
+				int monthItemPosition = monthReportsSpinner.getSelectedItemPosition();
 				String monthUrlString = monthsForReportsAdapter.getQueryString(monthItemPosition);
 				String countryUrlString = selectedCountryItem.getDownloadName();
 				if (countryUrlString.length() > 0) {
@@ -128,15 +147,17 @@ public class ReportsFragment extends BaseOsmAndFragment implements CountrySelect
 		countryNameTextView.setText(selectedCountryItem.getLocalName());
 
 		setThemedDrawable(view, R.id.calendarImageView, R.drawable.ic_action_data);
+		setThemedDrawable(view, R.id.monthDropDownIcon, R.drawable.ic_action_arrow_drop_down);
 		setThemedDrawable(view, R.id.regionIconImageView, R.drawable.ic_world_globe_dark);
-		
+		setThemedDrawable(view, R.id.countryDropDownIcon, R.drawable.ic_action_arrow_drop_down);
+
 		numberOfContributorsIcon = (ImageView) view.findViewById(R.id.numberOfContributorsIcon);
 		numberOfEditsIcon = (ImageView) view.findViewById(R.id.numberOfEditsIcon);
 		numberOfRecipientsIcon = (ImageView) view.findViewById(R.id.numberOfRecipientsIcon);
 		donationsIcon = (ImageView) view.findViewById(R.id.donationsIcon);
-		setThemedDrawable(numberOfContributorsIcon, R.drawable.ic_group);
+		setThemedDrawable(numberOfContributorsIcon, R.drawable.ic_action_group2);
 		setThemedDrawable(numberOfRecipientsIcon, R.drawable.ic_group);
-		setThemedDrawable(donationsIcon, R.drawable.ic_action_message);
+		setThemedDrawable(donationsIcon, R.drawable.ic_action_bitcoin);
 		setThemedDrawable(numberOfEditsIcon, R.drawable.ic_map);
 		
 		
@@ -152,8 +173,6 @@ public class ReportsFragment extends BaseOsmAndFragment implements CountrySelect
 		donationsTextView = (TextView) view.findViewById(R.id.donationsTextView);
 		recipientsTextView = (TextView) view.findViewById(R.id.recipientsTextView);
 
-		dividerToHide = view.findViewById(R.id.divider_to_hide);
-
 		requestAndUpdateUi();
 
 		AdapterView.OnItemSelectedListener onItemSelectedListener = new AdapterView.OnItemSelectedListener() {
@@ -167,7 +186,7 @@ public class ReportsFragment extends BaseOsmAndFragment implements CountrySelect
 
 			}
 		};
-		montReportsSpinner.setOnItemSelectedListener(onItemSelectedListener);
+		monthReportsSpinner.setOnItemSelectedListener(onItemSelectedListener);
 
 		inactiveColor = getColorFromAttr(R.attr.plugin_details_install_header_bg);
 		textColorPrimary = getColorFromAttr(android.R.attr.textColorPrimary);
@@ -177,7 +196,7 @@ public class ReportsFragment extends BaseOsmAndFragment implements CountrySelect
 	}
 
 	public void requestAndUpdateUi() {
-		int monthItemPosition = montReportsSpinner.getSelectedItemPosition();
+		int monthItemPosition = monthReportsSpinner.getSelectedItemPosition();
 		String monthUrlString = monthsForReportsAdapter.getQueryString(monthItemPosition);
 		String countryUrlString = selectedCountryItem.getDownloadName();
 
@@ -260,7 +279,7 @@ public class ReportsFragment extends BaseOsmAndFragment implements CountrySelect
 	private static class MonthsForReportsAdapter extends ArrayAdapter<String> {
 		private static final SimpleDateFormat queryFormat = new SimpleDateFormat("yyyy-MM", Locale.US);
 		@SuppressLint("SimpleDateFormat")
-		private static final SimpleDateFormat humanFormat = new SimpleDateFormat("MMMM yyyy");
+		private static final SimpleDateFormat humanFormat = new SimpleDateFormat("LLLL yyyy");
 
 		ArrayList<String> queryString = new ArrayList<>();
 
@@ -344,7 +363,7 @@ public class ReportsFragment extends BaseOsmAndFragment implements CountrySelect
 		numberOfContributorsIcon.setImageDrawable(getPaintedContentIcon(R.drawable.ic_group, inactiveColor));
 		numberOfEditsIcon.setImageDrawable(getPaintedContentIcon(R.drawable.ic_map, inactiveColor));
 		numberOfRecipientsIcon.setImageDrawable(getPaintedContentIcon(R.drawable.ic_group, inactiveColor));
-		donationsIcon.setImageDrawable(getPaintedContentIcon(R.drawable.ic_action_message, inactiveColor));
+		donationsIcon.setImageDrawable(getPaintedContentIcon(R.drawable.ic_action_bitcoin, inactiveColor));
 		
 		numberOfContributorsTitle.setTextColor(inactiveColor);
 		numberOfEditsTitle.setTextColor(inactiveColor);
@@ -352,8 +371,7 @@ public class ReportsFragment extends BaseOsmAndFragment implements CountrySelect
 		donationsTitle.setTextColor(inactiveColor);
 		
 		progressBar.setVisibility(View.VISIBLE);
-		dividerToHide.setVisibility(View.GONE);
-		
+
 		contributorsTextView.setTextColor(inactiveColor);
 		donationsTextView.setTextColor(inactiveColor);
 		recipientsTextView.setTextColor(inactiveColor);
@@ -364,16 +382,15 @@ public class ReportsFragment extends BaseOsmAndFragment implements CountrySelect
 		numberOfContributorsIcon.setImageDrawable(getContentIcon(R.drawable.ic_group));
 		numberOfEditsIcon.setImageDrawable(getContentIcon(R.drawable.ic_map));
 		numberOfRecipientsIcon.setImageDrawable(getContentIcon(R.drawable.ic_group));
-		donationsIcon.setImageDrawable(getContentIcon(R.drawable.ic_action_message));
+		donationsIcon.setImageDrawable(getContentIcon(R.drawable.ic_action_bitcoin));
 		
 		numberOfContributorsTitle.setTextColor(textColorSecondary);
 		numberOfEditsTitle.setTextColor(textColorSecondary);
 		numberOfRecipientsTitle.setTextColor(textColorSecondary);
 		donationsTitle.setTextColor(textColorSecondary);
 		
-		progressBar.setVisibility(View.GONE);
-		dividerToHide.setVisibility(View.VISIBLE);
-		
+		progressBar.setVisibility(View.INVISIBLE);
+
 		contributorsTextView.setTextColor(textColorPrimary);
 		editsTextView.setTextColor(textColorPrimary);
 		donationsTextView.setTextColor(textColorPrimary);

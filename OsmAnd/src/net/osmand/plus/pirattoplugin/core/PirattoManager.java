@@ -287,22 +287,20 @@ public class PirattoManager extends Observable implements PointsRetrieverTask.On
 	}
 
 	public boolean removeDestinationPoint(DestinationPoint destinationPoint) {
-		boolean state = this.destinationPoints.removePoint(destinationPoint);
-		this.destinationPoints.commit();
-		return state;
+		return this.destinationPoints.removePoint(destinationPoint);
 	}
 
 	@Override
 	public void onSuccess(String carPlate, DestinationPoints points) {
-		boolean updated = this.destinationPoints.updatePoints(points);
-		this.setChanged();
-		if (updated) {
-			Log.d(TAG, "Points are updated");
-			this.notifyObservers(this.destinationPoints.getDestinationPoints());
-			this.destinationPoints.commit();
+		if (points == null) {
+			this.destinationPoints = new DestinationPoints();
 		} else {
-			this.notifyObservers();
+			this.destinationPoints = points;
 		}
+
+		this.setChanged();
+		Log.d(TAG, "Points are updated");
+		this.notifyObservers(this.destinationPoints.getDestinationPoints());
 	}
 
 	@Override

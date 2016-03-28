@@ -12,6 +12,7 @@ import net.osmand.plus.pirattoplugin.core.PirattoManager;
 
 public class SettingsPirattoActivity extends SettingsBaseActivity {
 
+	private OsmandSettings.CommonPreference<String> hostNameSettings;
 	private OsmandSettings.CommonPreference<String> carPlateSettings;
 	private OsmandSettings.CommonPreference<Integer> updateIntervalSettings;
 	private PirattoManager pirattoManager;
@@ -30,11 +31,22 @@ public class SettingsPirattoActivity extends SettingsBaseActivity {
 			this.pirattoManager = PirattoManager.initialize(this.getMyApplication());
 		}
 
+		this.hostNameSettings = this.settings.registerStringPreference(PirattoManager.PIRATTO_HOST_NAME, null).makeGlobal();
 		this.carPlateSettings = this.settings.registerStringPreference(PirattoManager.PIRATTO_CAR_PLATE, null).makeGlobal();
 		this.updateIntervalSettings = this.settings.registerIntPreference(PirattoManager.PIRATTO_UPDATE_INTERVAL, 2).makeGlobal();
 
+		final EditTextPreference hostNamePref = (EditTextPreference) findPreference(this.hostNameSettings.getId());
 		final EditTextPreference carPlatePref = (EditTextPreference) findPreference(this.carPlateSettings.getId());
 		final EditTextPreference updateIntervalPref = (EditTextPreference) findPreference(this.updateIntervalSettings.getId());
+
+		hostNamePref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+			@Override
+			public boolean onPreferenceChange(Preference preference, Object newValue) {
+				hostNameSettings.set((String) newValue);
+				pirattoManager.refresh();
+				return true;
+			}
+		});
 
 		// Registered cars
 		// "CB 763AU" "CB 060EG" "CB 077CN" "CB 201AX" "CB 8627W"

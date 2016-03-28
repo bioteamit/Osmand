@@ -16,34 +16,41 @@ public class PointsRetrieverTask extends TimerTask {
 	}
 
 	private OnRetrievingPointsCallback onRetrievingPointsCallback;
+	private String hostName;
 	private String carPlate;
 
-	public PointsRetrieverTask(String carPlate, OnRetrievingPointsCallback onRetrievingPointsCallback) {
+	public PointsRetrieverTask(String hostName, String carPlate, OnRetrievingPointsCallback onRetrievingPointsCallback) {
+		this.hostName = hostName;
 		this.carPlate = carPlate;
 		this.onRetrievingPointsCallback = onRetrievingPointsCallback;
 	}
 
 	@Override
 	public void run() {
-		this.retrievePoints(this.carPlate);
+		this.retrievePoints(this.hostName, this.carPlate);
 	}
 
-	private void retrievePoints(String carPlate) {
+	private void retrievePoints(String hostName, String carPlate) {
 		Log.d(TAG, "Request destination points");
 
+		if (TextUtils.isEmpty(hostName)) {
+			Log.w(TAG, "Host name is not defined");
+			return;
+		}
+
 		if (TextUtils.isEmpty(carPlate)) {
-			Log.w(TAG, "No car plat is defined");
+			Log.w(TAG, "Car plate is not defined");
 			return;
 		}
 
 		if (this.onRetrievingPointsCallback == null) {
-			Log.e(TAG, "No callback is assigned");
+			Log.e(TAG, "Callback is not assigned");
 			return;
 		}
 
 		DestinationPointsRetriever retriever = new DestinationPointsRetriever();
 		try {
-			DestinationPoints points = retriever.retrievePoints(this.carPlate);
+			DestinationPoints points = retriever.retrievePoints(this.hostName, this.carPlate);
 			this.handleRetrievedPoints(points);
 
 			// FIXME: START INTEGRATION TEST
@@ -65,6 +72,8 @@ public class PointsRetrieverTask extends TimerTask {
 			Log.e(TAG, "Failed to parse destination points", e);
 		} catch (CarNotDefinedException e) {
 			Log.e(TAG, "Car plate is not valid", e);
+		} catch (HostNameNotDefinedException e) {
+			Log.e(TAG, "Host name is not valid", e);
 		}
 		return;
 	}

@@ -20,6 +20,7 @@ import java.util.Timer;
 
 public class PirattoManager extends Observable implements PointsRetrieverTask.OnRetrievingPointsCallback {
 
+	public final static String PIRATTO_HOST_NAME = "pref_piratto_hostname"; //$NON-NLS-1$
 	public final static String PIRATTO_CAR_PLATE = "pref_piratto_car_plate"; //$NON-NLS-1$
 	public final static String PIRATTO_UPDATE_INTERVAL = "pref_piratto_update_interval"; //$NON-NLS-1$
 	public final static String PIRATTO_TARGET_POINT_ADDRESS = "piratto_target_point_address"; //$NON-NLS-1$
@@ -48,6 +49,7 @@ public class PirattoManager extends Observable implements PointsRetrieverTask.On
 	private OsmandSettings.CommonPreference<Float> targetPointLatitudeSettings;
 	private OsmandSettings.CommonPreference<Float> targetPointLongitudeSettings;
 	///////
+	private OsmandSettings.CommonPreference<String> hostNameSettings;
 	private OsmandSettings.CommonPreference<String> carPlateSettings;
 	private OsmandSettings.CommonPreference<Integer> updateIntervalSettings;
 
@@ -71,6 +73,7 @@ public class PirattoManager extends Observable implements PointsRetrieverTask.On
 		this.destinationPoints = new DestinationPoints();
 //		this.addTestDestinationPoints();
 
+		this.hostNameSettings = this.settings.registerStringPreference(PIRATTO_HOST_NAME, null).makeGlobal();
 		this.carPlateSettings = this.settings.registerStringPreference(PIRATTO_CAR_PLATE, null).makeGlobal();
 		this.updateIntervalSettings = this.settings.registerIntPreference(PIRATTO_UPDATE_INTERVAL, 2).makeGlobal();
 	}
@@ -90,28 +93,6 @@ public class PirattoManager extends Observable implements PointsRetrieverTask.On
 
 	private void addTestDestinationPoint(String address, double latitude, double longitude) {
 		this.destinationPoints.addPoint(new DestinationPoint(address, latitude, longitude));
-	}
-
-	public void setCarPlate(String newCarPlate) {
-		if (!this.shouldChangeCarPlate(newCarPlate)) {
-			return;
-		}
-		this.carPlateSettings.set(newCarPlate);
-
-		this.refresh();
-	}
-
-	public void setUpdateTimeInterval(int timeInMinutes) {
-		if (timeInMinutes <= 0) {
-			return;
-		}
-		this.updateIntervalSettings.set(timeInMinutes);
-
-		this.refresh();
-	}
-
-	public synchronized void setRoutingPoint(boolean routing) {
-		this.isRoutingPoint = routing;
 	}
 
 	public boolean isRoutingPoint() {
@@ -270,7 +251,14 @@ public class PirattoManager extends Observable implements PointsRetrieverTask.On
 
 	public void refresh() {
 		this.cancelSchedule();
-		this.pointsRetrieverTask = new PointsRetrieverTask(this.carPlateSettings.get(), this);
+		String hostName = this.hostNameSettings.get();
+		String carPlate = this.carPlateSettings.get();
+		if (TextUtils.isEmpty(hostName) || TextUtils.isEmpty(carPlate)) {
+			Log.w(TAG, "Invalid refresh piratto points request as hostname or car plate is not defined");
+			return;
+		}
+
+		this.pointsRetrieverTask = new PointsRetrieverTask(hostName, carPlate, this);
 		this.timer = new Timer();
 		int period = this.updateIntervalSettings.get() * 60 * 1000;
 		this.timer.scheduleAtFixedRate(this.pointsRetrieverTask, 0, period);
@@ -312,13 +300,8 @@ public class PirattoManager extends Observable implements PointsRetrieverTask.On
 	protected void finalize() throws Throwable {
 		super.finalize();
 		this.cancelSchedule();
+		this.deleteObservers();
 		this.pointsRetrieverTask = null;
 		this.timer = null;
-	}
-
-	private static boolean shouldChangeCarPlate(String carPlate) {
-		return TextUtils.isEmpty(PirattoManager.instance.carPlateSettings.get())
-				|| (!TextUtils.isEmpty(carPlate)
-				&& !PirattoManager.instance.carPlateSettings.get().equals(carPlate));
 	}
 }

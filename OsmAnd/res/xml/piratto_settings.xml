@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <EditTextPreference
+        android:key="pref_piratto_hostname" android:title="@string/piratto_hostname_title" android:summary="@string/piratto_hostname_descr"
+        android:defaultValue="" />
+    <EditTextPreference
         android:key="pref_piratto_car_plate" android:title="@string/piratto_car_plate_title" android:summary="@string/piratto_car_plate_descr"
         android:defaultValue="" />
     <EditTextPreference

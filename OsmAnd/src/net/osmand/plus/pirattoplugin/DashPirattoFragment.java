@@ -87,32 +87,21 @@ public class DashPirattoFragment extends DashLocationFragment implements Observe
 
 	@Override
 	public void update(Observable observable, Object data) {
-		if (data == null && this.isActive) {
-			this.getActivity().runOnUiThread(new Runnable() {
-				@Override
-				public void run() {
-					Toast.makeText(DashPirattoFragment.this.getActivity(), DashPirattoFragment.this.getString(R.string.osmand_oneteam_piratto_update_no_points), Toast.LENGTH_SHORT).show();
-				}
-			});
+
+		if (data == null || !(data instanceof ArrayList)) {
 			return;
 		}
 
-		if (!(data instanceof ArrayList)) {
-			return;
-		}
-
+		final ArrayList<DestinationPoint> points = (ArrayList) data;
 		this.getActivity().runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
+				if (points.isEmpty() && DashPirattoFragment.this.isActive) {
+					Toast.makeText(DashPirattoFragment.this.getActivity(), DashPirattoFragment.this.getString(R.string.osmand_oneteam_piratto_update_no_points), Toast.LENGTH_SHORT).show();
+				}
 				DashPirattoFragment.this.onOpenDash();
 			}
 		});
-
-		PirattoManager pirattoManager = PirattoManager.getInstance();
-		if (!pirattoManager.isRoutingPoint()) {
-			pirattoManager.removeOldTargetPoint();
-			pirattoManager.routeNextPoint(this.getActivity());
-		}
 	}
 
 	@Override

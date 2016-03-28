@@ -202,15 +202,14 @@ public class PirattoPlugin extends OsmandPlugin implements Observer, RoutingHelp
 		Log.d(TAG, "on activity destroy");
 
 		this.pirattoManager.cancelSchedule();
-		this.pirattoManager.deleteObserver(this);
+		this.pirattoManager.deleteObservers();
 	}
 
 	@Override
 	public void update(Observable observable, Object data) {
-		PirattoManager pirattoManager = PirattoManager.getInstance();
-		if (!pirattoManager.isRoutingPoint()) {
-			pirattoManager.removeOldTargetPoint();
-			pirattoManager.routeNextPoint(this.mapActivity);
+		if (!this.pirattoManager.isRoutingPoint()) {
+			this.pirattoManager.removeOldTargetPoint();
+			this.pirattoManager.routeNextPoint(this.mapActivity);
 		}
 
 		this.pirattoLayer.refresh();

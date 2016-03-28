@@ -31,15 +31,19 @@ public class DestinationPointsRetriever {
 		return this.toDestinationPoints(pointsFile);
 	}
 
-	public DestinationPoints retrievePoints(String carPlate) throws IOException, CarNotDefinedException {
+	public DestinationPoints retrievePoints(String hostName, String carPlate) throws IOException, CarNotDefinedException, HostNameNotDefinedException {
+
+		if (TextUtils.isEmpty(hostName)) {
+			throw new HostNameNotDefinedException("Host name is not defined");
+		}
 
 		if (TextUtils.isEmpty(carPlate)) {
-			throw new CarNotDefinedException("No car plate is defined");
+			throw new CarNotDefinedException("Car plate is not defined");
 		}
 
 		String requestBody = this.createDestinationPointsBody(carPlate);
 
-		Response response = this.execute(Api.SERVER_URL, Api.RequestDestinationPoints.CONTENT_TYPE, requestBody);
+		Response response = this.execute(hostName, "text/plain", requestBody);
 		if (response.isSuccessful()) {
 			return this.toDestinationPoints(response.body());
 		}

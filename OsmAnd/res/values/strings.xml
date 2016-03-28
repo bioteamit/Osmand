@@ -2289,18 +2289,17 @@ If you need help with OsmAnd application, please contact our support team: suppo
 
     <!-- piratto-pl plugin -->
     <string name="osmand_oneteam_piratto_plugin_name">Piratto Delivery</string>
-    <string name="osmand_oneteam_piratto_plugin_description">The delivery points of Piratto orders.</string>
-    <string name="context_menu_item_piratto_add_destination_point">Mark as a destination point</string>
-    <string name="context_menu_item_piratto_delete_destination_point">Delete a destination point</string>
+    <string name="osmand_oneteam_piratto_plugin_description">The delivery points of Piratto</string>
     <string name="map_widget_piratto">Destination Point</string>
     <string name="osmand_oneteam_piratto_delete_confirm">Do you want to delete the destination point marker?</string>
     <string name="osmand_oneteam_piratto_delete">Delete a destination point marker</string>
-    <string name="osmand_oneteam_piratto_destination_point">Destination Point</string>
     <string name="osmand_oneteam_piratto_point_info">%1$s\n Lat %2$s\n Lon %3$s</string>
     <string name="osmand_oneteam_piratto_dashboard_title">Piratto points (%1$d)</string>
     <string name="osmand_oneteam_piratto_dashboard_update">Update points</string>
     <string name="osmand_oneteam_piratto_update_points">Update request is sent.</string>
     <string name="osmand_oneteam_piratto_update_no_points">No new points</string>
+    <string name="piratto_hostname_title">Host Name</string>
+    <string name="piratto_hostname_descr">Set host name (e.g. http://www.hostname.com:80)</string>
     <string name="piratto_car_plate_title">Car Plate</string>
     <string name="piratto_car_plate_descr">Set registered car plate (e.g. CB 763AU)</string>
     <string name="piratto_update_interval_title">Update Points Interval</string>

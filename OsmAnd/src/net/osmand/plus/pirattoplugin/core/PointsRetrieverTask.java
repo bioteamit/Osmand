@@ -70,16 +70,16 @@ public class PointsRetrieverTask extends TimerTask {
 			// END INTEGRATION TEST
 		} catch (IOException e) {
 			Log.e(TAG, "Failed to parse destination points", e);
-			this.onRetrievingPointsCallback.onFailure(this.hostName, this.carPlate, e.getMessage());
+			this.sendFailure(this.hostName, this.carPlate, e);
 		} catch (CarNotDefinedException e) {
 			Log.e(TAG, "Car plate is not valid", e);
-			this.onRetrievingPointsCallback.onFailure(this.hostName, this.carPlate, e.getMessage());
+			this.sendFailure(this.hostName, this.carPlate, e);
 		} catch (HostNameNotDefinedException e) {
 			Log.e(TAG, "Host name is not valid", e);
-			this.onRetrievingPointsCallback.onFailure(this.hostName, this.carPlate, e.getMessage());
+			this.sendFailure(this.hostName, this.carPlate, e);
 		} catch (InvalidFormatException e) {
 			Log.e(TAG, "Response format is not valid", e);
-			this.onRetrievingPointsCallback.onFailure(this.hostName, this.carPlate, e.getMessage());
+			this.sendFailure(this.hostName, this.carPlate, e);
 		}
 	}
 
@@ -93,5 +93,13 @@ public class PointsRetrieverTask extends TimerTask {
 		Log.d(TAG, "Destination points size: " + points.getDestinationPoints().size());
 		this.onRetrievingPointsCallback.onSuccess(this.hostName, this.carPlate, points);
 		return;
+	}
+
+	private void sendFailure(String hostName, String carPlate, Exception e) {
+		String message = e.getMessage();
+		if (TextUtils.isEmpty(message)) {
+			message = e.getClass().getSimpleName();
+		}
+		this.onRetrievingPointsCallback.onFailure(hostName, carPlate, message);
 	}
 }

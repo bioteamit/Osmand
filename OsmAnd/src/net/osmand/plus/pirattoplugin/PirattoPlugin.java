@@ -1,6 +1,7 @@
 package net.osmand.plus.pirattoplugin;
 
 import android.app.Activity;
+import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -213,6 +214,10 @@ public class PirattoPlugin extends OsmandPlugin implements Observer, RoutingHelp
 			final String hostName = info[0];
 			final String carPlate = info[1];
 			final String message = info[2];
+			if (TextUtils.isEmpty(message)) {
+				return;
+			}
+
 			final String line = message.split("[\\r\\n]+")[0];
 
 			this.mapActivity.runOnUiThread(new Runnable() {

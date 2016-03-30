@@ -2297,7 +2297,7 @@ If you need help with OsmAnd application, please contact our support team: suppo
     <string name="osmand_oneteam_piratto_dashboard_title">Piratto points (%1$d)</string>
     <string name="osmand_oneteam_piratto_dashboard_update">Update points</string>
     <string name="osmand_oneteam_piratto_update_points">Update request is sent.</string>
-    <string name="osmand_oneteam_piratto_update_no_points">No new points</string>
+    <string name="osmand_oneteam_piratto_update_no_points">No new points (%1$s)</string>
     <string name="piratto_hostname_title">Host Name</string>
     <string name="piratto_hostname_descr">Set host name (e.g. http://www.hostname.com:80)</string>
     <string name="piratto_car_plate_title">Car Plate</string>

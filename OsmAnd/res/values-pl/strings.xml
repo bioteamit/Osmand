@@ -2157,7 +2157,7 @@
     <string name="osmand_oneteam_piratto_dashboard_title">Adresy dostaw z Piratto (%1$d)</string>
     <string name="osmand_oneteam_piratto_dashboard_update">Pobierz Adresy Dostaw</string>
     <string name="osmand_oneteam_piratto_update_points">Zapytanie o adresy dostaw zostało wysłane</string>
-    <string name="osmand_oneteam_piratto_update_no_points">Brak nowych adresów dostaw</string>
+    <string name="osmand_oneteam_piratto_update_no_points">Brak nowych adresów dostaw (%1$s)</string>
     <string name="piratto_hostname_title">Adres serwera</string>
     <string name="piratto_hostname_descr">Ustaw adres serwera (np. http://www.hostname.pl:80)</string>
     <string name="piratto_car_plate_title">Numer rejestracyjny samochodu</string>

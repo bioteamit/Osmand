@@ -304,4 +304,16 @@ public class PirattoManager extends Observable implements PointsRetrieverTask.On
 		this.pointsRetrieverTask = null;
 		this.timer = null;
 	}
+
+	public String getHostName() {
+		return this.hostNameSettings.get();
+	}
+
+	public String getCarPlate() {
+		return this.carPlateSettings.get();
+	}
+
+	public int getUpdateInterval() {
+		return this.updateIntervalSettings.get();
+	}
 }

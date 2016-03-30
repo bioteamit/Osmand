@@ -279,7 +279,7 @@ public class PirattoManager extends Observable implements PointsRetrieverTask.On
 	}
 
 	@Override
-	public void onSuccess(String carPlate, DestinationPoints points) {
+	public void onSuccess(String hostName, String carPlate, DestinationPoints points) {
 		if (points == null) {
 			this.destinationPoints = new DestinationPoints();
 		} else {
@@ -292,8 +292,11 @@ public class PirattoManager extends Observable implements PointsRetrieverTask.On
 	}
 
 	@Override
-	public void onFailure(String carPlate, String message) {
-		Log.w(TAG, "Failed to retrieve destination points for car [" + carPlate + "] due to " + message);
+	public void onFailure(String hostName, String carPlate, String message) {
+		Log.w(TAG, "Failed to retrieve destination points for host name [" + hostName + "] and car [" + carPlate + "] due to " + message);
+
+		this.setChanged();
+		this.notifyObservers(new String[] { hostName, carPlate, message });
 	}
 
 	@Override

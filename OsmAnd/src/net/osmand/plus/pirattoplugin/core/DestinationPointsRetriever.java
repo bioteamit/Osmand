@@ -5,6 +5,7 @@ import android.text.TextUtils;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import okhttp3.MediaType;
@@ -22,7 +23,7 @@ public class DestinationPointsRetriever {
 		this.client = new OkHttpClient();
 	}
 
-	public DestinationPoints retrievePoints(File pointsFile) throws IOException {
+	public DestinationPoints retrievePoints(File pointsFile) throws IOException, InvalidFormatException {
 		if (pointsFile == null
 				|| !pointsFile.exists()) {
 			// TODO: report error
@@ -31,7 +32,7 @@ public class DestinationPointsRetriever {
 		return this.toDestinationPoints(pointsFile);
 	}
 
-	public DestinationPoints retrievePoints(String hostName, String carPlate) throws IOException, CarNotDefinedException, HostNameNotDefinedException {
+	public DestinationPoints retrievePoints(String hostName, String carPlate) throws IOException, CarNotDefinedException, HostNameNotDefinedException, InvalidFormatException {
 
 		if (TextUtils.isEmpty(hostName)) {
 			throw new HostNameNotDefinedException("Host name is not defined");
@@ -66,11 +67,11 @@ public class DestinationPointsRetriever {
 		return this.client.newCall(request).execute();
 	}
 
-	private DestinationPoints toDestinationPoints(ResponseBody body) throws IOException {
+	private DestinationPoints toDestinationPoints(ResponseBody body) throws InvalidFormatException {
 		return DestinationPoints.parse(body.byteStream());
 	}
 
-	private DestinationPoints toDestinationPoints(File pointsFile) throws IOException {
+	private DestinationPoints toDestinationPoints(File pointsFile) throws FileNotFoundException, InvalidFormatException {
 		BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(pointsFile), 5120);
 		return DestinationPoints.parse(inputStream);
 	}

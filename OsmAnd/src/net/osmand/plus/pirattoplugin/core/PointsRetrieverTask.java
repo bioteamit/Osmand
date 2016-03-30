@@ -11,8 +11,8 @@ public class PointsRetrieverTask extends TimerTask {
 	private static final String TAG = "PointsRetrieverTask";
 
 	public interface OnRetrievingPointsCallback {
-		void onSuccess(String carPlate, DestinationPoints points);
-		void onFailure(String carPlate, String message);
+		void onSuccess(String hostName, String carPlate, DestinationPoints points);
+		void onFailure(String hostName, String carPlate, String message);
 	}
 
 	private OnRetrievingPointsCallback onRetrievingPointsCallback;
@@ -70,23 +70,28 @@ public class PointsRetrieverTask extends TimerTask {
 			// END INTEGRATION TEST
 		} catch (IOException e) {
 			Log.e(TAG, "Failed to parse destination points", e);
+			this.onRetrievingPointsCallback.onFailure(this.hostName, this.carPlate, e.getMessage());
 		} catch (CarNotDefinedException e) {
 			Log.e(TAG, "Car plate is not valid", e);
+			this.onRetrievingPointsCallback.onFailure(this.hostName, this.carPlate, e.getMessage());
 		} catch (HostNameNotDefinedException e) {
 			Log.e(TAG, "Host name is not valid", e);
+			this.onRetrievingPointsCallback.onFailure(this.hostName, this.carPlate, e.getMessage());
+		} catch (InvalidFormatException e) {
+			Log.e(TAG, "Response format is not valid", e);
+			this.onRetrievingPointsCallback.onFailure(this.hostName, this.carPlate, e.getMessage());
 		}
-		return;
 	}
 
 	private void handleRetrievedPoints(DestinationPoints points) {
 		if (points == null) {
 			Log.d(TAG, "Failed to retrieve destination points");
-			this.onRetrievingPointsCallback.onFailure(this.carPlate, "Failed to retrieve destination points");
+			this.onRetrievingPointsCallback.onFailure(this.hostName, this.carPlate, "Failed to retrieve destination points");
 			return;
 		}
 
 		Log.d(TAG, "Destination points size: " + points.getDestinationPoints().size());
-		this.onRetrievingPointsCallback.onSuccess(this.carPlate, points);
+		this.onRetrievingPointsCallback.onSuccess(this.hostName, this.carPlate, points);
 		return;
 	}
 }

@@ -4,10 +4,13 @@ import android.text.TextUtils;
 import android.util.Xml;
 
 import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlSerializer;
 
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
@@ -64,80 +67,82 @@ public class DestinationPoints {
 		this.destinationPoints.remove(index);
 	}
 
-	public static DestinationPoints parse(InputStream inputStream) {
-		XmlPullParser parser = Xml.newPullParser();
+	public static DestinationPoints parse(InputStream inputStream) throws InvalidFormatException {
 		try {
-			parser.setInput(inputStream, "UTF-8");
-			return parse(parser);
-		} catch (Exception e) {
-			return null;
+			String rawPoints = toString(inputStream);
+			return parse(rawPoints);
+		} catch (IOException e) {
+			throw new InvalidFormatException(e.getMessage());
 		}
 	}
 
-	public static DestinationPoints parse(String rawPoints) {
+	public static DestinationPoints parse(String rawPoints) throws InvalidFormatException {
 		XmlPullParser parser = Xml.newPullParser();
 		try {
 			StringReader reader = new StringReader(rawPoints);
 			parser.setInput(reader);
 			return parse(parser);
-		} catch (Exception e) {
-			return null;
+		} catch (InvalidFormatException e) {
+			throw new InvalidFormatException(rawPoints);
+		} catch (XmlPullParserException | IOException e) {
+			throw new InvalidFormatException(e.getMessage());
 		}
 	}
 
-	private static DestinationPoints parse(XmlPullParser parser) {
-		DestinationPoints destinationPoints = new DestinationPoints();
-		try {
-			int eventType = parser.getEventType();
-			DestinationPoint destinationPoint = null;
-			double latitude = -1;
-			double longitude = -1;
-			boolean done = false;
-			while (eventType != XmlPullParser.END_DOCUMENT && !done) {
-				String name = null;
-				switch (eventType) {
-					case XmlPullParser.START_DOCUMENT:
-						break;
-					case XmlPullParser.START_TAG:
-						name = parser.getName();
-						if (name.equalsIgnoreCase(TAG_DESTINATION_POINT)) {
-							destinationPoint = new DestinationPoint();
-							latitude = -1;
-							longitude = -1;
-						} else if (destinationPoint != null) {
-							if (name.equalsIgnoreCase(DestinationPoint.TAG_ADDRESS)) {
-								destinationPoint.setAddress(parser.nextText());
-							} else if (name.equalsIgnoreCase(DestinationPoint.TAG_LATITUDE)) {
-								latitude = Double.parseDouble(parser.nextText());
-							} else if (name.equalsIgnoreCase(DestinationPoint.TAG_LONGITUDE)){
-								longitude = Double.parseDouble(parser.nextText());
-							}
+	private static DestinationPoints parse(XmlPullParser parser) throws XmlPullParserException, IOException, InvalidFormatException {
+		int eventType = parser.getEventType();
+		DestinationPoints destinationPoints = null;
+		DestinationPoint destinationPoint = null;
+		double latitude = -1;
+		double longitude = -1;
+		boolean done = false;
+		while (eventType != XmlPullParser.END_DOCUMENT && !done) {
+			String name = null;
+			switch (eventType) {
+				case XmlPullParser.START_DOCUMENT:
+					break;
+				case XmlPullParser.START_TAG:
+					name = parser.getName();
+					if (name.equalsIgnoreCase(TAG_DESTINATION_POINTS)) {
+						destinationPoints = new DestinationPoints();
+					} else if (name.equalsIgnoreCase(TAG_DESTINATION_POINT)) {
+						destinationPoint = new DestinationPoint();
+						latitude = -1;
+						longitude = -1;
+					} else if (destinationPoint != null) {
+						if (name.equalsIgnoreCase(DestinationPoint.TAG_ADDRESS)) {
+							destinationPoint.setAddress(parser.nextText());
+						} else if (name.equalsIgnoreCase(DestinationPoint.TAG_LATITUDE)) {
+							latitude = Double.parseDouble(parser.nextText());
+						} else if (name.equalsIgnoreCase(DestinationPoint.TAG_LONGITUDE)){
+							longitude = Double.parseDouble(parser.nextText());
 						}
-						break;
-					case XmlPullParser.END_TAG:
-						name = parser.getName();
-						if (name.equalsIgnoreCase(TAG_DESTINATION_POINT)
-								&& destinationPoint != null) {
-							if (latitude > 0 && longitude > 0) {
-								destinationPoint.setLatLong(latitude, longitude);
-								destinationPoints.addPoint(destinationPoint);
-							}
+					}
+					break;
+				case XmlPullParser.END_TAG:
+					name = parser.getName();
+					if (name.equalsIgnoreCase(TAG_DESTINATION_POINTS)) {
+						return destinationPoints;
+					} else if (name.equalsIgnoreCase(TAG_DESTINATION_POINT)
+							&& destinationPoints != null
+							&& destinationPoint != null) {
+						if (latitude > 0 && longitude > 0) {
+							destinationPoint.setLatLong(latitude, longitude);
+							destinationPoints.addPoint(destinationPoint);
 						}
-						break;
-				}
-
-				// skip "OK"
-				try {
-					eventType = parser.next();
-				} catch (Exception e) {
-					eventType = parser.next();
-				}
+					}
+					break;
 			}
-		} catch (Exception e) {
-			return null;
+
+			// skip "OK"
+			try {
+				eventType = parser.next();
+			} catch (Exception e) {
+				eventType = parser.next();
+			}
 		}
 
-		return destinationPoints;
+		throw new InvalidFormatException();
 	}
 
 	public boolean commit() {
@@ -180,5 +185,16 @@ public class DestinationPoints {
 		} catch (Exception e) {
 			return false;
 		}
+	}
+
+	private static String toString(InputStream inputStream) throws IOException {
+		StringBuilder builder = new StringBuilder();
+		InputStreamReader reader = new InputStreamReader(inputStream, "UTF-8");
+		char[] buffer = new char[2048];
+		int count;
+		while ((count = reader.read(buffer)) > 0) {
+			builder.append(buffer, 0, count);
+		}
+		return builder.toString();
 	}
 }

@@ -2151,18 +2151,18 @@
     <string name="osmand_oneteam_piratto_plugin_name">Dostawy Piratto</string>
     <string name="osmand_oneteam_piratto_plugin_description">Adres dostaw dla zamówień z Piratto</string>
     <string name="map_widget_piratto">Adresy dostaw z Piratto</string>
-    <string name="osmand_oneteam_piratto_delete_confirm">Do you want to delete the destination point marker?</string>
-    <string name="osmand_oneteam_piratto_delete">Delete a destination point marker</string>
-    <string name="osmand_oneteam_piratto_point_info">%1$s\n Lat %2$s\n Lon %3$s</string>
+    <string name="osmand_oneteam_piratto_delete_confirm">Czy chcesz usunąć cel?</string>
+    <string name="osmand_oneteam_piratto_delete">Usuń cel</string>
+    <string name="osmand_oneteam_piratto_point_info">%1$s\n Szer. %2$s\n Dł. %3$s</string>
     <string name="osmand_oneteam_piratto_dashboard_title">Adresy dostaw z Piratto (%1$d)</string>
     <string name="osmand_oneteam_piratto_dashboard_update">Pobierz Adresy Dostaw</string>
     <string name="osmand_oneteam_piratto_update_points">Zapytanie o adresy dostaw zostało wysłane</string>
     <string name="osmand_oneteam_piratto_update_no_points">Brak nowych adresów dostaw</string>
-    <string name="piratto_hostname_title">Host Name</string>
-    <string name="piratto_hostname_descr">Set host name (e.g. http://www.hostname.com:80)</string>
+    <string name="piratto_hostname_title">Adres serwera</string>
+    <string name="piratto_hostname_descr">Ustaw adres serwera (np. http://www.hostname.pl:80)</string>
     <string name="piratto_car_plate_title">Numer rejestracyjny samochodu</string>
     <string name="piratto_car_plate_descr">Ustaw numer rejestracyjny samochodu (np. CB 763AU)</string>
     <string name="piratto_update_interval_title">Częstotliwość aktualizacji adresów</string>
     <string name="piratto_update_interval_descr">Ustaw częstotliwość aktualizacji adresów dostaw w minutach (np. 2)</string>
-    <string name="osmand_oneteam_piratto_next_point">Route next point</string>
+    <string name="osmand_oneteam_piratto_next_point">Prowadź do następnego celu</string>
 </resources>

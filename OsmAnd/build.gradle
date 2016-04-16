@@ -30,10 +30,10 @@ android {
 		}
 
 		publishing {
-			storeFile file("/var/lib/jenkins/osmand_key")
-			storePassword System.getenv("OSMAND_APK_PASSWORD")
-			keyAlias "osmand"
-			keyPassword System.getenv("OSMAND_APK_PASSWORD")
+			storeFile file("../keystores/compilelab_debug.keystore")
+			storePassword System.getenv("android")
+			keyAlias "androiddebugkey"
+			keyPassword System.getenv("android")
 		}
 	}
 

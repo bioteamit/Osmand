@@ -71,28 +71,10 @@ public class PirattoManager extends Observable implements PointsRetrieverTask.On
 		this.settings = application.getSettings();
 		this.targetPointsHelper = application.getTargetPointsHelper();
 		this.destinationPoints = new DestinationPoints();
-//		this.addTestDestinationPoints();
 
 		this.hostNameSettings = this.settings.registerStringPreference(PIRATTO_HOST_NAME, null).makeGlobal();
 		this.carPlateSettings = this.settings.registerStringPreference(PIRATTO_CAR_PLATE, null).makeGlobal();
 		this.updateIntervalSettings = this.settings.registerIntPreference(PIRATTO_UPDATE_INTERVAL, 2).makeGlobal();
-	}
-
-	private void addTestDestinationPoints() {
-		this.addTestDestinationPoint("Qalioub5", 30.182147, 31.226800);
-		this.addTestDestinationPoint("Qalioub3", 30.182015, 31.226545);
-		this.addTestDestinationPoint("Qalioub4", 30.182256, 31.226191);
-		this.addTestDestinationPoint("Shoubra", 30.0906098, 31.2455468);
-		this.addTestDestinationPoint("Qalioub1", 30.1736758, 31.2250333);
-		this.addTestDestinationPoint("Qaliob2", 30.1796859, 31.2214284);
-		this.addTestDestinationPoint("DownTown", 30.0165934, 31.417473);
-		this.addTestDestinationPoint("19 Marca 19811", 53.1247962, 18.0043512);
-		this.addTestDestinationPoint("Aleksandrowska2", 53.0987161, 18.0235117);
-		this.addTestDestinationPoint("16 Pułku Ułanów Wielkopolskich2", 53.1192529, 17.9720179);
-	}
-
-	private void addTestDestinationPoint(String address, double latitude, double longitude) {
-		this.destinationPoints.addPoint(new DestinationPoint(address, latitude, longitude));
 	}
 
 	public boolean isRoutingPoint() {

@@ -31,9 +31,9 @@ android {
 
 		publishing {
 			storeFile file("../keystores/compilelab_debug.keystore")
-			storePassword System.getenv("android")
+			storePassword "android"
 			keyAlias "androiddebugkey"
-			keyPassword System.getenv("android")
+			keyPassword "android"
 		}
 	}
 

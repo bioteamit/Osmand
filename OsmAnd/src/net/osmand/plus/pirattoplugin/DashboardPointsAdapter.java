@@ -74,7 +74,7 @@ public class DashboardPointsAdapter {
 		pointDescription.setLon(point.getLongitude());
 
 		ImageView iconView = ((ImageView) view.findViewById(R.id.icon));
-		iconView.setImageDrawable(this.getMyApplication().getIconsCache().getContentIcon(R.drawable.ic_type_piratto));
+		iconView.setImageDrawable(this.getMyApplication().getIconsCache().getThemedIcon(R.drawable.ic_type_piratto));
 
 		String name = pointDescription.getName();
 		TextView nameView = ((TextView) view.findViewById(R.id.address));
@@ -92,7 +92,7 @@ public class DashboardPointsAdapter {
 
 		ImageButton removeView = (ImageButton) view.findViewById(R.id.remove);
 		removeView.setImageDrawable(this.getMyApplication().getIconsCache().
-				getContentIcon(R.drawable.ic_action_remove_dark));
+				getThemedIcon(R.drawable.ic_action_remove_dark));
 
 		removeView.setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -102,7 +102,7 @@ public class DashboardPointsAdapter {
 		});
 
 		ImageButton navigateView = (ImageButton) view.findViewById(R.id.navigate_to);
-		navigateView.setImageDrawable(this.getMyApplication().getIconsCache().getContentIcon(R.drawable.ic_action_gdirections_dark));
+		navigateView.setImageDrawable(this.getMyApplication().getIconsCache().getThemedIcon(R.drawable.ic_action_gdirections_dark));
 		navigateView.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {

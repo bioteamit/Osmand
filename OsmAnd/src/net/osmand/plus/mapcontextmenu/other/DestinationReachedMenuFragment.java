@@ -132,7 +132,7 @@ public class DestinationReachedMenuFragment extends Fragment {
 				if (pirattoManager.isRoutingPoint()) {
 					routeNextPoint.setVisibility(View.VISIBLE);
 					routeNextPoint.setCompoundDrawablesWithIntrinsicBounds(
-							iconsCache.getContentIcon(R.drawable.ic_action_piratto_dark), null, null, null);
+							iconsCache.getThemedIcon(R.drawable.ic_action_piratto_dark), null, null, null);
 					routeNextPoint.setOnClickListener(new View.OnClickListener() {
 						@Override
 						public void onClick(View v) {

@@ -84,6 +84,7 @@ public abstract class PointEditorFragment extends Fragment {
 		Toolbar toolbar = (Toolbar) view.findViewById(R.id.toolbar);
 		toolbar.setTitle(getToolbarTitle());
 		toolbar.setNavigationIcon(getMyApplication().getIconsCache().getIcon(R.drawable.abc_ic_ab_back_mtrl_am_alpha));
+		toolbar.setNavigationContentDescription(R.string.access_shared_string_navigate_up);
 		toolbar.setTitleTextColor(getResources().getColor(getResIdFromAttribute(getMapActivity(), R.attr.pstsTextColor)));
 		toolbar.setNavigationOnClickListener(new View.OnClickListener() {
 			@Override
@@ -178,6 +179,15 @@ public abstract class PointEditorFragment extends Fragment {
 
 		ImageView descriptionImage = (ImageView) view.findViewById(R.id.description_image);
 		descriptionImage.setImageDrawable(getRowIcon(R.drawable.ic_action_note_dark));
+
+		if (getMyApplication().accessibilityEnabled()) {
+			headerCaption.setFocusable(true);
+			nameCaption.setFocusable(true);
+			categoryCaption.setFocusable(true);
+			nameEdit.setHint(R.string.access_hint_enter_name);
+			categoryEdit.setHint(R.string.access_hint_enter_category);
+			descriptionEdit.setHint(R.string.access_hint_enter_description);
+		}
 
 		runLayoutListener();
 
@@ -406,6 +416,6 @@ public abstract class PointEditorFragment extends Fragment {
 
 	protected Drawable getPaintedIcon(int iconId, int color) {
 		IconsCache iconsCache = getMapActivity().getMyApplication().getIconsCache();
-		return iconsCache.getPaintedContentIcon(iconId, color);
+		return iconsCache.getPaintedIcon(iconId, color);
 	}
 }

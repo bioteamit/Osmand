@@ -10,7 +10,6 @@ import android.widget.LinearLayout.LayoutParams;
 
 import net.osmand.AndroidUtils;
 import net.osmand.plus.ApplicationMode;
-import net.osmand.plus.ContextMenuAdapter;
 import net.osmand.plus.OsmandApplication;
 import net.osmand.plus.OsmandSettings;
 import net.osmand.plus.R;
@@ -36,7 +35,7 @@ public class AppModeDialog {
 
 	//special method for drawer menu
 	//needed because if there's more than 4 items  - the don't fit in drawer
-	public static View prepareAppModeDrawerView(Activity a, List<ApplicationMode> visible, final Set<ApplicationMode> selected, ContextMenuAdapter.BooleanResult allModes,
+	public static View prepareAppModeDrawerView(Activity a, final Set<ApplicationMode> selected,
 												boolean useMapTheme, final View.OnClickListener onClickListener) {
 		OsmandSettings settings = ((OsmandApplication) a.getApplication()).getSettings();
 		final List<ApplicationMode> values = new ArrayList<ApplicationMode>(ApplicationMode.values(settings));
@@ -77,15 +76,17 @@ public class AppModeDialog {
 			ImageView iv = (ImageView) tb.findViewById(R.id.app_mode_icon);
 			if (checked) {
 				iv.setImageDrawable(ctx.getIconsCache().getIcon(mode.getSmallIconDark(), R.color.osmand_orange));
+				iv.setContentDescription(String.format("%s %s", mode.toHumanString(ctx), ctx.getString(R.string.item_checked)));
 				tb.findViewById(R.id.selection).setVisibility(View.VISIBLE);
 			} else {
 				if (useMapTheme) {
 					boolean nightMode = ctx.getDaynightHelper().isNightModeForMapControls();
-					iv.setImageDrawable(ctx.getIconsCache().getContentIcon(mode.getSmallIconDark(), !nightMode));
+					iv.setImageDrawable(ctx.getIconsCache().getIcon(mode.getSmallIconDark(), !nightMode));
 					AndroidUtils.setBackground(ctx, iv, nightMode, R.drawable.dashboard_button_light, R.drawable.dashboard_button_dark);
 				} else {
-					iv.setImageDrawable(ctx.getIconsCache().getContentIcon(mode.getSmallIconDark()));
+					iv.setImageDrawable(ctx.getIconsCache().getThemedIcon(mode.getSmallIconDark()));
 				}
+				iv.setContentDescription(String.format("%s %s", mode.toHumanString(ctx), ctx.getString(R.string.item_unchecked)));
 				tb.findViewById(R.id.selection).setVisibility(View.INVISIBLE);
 			}
 			iv.setOnClickListener(new View.OnClickListener() {
@@ -119,11 +120,11 @@ public class AppModeDialog {
 
 	static private View createToggle(LayoutInflater layoutInflater, OsmandApplication ctx, LinearLayout layout, ApplicationMode mode){
 		int metricsX = (int) ctx.getResources().getDimension(R.dimen.map_mode_button_width);
-		int metricsY = (int) ctx.getResources().getDimension(R.dimen.list_item_height);
+		int metricsY = (int) ctx.getResources().getDimension(R.dimen.map_mode_button_width);
 		View tb = layoutInflater.inflate(R.layout.mode_view, null);
-		tb.findViewById(R.id.app_mode_icon).setContentDescription(mode.toHumanString(ctx));
 		ImageView iv = (ImageView) tb.findViewById(R.id.app_mode_icon);
 		iv.setImageDrawable(ctx.getIconsCache().getIcon(mode.getSmallIconDark(), R.color.osmand_orange));
+		iv.setContentDescription(mode.toHumanString(ctx));
 //		tb.setCompoundDrawablesWithIntrinsicBounds(null, ctx.getIconsCache().getIcon(mode.getIconId(), R.color.app_mode_icon_color), null, null);
 		LayoutParams lp = new LinearLayout.LayoutParams(metricsX, metricsY);
 //		lp.setMargins(left, 0, 0, 0);

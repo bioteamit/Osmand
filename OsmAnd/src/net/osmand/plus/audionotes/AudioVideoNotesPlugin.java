@@ -24,6 +24,7 @@ import android.os.Build;
 import android.os.StatFs;
 import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
+import android.support.v7.app.AlertDialog;
 import android.view.Display;
 import android.view.KeyEvent;
 import android.view.Surface;
@@ -40,14 +41,13 @@ import net.osmand.IProgress;
 import net.osmand.IndexConstants;
 import net.osmand.Location;
 import net.osmand.PlatformUtil;
-import net.osmand.access.AccessibleAlertBuilder;
-import net.osmand.access.AccessibleToast;
 import net.osmand.data.DataTileManager;
 import net.osmand.data.LatLon;
 import net.osmand.data.PointDescription;
 import net.osmand.plus.ApplicationMode;
 import net.osmand.plus.ContextMenuAdapter;
-import net.osmand.plus.ContextMenuAdapter.OnContextMenuClick;
+import net.osmand.plus.ContextMenuAdapter.ItemClickListener;
+import net.osmand.plus.ContextMenuItem;
 import net.osmand.plus.OsmandApplication;
 import net.osmand.plus.OsmandPlugin;
 import net.osmand.plus.OsmandSettings;
@@ -136,9 +136,10 @@ public class AudioVideoNotesPlugin extends OsmandPlugin {
 	public static final int AV_CAMERA_FOCUS_INFINITY = 3;
 	public static final int AV_CAMERA_FOCUS_MACRO = 4;
 	public static final int AV_CAMERA_FOCUS_CONTINUOUS = 5;
-	// shoto shot:
+	// photo shot:
 	private static int shotId = 0;
 	private SoundPool sp = null;
+	public static final int FULL_SCEEN_RESULT_DELAY_MS = 5000;
 
 	public final CommonPreference<Integer> AV_CAMERA_PICTURE_SIZE;
 	public final CommonPreference<Integer> AV_CAMERA_FOCUS_TYPE;
@@ -160,7 +161,7 @@ public class AudioVideoNotesPlugin extends OsmandPlugin {
 	private static File mediaRecFile;
 	private static MediaRecorder mediaRec;
 	private File lastTakingPhoto;
-	private byte[] photoRawData;
+	private byte[] photoJpegData;
 	private Timer photoTimer;
 	private Camera cam;
 	private List<Camera.Size> mSupportedPreviewSizes;
@@ -440,11 +441,11 @@ public class AudioVideoNotesPlugin extends OsmandPlugin {
 
 		}
 
-		public String getPlainDuration() {
+		public String getPlainDuration(boolean accessibilityEnabled) {
 			updateInternalDescription();
 			if (duration > 0) {
 				int d = (int) (duration / 1000);
-				return Algorithms.formatDuration(d);
+				return Algorithms.formatDuration(d, accessibilityEnabled);
 			} else {
 				return "";
 			}
@@ -454,7 +455,7 @@ public class AudioVideoNotesPlugin extends OsmandPlugin {
 			String additional = "";
 			if (duration > 0) {
 				int d = (int) (duration / 1000);
-				additional += "(" + Algorithms.formatDuration(d) + ")";
+				additional += "(" + Algorithms.formatDuration(d, ((OsmandApplication)ctx.getApplicationContext()).accessibilityEnabled()) + ")";
 			}
 			if (!available) {
 				additional += "[" + ctx.getString(R.string.recording_unavailable) + "]";
@@ -580,18 +581,25 @@ public class AudioVideoNotesPlugin extends OsmandPlugin {
 
 	@Override
 	public void registerLayerContextMenuActions(final OsmandMapTileView mapView, ContextMenuAdapter adapter, final MapActivity mapActivity) {
-		OnContextMenuClick listener = new OnContextMenuClick() {
+		ItemClickListener listener = new ContextMenuAdapter.ItemClickListener() {
 			@Override
-			public boolean onContextMenuClick(ArrayAdapter<?> adapter, int itemId, int pos, boolean isChecked) {
+			public boolean onContextMenuClick(ArrayAdapter<ContextMenuItem> adapter, int itemId, int pos, boolean isChecked) {
 				if (itemId == R.string.layer_recordings) {
 					SHOW_RECORDINGS.set(!SHOW_RECORDINGS.get());
+					adapter.getItem(pos).setColorRes(SHOW_RECORDINGS.get() ?
+							R.color.osmand_orange : ContextMenuItem.INVALID_ID);
+					adapter.notifyDataSetChanged();
 					updateLayers(mapView, mapActivity);
 				}
 				return true;
 			}
 		};
-		adapter.item(R.string.layer_recordings).selected(SHOW_RECORDINGS.get() ? 1 : 0)
-				.iconColor(R.drawable.ic_action_micro_dark).listen(listener).position(12).reg();
+		adapter.addItem(new ContextMenuItem.ItemBuilder().setTitleId(R.string.layer_recordings, app)
+				.setSelected(SHOW_RECORDINGS.get())
+				.setIcon(R.drawable.ic_action_micro_dark)
+				.setColor(SHOW_RECORDINGS.get() ? R.color.osmand_orange : ContextMenuItem.INVALID_ID)
+				.setPosition(12)
+				.setListener(listener).createItem());
 	}
 
 	@Override
@@ -600,33 +608,42 @@ public class AudioVideoNotesPlugin extends OsmandPlugin {
 		if (isRecording()) {
 			return;
 		}
-		adapter.item(R.string.recording_context_menu_arecord).iconColor(R.drawable.ic_action_micro_dark)
-				.listen(new OnContextMenuClick() {
+		adapter.addItem(new ContextMenuItem.ItemBuilder().setTitleId(R.string.recording_context_menu_arecord, app)
+				.setIcon(R.drawable.ic_action_micro_dark)
+				.setListener(new ContextMenuAdapter.ItemClickListener() {
 
 					@Override
-					public boolean onContextMenuClick(ArrayAdapter<?> adapter, int itemId, int pos, boolean isChecked) {
+					public boolean onContextMenuClick(ArrayAdapter<ContextMenuItem> adapter, int itemId, int pos, boolean isChecked) {
 						recordAudio(latitude, longitude, mapActivity);
 						return true;
 					}
-				}).position(6).reg();
-		adapter.item(R.string.recording_context_menu_vrecord).iconColor(R.drawable.ic_action_video_dark)
-				.listen(new OnContextMenuClick() {
+				})
+				.setPosition(6)
+				.createItem());
+		adapter.addItem(new ContextMenuItem.ItemBuilder().setTitleId(R.string.recording_context_menu_vrecord, app)
+				.setIcon(R.drawable.ic_action_video_dark)
+				.setListener(new ItemClickListener() {
 
 					@Override
-					public boolean onContextMenuClick(ArrayAdapter<?> adapter, int itemId, int pos, boolean isChecked) {
+					public boolean onContextMenuClick(ArrayAdapter<ContextMenuItem> adapter, int itemId, int pos, boolean isChecked) {
 						recordVideo(latitude, longitude, mapActivity);
 						return true;
 					}
-				}).position(7).reg();
-		adapter.item(R.string.recording_context_menu_precord).iconColor(R.drawable.ic_action_photo_dark)
-				.listen(new OnContextMenuClick() {
+				})
+				.setPosition(7)
+				.createItem());
+		adapter.addItem(new ContextMenuItem.ItemBuilder().setTitleId(R.string.recording_context_menu_precord, app)
+				.setIcon(R.drawable.ic_action_photo_dark)
+				.setListener(new ItemClickListener() {
 					@Override
-					public boolean onContextMenuClick(ArrayAdapter<?> adapter, int itemId, int pos, boolean isChecked) {
+					public boolean onContextMenuClick(ArrayAdapter<ContextMenuItem> adapter, int itemId, int pos, boolean isChecked) {
 						takePhoto(latitude, longitude, mapActivity, false);
 						return true;
 					}
 
-				}).position(8).reg();
+				})
+				.setPosition(8)
+				.createItem());
 	}
 
 	@Override
@@ -707,7 +724,7 @@ public class AudioVideoNotesPlugin extends OsmandPlugin {
 		// double lat = mapActivity.getMapView().getLatitude();
 		// double lon = mapActivity.getMapView().getLongitude();
 		if (loc == null) {
-			AccessibleToast.makeText(app, R.string.audionotes_location_not_defined, Toast.LENGTH_LONG).show();
+			Toast.makeText(app, R.string.audionotes_location_not_defined, Toast.LENGTH_LONG).show();
 			return;
 		}
 		double lon = loc.getLongitude();
@@ -721,7 +738,7 @@ public class AudioVideoNotesPlugin extends OsmandPlugin {
 	}
 
 	private void chooseDefaultAction(final double lat, final double lon, final MapActivity mapActivity) {
-		AccessibleAlertBuilder ab = new AccessibleAlertBuilder(mapActivity);
+		AlertDialog.Builder ab = new AlertDialog.Builder(mapActivity);
 		ab.setItems(
 				new String[]{mapActivity.getString(R.string.recording_context_menu_arecord),
 						mapActivity.getString(R.string.recording_context_menu_vrecord),
@@ -946,7 +963,7 @@ public class AudioVideoNotesPlugin extends OsmandPlugin {
 
 	private void logErr(Exception e) {
 		log.error("Error starting recorder ", e);
-		AccessibleToast.makeText(app, app.getString(R.string.recording_error) + " : " + e.getMessage(), Toast.LENGTH_LONG).show();
+		Toast.makeText(app, app.getString(R.string.recording_error) + " : " + e.getMessage(), Toast.LENGTH_LONG).show();
 	}
 
 	protected void openCamera() {
@@ -1075,7 +1092,7 @@ public class AudioVideoNotesPlugin extends OsmandPlugin {
 					mediaRecFile = f;
 
 				} catch (Exception e) {
-					AccessibleToast.makeText(app, e.getMessage(), Toast.LENGTH_LONG).show();
+					Toast.makeText(app, e.getMessage(), Toast.LENGTH_LONG).show();
 					e.printStackTrace();
 					res = false;
 				}
@@ -1099,7 +1116,7 @@ public class AudioVideoNotesPlugin extends OsmandPlugin {
 				runMediaRecorder(mapActivity, mr, f);
 			} catch (Exception e) {
 				log.error("Error starting audio recorder ", e);
-				AccessibleToast.makeText(app, app.getString(R.string.recording_error) + " : "
+				Toast.makeText(app, app.getString(R.string.recording_error) + " : "
 						+ e.getMessage(), Toast.LENGTH_LONG).show();
 			}
 		} else {
@@ -1280,14 +1297,13 @@ public class AudioVideoNotesPlugin extends OsmandPlugin {
 
 	private void internalShoot() {
 		if (!autofocus) {
-			cam.takePicture(null, null, new AudioVideoPhotoHandler());
+			cam.takePicture(null, null, new JpegPhotoHandler());
 		} else {
 			cam.autoFocus(new Camera.AutoFocusCallback() {
 				@Override
 				public void onAutoFocus(boolean success, Camera camera) {
-					cam.cancelAutoFocus();
 					try {
-						cam.takePicture(null, null, new AudioVideoPhotoHandler());
+						cam.takePicture(null, null, new JpegPhotoHandler());
 					} catch (Exception e) {
 						logErr(e);
 						closeRecordingMenu();
@@ -1372,7 +1388,7 @@ public class AudioVideoNotesPlugin extends OsmandPlugin {
 			recordingDone = true;
 			if (cam != null && lastTakingPhoto != null) {
 				try {
-					cam.takePicture(null, null, new AudioVideoPhotoHandler());
+					cam.takePicture(null, null, new JpegPhotoHandler());
 				} catch (RuntimeException e) {
 					closeRecordingMenu();
 					closeCamera();
@@ -1391,7 +1407,7 @@ public class AudioVideoNotesPlugin extends OsmandPlugin {
 			mapActivity.startActivityForResult(takePictureIntent, 205);
 		} catch (Exception e) {
 			log.error("Error taking a picture ", e);
-			AccessibleToast.makeText(app, app.getString(R.string.recording_error) + " : " + e.getMessage(), Toast.LENGTH_LONG).show();
+			Toast.makeText(app, app.getString(R.string.recording_error) + " : " + e.getMessage(), Toast.LENGTH_LONG).show();
 		}
 	}
 
@@ -1520,6 +1536,9 @@ public class AudioVideoNotesPlugin extends OsmandPlugin {
 		if (mapActivity != null && rec != null) {
 			MapContextMenu menu = mapActivity.getContextMenu();
 			menu.show(new LatLon(rec.lat, rec.lon), audioNotesLayer.getObjectName(rec), rec);
+			if (app.getRoutingHelper().isFollowingMode()) {
+				menu.hideWithTimeout(3000);
+			}
 		}
 	}
 
@@ -1873,14 +1892,14 @@ public class AudioVideoNotesPlugin extends OsmandPlugin {
 		}
 	}
 
-	public class AudioVideoPhotoHandler implements PictureCallback {
+	public class JpegPhotoHandler implements PictureCallback {
 
-		public AudioVideoPhotoHandler() {
+		public JpegPhotoHandler() {
 		}
 
 		@Override
 		public void onPictureTaken(final byte[] data, Camera camera) {
-			photoRawData = data;
+			photoJpegData = data;
 
 			if (AV_PHOTO_PLAY_SOUND.get()) {
 				if (sp != null && shotId != 0) {
@@ -1888,6 +1907,9 @@ public class AudioVideoNotesPlugin extends OsmandPlugin {
 				}
 			}
 
+			if (recordingMenu != null) {
+				recordingMenu.showFinalPhoto(data, FULL_SCEEN_RESULT_DELAY_MS);
+			}
 			startPhotoTimer();
 		}
 	}
@@ -1902,7 +1924,7 @@ public class AudioVideoNotesPlugin extends OsmandPlugin {
 			public void run() {
 				finishPhotoRecording(false);
 			}
-		}, 4000);
+		}, FULL_SCEEN_RESULT_DELAY_MS);
 	}
 
 	private void cancelPhotoTimer() {
@@ -1914,11 +1936,14 @@ public class AudioVideoNotesPlugin extends OsmandPlugin {
 
 	public synchronized void shootAgain() {
 		cancelPhotoTimer();
-		photoRawData = null;
+		photoJpegData = null;
 		if (cam != null) {
 			try {
 				cam.cancelAutoFocus();
 				cam.stopPreview();
+				if (recordingMenu != null) {
+					recordingMenu.hideFinalPhoto();
+				}
 				cam.startPreview();
 				internalShoot();
 
@@ -1934,18 +1959,18 @@ public class AudioVideoNotesPlugin extends OsmandPlugin {
 
 	public synchronized void finishPhotoRecording(boolean cancel) {
 		cancelPhotoTimer();
-		if (photoRawData != null && photoRawData.length > 0 && lastTakingPhoto != null) {
+		if (photoJpegData != null && photoJpegData.length > 0 && lastTakingPhoto != null) {
 			try {
 				if (!cancel) {
 					FileOutputStream fos = new FileOutputStream(lastTakingPhoto);
-					fos.write(photoRawData);
+					fos.write(photoJpegData);
 					fos.close();
 					indexFile(true, lastTakingPhoto);
 				}
 			} catch (Exception error) {
 				logErr(error);
 			} finally {
-				photoRawData = null;
+				photoJpegData = null;
 				closeRecordingMenu();
 				if (!cancel) {
 					finishRecording();

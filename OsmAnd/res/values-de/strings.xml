@@ -216,8 +216,6 @@ Für Hilfe mit der OsmAnd-App kontaktieren Sie bitte unser Support-Team unter su
 	<string name="back_to_location">Zurück zum Standort</string>
 	<string name="shared_string_help">Hilfe</string>
 	
-	<string name="accessibility_extensions_descr">Barrierefreiheit-Erweiterungen für alte Android-Versionen</string>
-	<string name="accessibility_extensions">Barrierefreiheit-Erweiterungen</string>
 	<string name="accessibility_mode">Barrierefreiheit-Modus</string>
 	<string name="accessibility_mode_descr">Schaltet die Eingabehilfen-Funktionen ein</string>
 	<string name="shared_string_on">An</string>
@@ -262,13 +260,9 @@ Für Hilfe mit der OsmAnd-App kontaktieren Sie bitte unser Support-Team unter su
 	<string name="settings_direction_style_descr">Wähle eine Art um relative Richtungen während der Bewegung auszudrücken</string>
 	<string name="auto_announce_on">Automatische Ankündigungen ein</string>
 	<string name="auto_announce_off">Automatische Ankündigungen aus</string>
-	<string name="scroll_map_by_gestures_descr">Scrolle die Karte mit Gesten auf dem Touchscreen</string>
-	<string name="scroll_map_by_gestures">Natürliches Scrollen der Karte</string>
 	<string name="i_am_here">Ich bin hier</string>
 	<string name="zoom_by_trackball_descr">Horizontale Trackball-Bewegung zoomt Karte</string>
 	<string name="zoom_by_trackball">Benutze den Trackball zum Zoomen</string>
-	<string name="use_short_object_names_descr">Benutze kurze Objektnamen im Touch-Entdeckungsmodus</string>
-	<string name="use_short_object_names">Benutze Objektnamen</string>
 	<string name="accessibility_preferences_descr">Einstellungen zur Barrierefreiheit</string>
 	<string name="shared_string_accessibility">Bedienungshilfen</string>
 	<string name="rendering_out_of_memory">Zu wenig Prozess-Speicher zum Anzeigen des gewählten Gebietes</string>
@@ -476,7 +470,7 @@ Für Hilfe mit der OsmAnd-App kontaktieren Sie bitte unser Support-Team unter su
 	<string name="map_underlay">Underlay-Karte</string>
 	<string name="map_underlay_descr">Wähle Underlay-Karte</string>
 	<string name="layer_overlay">Overlay-Karte…</string>
-	<string name="shared_string_none">Keine</string>
+	<string name="shared_string_none">Keine(r/s)</string>
 	<string name="map_overlay">Overlay-Karte</string>
 	<string name="map_overlay_descr">Wähle Overlay-Karte</string>
 	<string name="tile_source_already_installed">Karte schon installiert, Einstellungen werden aktualisiert</string>
@@ -1324,14 +1318,14 @@ Für Hilfe mit der OsmAnd-App kontaktieren Sie bitte unser Support-Team unter su
 	<string name="none_selected_gpx">Keine GPX-Spur ausgewählt. Zum Auswählen auf eine Spur lange drücken.</string>
 	
 	<string name="local_index_select_gpx_file">Zum Anzeigen auswählen</string>
-	<string name="rendering_attr_hideBuildings_name">Gebäude ausblenden</string>
-	<string name="rendering_attr_hideNonVehicleHighways_name">Fußwege ausblenden</string>
-	<string name="rendering_attr_hideText_name">Text ausblenden</string>
-	<string name="rendering_attr_hideWoodScrubs_name">Wälder und Gebüsch ausblenden</string>
+	<string name="rendering_attr_hideBuildings_name">Gebäude</string>
+	<string name="rendering_attr_hideNonVehicleHighways_name">Fußwege</string>
+	<string name="rendering_attr_hideText_name">Text</string>
+	<string name="rendering_attr_hideWoodScrubs_name">Wälder und Gebüsch</string>
 	<string name="rendering_attr_buildings15zoom_name">Gebäude ab Zoomstufe 15 anzeigen</string>
 	<string name="rendering_attr_moreDetailed_name">Mehr Details</string>
 	<string name="rendering_attr_lessDetailed_name">Weniger Details in Karte</string>
-	<string name="rendering_attr_hideAccess_name">Zugangsbeschränkungen verbergen</string>
+	<string name="rendering_attr_hideAccess_name">Zugangsbeschränkungen</string>
 	<string name="rendering_attr_showAccess_name">Zugangsbeschränkungen anzeigen</string>
 	<string name="rendering_attr_showSurfaceGrade_name">Straßenqualität anzeigen</string>
 	<string name="rendering_attr_showSurfaces_name">Straßenoberfläche anzeigen</string>
@@ -1407,7 +1401,7 @@ Für Hilfe mit der OsmAnd-App kontaktieren Sie bitte unser Support-Team unter su
 
 	<string name="osmo_settings_uuid">Geräte-ID</string>
 	<string name="osmo_settings_descr">Konfigurieren der Überwachungseinstellungen und des persönlichen Überwachungskanals</string>
-	<string name="osmo_plugin_description">"Dieses Plugin stellt den Funktionsumfang der sogenannten OsMo-Live-Überwachung bereit, siehe http://osmo.mobi.\n\nEs ermöglicht die temporäre oder dauerhafte Positionsdarstellung und Kommunikation einer Gruppe teilnehmender Geräte in Echtzeit. Es gibt verschiedene Einstellungen für zeitlich begrenzte oder Dauer-Aufzeichnung.\n\nAnonym erstellte Gruppen können spontan eingerichtet werden, hier sind die Optionen etwas eingeschränkt: Lebensdauer der Gruppe nur für einige Tage, auch ist keine zentrale Steuerung der Gruppe möglich. Voll funktionsfähige Gruppen müssen auf der genannten Internetseite erstellt werden, auf die Gruppe haben nur registrierte Nutzer Zugriff. "</string>
+	<string name="osmo_plugin_description">"Dieses Plugin stellt teilweise den Funktionsumfang der sogenannten OsMo-Live-Überwachung bereit, siehe http://osmo.mobi.\n\nSie können in Echtzeit alle Geräte einer teilnehmenden Gruppe verfolgen. Sie können auch den Punkt und die Tracks sehen, welche in der Gruppe hochgeladen worden sind, der Sie angehören.\n\nAnonym erstellte Gruppen können spontan eingerichtet werden, hier sind die Optionen etwas eingeschränkt: Lebensdauer der Gruppe nur für einige Tage, auch ist keine zentrale Steuerung der Gruppe möglich. Voll funktionsfähige Gruppen müssen auf der genannten Internetseite erstellt werden, auf die Gruppe haben nur registrierte Nutzer Zugriff. "</string>
 	<string name="osmo_plugin_name">OpenStreetMap Überwachung</string>
 	<string name="osmo_settings">OsMo</string>
 	<string name="osmo_io_error">"OsMo-Verbindungsproblem: "</string>
@@ -1681,7 +1675,7 @@ Für Hilfe mit der OsmAnd-App kontaktieren Sie bitte unser Support-Team unter su
 	<string name="shared_string_selected_lowercase">ausgewählt</string>
 	<string name="shared_string_open">Offen</string>
 
-	<string name="rendering_attr_hideHouseNumbers_name">Hausnummern verbergen</string>
+	<string name="rendering_attr_hideHouseNumbers_name">Hausnummern</string>
 	<string name="application_dir_change_warning3">Soll OsmAnd auch die Datendateien an den neuen Ort kopieren?</string>
 	<string name="specified_directiory_not_writeable">Karten konnten im angegebenen Verzeichnis nicht erstellt werden</string>
 	<string name="copying_osmand_file_failed">Das Kopieren der Dateien ist fehlgeschlagen!</string>
@@ -1872,7 +1866,7 @@ Für Hilfe mit der OsmAnd-App kontaktieren Sie bitte unser Support-Team unter su
 	<string name="unsaved_changes_will_be_lost">Alle ungesicherten Änderungen gehen verloren. Fortfahren?</string>
 	<string name="roads">Straßen</string>
     <string name="show_free_version_banner_description">Auch bei der bezahlten Version ist das Banner der kostenlosen Version sichtbar</string>
-<string name="rendering_attr_hideProposed_name">Vorgeschlagene Objekte ausblenden</string>
+<string name="rendering_attr_hideProposed_name">Vorgeschlagene Objekte</string>
     <string name="shared_string_update">Aktualisieren</string>
 
     <string name="shared_string_upload">Hochladen</string>
@@ -2047,7 +2041,7 @@ Für Hilfe mit der OsmAnd-App kontaktieren Sie bitte unser Support-Team unter su
 <string name="shared_string_type">Typ</string>
     <string name="starting_point">Startpunkt</string>
     <string name="shared_string_undo_all">Alles rückgängig machen</string>
-    <string name="rendering_attr_hideIcons_name">POI Symbole ausblenden</string>
+    <string name="rendering_attr_hideIcons_name">POI Symbole</string>
     <string name="switch_start_finish">Start und Ziel tauschen</string>
 <string name="number_of_edits">Anzahl der Bearbeitungen</string>
     <string name="number_of_contributors">Anzahl der Mitwirkenden</string>
@@ -2057,7 +2051,7 @@ Für Hilfe mit der OsmAnd-App kontaktieren Sie bitte unser Support-Team unter su
     <string name="shared_string_select">Auswählen</string>
     <string name="clear_updates_proposition_message">Kartenaktualisierungen können gelöscht werden, um zur Originalkarte zurückzukehren</string>
     <string name="data_is_not_available">Daten nicht verfügbar</string>
-    <string name="rendering_attr_hideUnderground_name">Unterirdische Objekte ausblenden</string>
+    <string name="rendering_attr_hideUnderground_name">Unterirdische Objekte</string>
     <string name="shared_string_read_more">Mehr lesen</string>
     <string name="shared_string_status">Status</string>
     <string name="shared_string_save_changes">Änderungen speichern</string>
@@ -2130,4 +2124,32 @@ Für Hilfe mit der OsmAnd-App kontaktieren Sie bitte unser Support-Team unter su
     <string name="file_name_containes_illegal_char">Datenname beinhaltet nicht erlaubte Zeichen</string>
 <string name="no_waypoints_found">Keine Wegpunkte gefunden</string>
     <string name="no_map_markers_found">Bitte eine Kartenmarkierung via Karte setzen</string>
+    <string name="rendering_value_thin_name">Dünn</string>
+    <string name="rendering_value_medium_name">Mittel</string>
+    <string name="rendering_value_bold_name">Fett</string>
+    <string name="map_mode">Kartenmodus</string>
+    <string name="number_of_gpx_files_selected_pattern">%s GPX Dateien ausgewählt</string>
+    <string name="access_default_color">Standartfarbe</string>
+    <string name="access_category_choice">Kategorie auswählen</string>
+    <string name="access_hint_enter_name">Name eingeben</string>
+    <string name="access_hint_enter_category">Kategorie eingeben</string>
+    <string name="access_hint_enter_description">Beschreibung eingeben</string>
+    <string name="access_map_linked_to_location">Karte ist mit einer Position verknüpft</string>
+    <string name="access_collapsed_list">Reduzierte Liste</string>
+    <string name="access_expanded_list">Erweiterte Liste</string>
+    <string name="access_empty_list">Liste leeren</string>
+    <string name="access_tree_list">Strukturliste</string>
+    <string name="access_shared_string_not_installed">Nicht installiert</string>
+    <string name="access_widget_expand">Erweitern</string>
+    <string name="access_shared_string_navigate_up">Hoch navigieren</string>
+    <string name="access_sort">Sortierten</string>
+    <string name="access_disable_offroute_recalc">Beim Abkommen vom Weg, Route nicht ändern</string>
+    <string name="access_disable_offroute_recalc_descr">Beim starken Abweichen von der Route, automatische Routenneuberechnung verhindern</string>
+    <string name="access_disable_wrong_direction_recalc">Route bei falscher Fahrtrichtung nicht ändern</string>
+    <string name="access_disable_wrong_direction_recalc_descr">Bei falscher Fahrtrichtung automatische Routenneuberechnung verhindern</string>
+    <string name="access_smart_autoannounce">Intelligente automatische Ankündigung</string>
+    <string name="access_smart_autoannounce_descr">Nur benachrichtigen wenn sich die Richtung zum Zielpunkt geändert hat</string>
+    <string name="access_autoannounce_period_descr">Kürzester Abstand zwischen Benachrichtigungen</string>
+    <string name="map_widget_bearing">Peilung</string>
+    <string name="access_autoannounce_period">Zeitraum der automatischen Ankündigungen</string>
     </resources>

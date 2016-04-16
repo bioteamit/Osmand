@@ -715,8 +715,6 @@
     <string name="back_to_location">Retourner à la position</string>
     <string name="shared_string_help">Aide</string>
 
-    <string name="accessibility_extensions_descr">Extensions d\'accessibilité pour les anciennes versions Android</string>
-    <string name="accessibility_extensions">Extensions d\'accessibilité</string>
     <string name="accessibility_mode">Mode accessibilité</string>
     <string name="accessibility_mode_descr">Activer les fonctionnalités d\'accessibilité</string>
     <string name="shared_string_on">Oui</string>
@@ -761,13 +759,9 @@
     <string name="settings_direction_style_descr">Sélectionnez un style pour indiquer la direction générale lors du déplacement</string>
     <string name="auto_announce_on">Démarrer les annonces automatiques</string>
     <string name="auto_announce_off">Arrêter les annonces automatiques</string>
-    <string name="scroll_map_by_gestures_descr">Faire défiler la carte par gestes sur l\'écran</string>
-    <string name="scroll_map_by_gestures">Défilement naturel de la carte</string>
     <string name="i_am_here">Je suis ici</string>
     <string name="zoom_by_trackball_descr">Modifier le niveau de zoom par mouvements horizontaux du trackball</string>
     <string name="zoom_by_trackball">Utiliser le trackball pour le contrôle du zoom</string>
-    <string name="use_short_object_names_descr">Utiliser les noms d\'objets courts</string>
-    <string name="use_short_object_names">Utiliser les noms d\'objets</string>
     <string name="accessibility_preferences_descr">Configurer les paramètres liés à l\'accessibilité</string>
     <string name="shared_string_accessibility">Accessibilité</string>
     <string name="use_fluorescent_overlays">Sur-couche fluorescente</string>
@@ -1314,7 +1308,7 @@
     <string name="osmo_settings_uuid">Identifiant unique de l\'appareil</string>
     <string name="osmo_settings_descr">Configurer les paramètres de suivi et définir votre canal de suivi personnel</string>
     <string name="osmo_plugin_description">"Ce greffon permet un suivi temps-réel grâce à OsMo, voir http://osmo.mobi.\n\nCe système offre la possibilité de suivre tous les appareils d\'un groupe en temps réel. Il existe différents paramètres pour le suivi de la session courante ou pour un suivi permanent.\n\nLes groupes anonymes sont limités à quelques jours et leurs fonctionnalités restreintes, ainsi, pas de contrôle à distance et pas d\'administrateur de groupe. Des groupes avec toutes les fonctionnalités peuvent être créés via le site web et seuls les utilisateurs enregistrés y ont accès. "</string>
-    <string name="osmo_plugin_name">OsMo (Suivi OSM)</string>
+    <string name="osmo_plugin_name">Suivi OpenStreetMap</string>
     <string name="osmo_settings">OsMo</string>
 
     <string name="osmo_io_error">Problème de connexion OSMo : </string>
@@ -1322,15 +1316,14 @@
     <string name="osmo_mode_off">Démarrer la session OsMo</string>
     <string name="osmo_mode_restart">Redémarrer la session OsMo</string>
     <string name="osmo_settings_debug">Informations de débogage</string>
-    <string name="osmo_tracker_id">Identifiant personnel de suivi</string>
-	<string name="osmo_tracker_id_descr">Cliquer pour voir ou partager l\'identifiant de suivi. 
-       L\'utilisation d\'appareils connectés par identifiant de suivi permettra de suivre tous les mouvements de cet appareil ! Pour se déconnecter, sélectionnez l\'option Redémarrer.</string>
+    <string name="osmo_tracker_id">Identifiant de suivi</string>
+	<string name="osmo_tracker_id_descr">Cliquer pour afficher l\'identifiant de suivi</string>
     <string name="osmo_session_token">Jeton de session : %1$s</string>
     <string name="osmo_auth_pending">En attente d\'autorisation…</string>
     <string name="osmo_locations_sent">"Positions envoyées : %1$d (en attente : %2$d) "</string>
     <string name="osmo_conn_successfull">Connexion établie : %1$s </string>
-    <string name="osmo_auto_send_locations_descr">Démarrer automatiquement une session de suivi et l\'envoi des emplacements dès le démarrage de l\'application</string>
-    <string name="osmo_auto_send_locations">Démarrage automatique de session de suivi</string>
+    <string name="osmo_auto_send_locations_descr">Démarrer automatiquement l\'itinéraire et envoyer les positions dès le démarrage de l\'application</string>
+    <string name="osmo_auto_send_locations">Démarrer automatiquement l\'itinéraire</string>
     <string name="keep_informing_never">Manuelle (en appuyant sur la flèche)</string>
     <string name="keep_informing_descr">Répéter les instructions de navigation à intervalles réguliers</string>
     <string name="keep_informing">Répéter les instructions de navigation</string>
@@ -1349,7 +1342,7 @@
 
 
     <string name="osmo_connected_devices">Appareils connectés</string>
-    <string name="osmo_groups">Groupes/appareils OsMo</string>
+    <string name="osmo_groups">Groupes OsMo</string>
     <string name="osmo_group_info">Info</string>
     <string name="osmo_group">Groupe OsMo</string>
     <string name="osmo_group_share">Pour vous connecter au groupe %2$s, veuillez spécifier l\'identifiant du groupe (%1$s) ou cliquer %3$s.</string>
@@ -1371,7 +1364,7 @@
     <string name="osmo_connect_to_group_id">Identifiant du groupe</string>
     <string name="osmo_group_name">Nom du groupe</string>
     <string name="osmo_connect_to_group">Lier au groupe</string>
-    <string name="osmo_connect">Connexion à</string>
+    <string name="osmo_connect">Rejoindre</string>
     <string name="osmo_create_group">Créer un groupe</string>
     <string name="osmo_server_operation_failed">Échec du serveur OsMo</string>
     <string name="osmo_activity">Suivi OpenStreetMap</string>
@@ -1400,7 +1393,7 @@
     <string name="osmo_center_location">Centrer sur l\'écran</string>
     <string name="osmo_set_moving_target">Définir comme cible mobile</string>
     <string name="osmo_use_server_name">Nom enregistré</string>
-    <string name="osmo_connect_to_my_nickname">Mon pseudo</string>
+    <string name="osmo_connect_to_my_nickname">Pseudo</string>
     <string name="osmo_user_name">Utilisateur</string>
     
     <string name="osmo_user_joined">L\'utilisateur %1$s a rejoint le groupe %2$s</string>
@@ -1485,14 +1478,14 @@
     <string name="gpx_monitoring_start">Démarrer l\'enregistrement GPX</string>
     <string name="gpx_monitoring_stop">Arrêter l\'enregistrement GPX</string>
     <string name="gpx_start_new_segment">Débuter un nouveau segment</string>
-    <string name="rendering_attr_hideBuildings_name">Masquer les bâtiments</string>
-    <string name="rendering_attr_hideNonVehicleHighways_name">Masquer les voies non adaptées aux véhicules</string>
-    <string name="rendering_attr_hideText_name">Masquer les textes</string>
-    <string name="rendering_attr_hideWoodScrubs_name">Masquer la végétation</string>
+    <string name="rendering_attr_hideBuildings_name">Bâtiments</string>
+    <string name="rendering_attr_hideNonVehicleHighways_name">Voies non adaptées aux véhicules</string>
+    <string name="rendering_attr_hideText_name">Texte</string>
+    <string name="rendering_attr_hideWoodScrubs_name">Végétation</string>
     <string name="rendering_attr_buildings15zoom_name">Bâtiments en zoom 15</string>
     <string name="rendering_attr_moreDetailed_name">Plus détaillé</string>
     <string name="rendering_attr_lessDetailed_name">Moins détaillé</string>
-    <string name="rendering_attr_hideAccess_name">Masquer les restrictions d\'accès</string>
+    <string name="rendering_attr_hideAccess_name">Accès restreints</string>
     <string name="rendering_attr_showAccess_name">Afficher les restrictions d\'accès</string>
     <string name="rendering_attr_showSurfaceGrade_name">Afficher la qualité des routes</string>
     <string name="rendering_attr_showSurfaces_name">Afficher la surface des routes</string>
@@ -1570,8 +1563,8 @@
     <string name="speed_limit_exceed">Marge de tolérance aux limites de vitesse</string>
     <string name="speed_limit_exceed_message">Indiquez la marge de tolérance à ajouter à la limitations de vitesse et au dessus de laquelle vous recevrez une alerte vocale.</string>
     <string name="osmo_device_not_found">Périphérique introuvable</string>
-    <string name="osmo_no_connection_msg">Le service OsMo n\'est pas disponible :\n- Vérifier la connexion;\n- Vérifier les paramètres;\n- Vérifier notre page Twitter: https://twitter.com/OsMomobi</string>
-    <string name="anonymous_user_hint">Un utilisateur anonyme ne peut pas :\n- Créer des groupes;\n- Synchroniser les groupes et les périphériques avec le serveur;\n- Gérer les groupes et les périphériques dans un espace privé.</string>
+    <string name="osmo_no_connection_msg">Impossible de se connecter au serveur OsMo :\n- Vérifier votre connexion Internet;\n- Vérifier les paramètres;\n- Vérifier notre page Twitter: https://twitter.com/OsMomobi</string>
+    <string name="anonymous_user_hint">Un utilisateur anonyme ne peut pas :\n- Créer des groupes;\n- Synchroniser les groupes et les périphériques avec le serveur;\n- Gérer les groupes et les périphériques depuis un espace privé sur le site Web.</string>
     <string name="anonymous_user">Utilisateur anonyme</string>
     <string name="logged_as">Connecté entant que %1$s</string>
     <string name="rendering_category_details">Détails</string>
@@ -1778,7 +1771,7 @@
     <string name="storage_directory">Stockage de la carte</string>
     <string name="shared_string_copy">Copier</string>
     <string name="application_dir_change_warning3">Souhaitez-vous aussi qu\'OsmAnd copie ses fichiers de données vers la nouvelle destination ?</string>
-    <string name="rendering_attr_hideHouseNumbers_name">Masquer les numéros dans les rues</string>
+    <string name="rendering_attr_hideHouseNumbers_name">Numéros dans les rues</string>
     
     <string name="routing_attr_avoid_borders_description">Éviter de franchir les frontières entre pays</string>
     <string name="routing_attr_height_name">Limite de hauteur</string>
@@ -2011,7 +2004,7 @@
     <string name="shared_string_update">Mise à jour</string>
     <string name="read_more">Lire plus</string>
     <string name="whats_new">Quoi de neuf dans</string>
-    <string name="rendering_attr_hideProposed_name">Masquer les objets proposés</string>
+    <string name="rendering_attr_hideProposed_name">Objets proposés</string>
     <string name="lang_mk">Macédonien</string>
     <string name="lang_fy">Frison occidental</string>
     <string name="lang_als">Tosque</string>
@@ -2104,15 +2097,15 @@
     <string name="shared_string_undo_all">Tout annuler</string>
     <string name="starting_point">Point de départ</string>
     <string name="rec_split">Intervalle d\'enregistrement</string>
-    <string name="rec_split_title">Utiliser un intervalle d\'enregistrement</string>
+    <string name="rec_split_title">Définir un intervalle d\'enregistrement</string>
     <string name="rec_split_desc">Écraser les enregistrements quand l\'espace utilisé dépasse la capacité de stockage</string>
     <string name="rec_split_clip_length">Durée de l\'enregistrement</string>
-    <string name="rec_split_clip_length_desc">La longueur de chaque enregistrement ne sera plus l\'intervalle de temps défini</string>
+    <string name="rec_split_clip_length_desc">La longueur de chaque enregistrement ne dépassera pas l’intervalle de temps défini</string>
     <string name="rec_split_storage_size">Taille de l\'espace de stockage</string>
     <string name="rec_split_storage_size_desc">Espace maximum alloué pour tous les enregistrements</string>
     <string name="shared_string_type">Type</string>
     <string name="switch_start_finish">Inverser Départ et Destination</string>
-    <string name="rendering_attr_hideIcons_name">Masquer les icônes des PI</string>
+    <string name="rendering_attr_hideIcons_name">Icônes des PI</string>
     <string name="number_of_contributors">Nombre de contributeurs</string>
     <string name="number_of_edits">Nombre de modifications</string>
     <string name="reports_for">Signaler pour</string>
@@ -2122,7 +2115,7 @@
     <string name="road_blocked">Route barrée</string>
     <string name="add_time_span">Ajouter un laps de temps</string>
     <string name="data_is_not_available">Donnée indisponible</string>
-    <string name="rendering_attr_hideUnderground_name">Cacher les objets souterrains</string>
+    <string name="rendering_attr_hideUnderground_name">Objets souterrains</string>
     <string name="shared_string_read_more">Lire la suite</string>
     <string name="shared_string_email_address">Adresse email</string>
     <string name="shared_string_status">Statut</string>
@@ -2174,4 +2167,44 @@
     <string name="storage_directory_readonly_desc">L\'emplacement de stockage sélectionné est en lecture seule. L\'emplacement de stockage a donc été modifié pour utiliser la mémoire interne. Merci de sélectionner un dossier valide.</string>
     <string name="osm_user_stat">Modifications %1$s, classement %2$s, nombre total de modifications %3$s</string>
     <string name="osm_live_subscription">Abonnement à OSM Live</string>
+    <string name="no_map_markers_found">Ajoutez des marqueurs depuis la carte</string>
+    <string name="no_waypoints_found">Aucun point de passage trouvé</string>
+    <string name="report">Signaler</string>
+    <string name="select_map_marker">Sélectionner un marqueur</string>
+    <string name="map_markers_other">Autres marqueurs</string>
+    <string name="map_marker_1st">Premier marqueur</string>
+    <string name="map_marker_2nd">Second marqueur</string>
+    <string name="add_points_to_map_markers_q">Souhaitez-vous ajouter tous les points comme marqueurs ?</string>
+    <string name="shared_string_add_to_map_markers">Ajouter comme marqueur</string>
+    <string name="select_map_markers">Sélectionner les marqueurs</string>
+    <string name="show_map_markers_description">Activer la fonction marqueur</string>
+    <string name="clear_active_markers_q">Souhaitez-vous supprimer tous les marqueurs actifs ?</string>
+    <string name="clear_markers_history_q">Souhaitez-vous effacer l\'historique des marqueurs ?</string>
+    <string name="active_markers">Marqueurs actifs</string>
+    <string name="map_markers">Marqueurs</string>
+    <string name="map_marker">Marqueur</string>
+    <string name="file_name_containes_illegal_char">Le nom de fichier contient des caractères interdits</string>
+<string name="osm_live_header">Cet abonnement active les mises à jour horaires pour toutes les cartes. Les dons sont reversés à la Communauté OSM. Si vous appréciez OsmAnd et OSM et que vous souhaitez supporter ces projets, c\'est la meilleure façon de le faire.</string>
+    
+    <string name="rendering_value_thin_name">Fin</string>
+    <string name="rendering_value_medium_name">Moyen</string>
+    <string name="rendering_value_bold_name">Épais</string>
+    <string name="number_of_gpx_files_selected_pattern">%s fichiers GPX sélectionnés</string>
+    <string name="map_mode">Mode Carte</string>
+    <string name="access_default_color">Couleur par défaut</string>
+    <string name="access_category_choice">Sélectionnez une catégorie</string>
+    <string name="access_hint_enter_name">Saisissez un nom</string>
+    <string name="access_hint_enter_category">Saisissez une catégorie</string>
+    <string name="access_hint_enter_description">Saisissez une description</string>
+    <string name="access_collapsed_list">Plier la liste</string>
+    <string name="access_expanded_list">Déplier la liste</string>
+    <string name="access_empty_list">Vider la liste</string>
+    <string name="access_tree_list">Liste arborescente</string>
+    <string name="access_shared_string_not_installed">Non installé</string>
+    <string name="access_widget_expand">Déplier</string>
+    <string name="access_sort">Trier</string>
+    <string name="access_smart_autoannounce">Annonces intelligentes</string>
+    <string name="access_smart_autoannounce_descr">Annoncer uniquement lorsque la direction de la destination est modifiée</string>
+    <string name="access_autoannounce_period">Fréquence des annonces</string>
+    <string name="access_autoannounce_period_descr">Temps minimum entre deux annonces</string>
     </resources>

@@ -18,7 +18,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import net.osmand.access.AccessibleToast;
 import net.osmand.map.WorldRegion;
 import net.osmand.plus.OsmandPlugin;
 import net.osmand.plus.R;
@@ -259,10 +258,13 @@ public class ItemViewHolder {
 			final boolean isDownloading = context.getDownloadThread().isDownloading(item);
 			if (isDownloading) {
 				rightImageButton.setImageDrawable(getContentIcon(context, R.drawable.ic_action_remove_dark));
+				rightImageButton.setContentDescription(context.getString(R.string.shared_string_cancel));
 			} else if(item.isDownloaded() && !item.isOutdated()) {
 				rightImageButton.setImageDrawable(getContentIcon(context, R.drawable.ic_overflow_menu_white));
+				rightImageButton.setContentDescription(context.getString(R.string.shared_string_more));
 			} else {
 				rightImageButton.setImageDrawable(getContentIcon(context, R.drawable.ic_action_import));
+				rightImageButton.setContentDescription(context.getString(R.string.shared_string_download));
 			}
 			rightImageButton.setOnClickListener(action);
 		}
@@ -304,7 +306,7 @@ public class ItemViewHolder {
 					case ASK_FOR_SEAMARKS_PLUGIN:
 						context.startActivity(new Intent(context, context.getMyApplication().getAppCustomization()
 								.getPluginsActivity()));
-						AccessibleToast.makeText(context.getApplicationContext(),
+						Toast.makeText(context.getApplicationContext(),
 								context.getString(R.string.activate_seamarks_plugin), Toast.LENGTH_SHORT).show();
 						break;
 					case ASK_FOR_SRTM_PLUGIN_PURCHASE:
@@ -314,7 +316,7 @@ public class ItemViewHolder {
 					case ASK_FOR_SRTM_PLUGIN_ENABLE:
 						context.startActivity(new Intent(context, context.getMyApplication().getAppCustomization()
 								.getPluginsActivity()));
-						AccessibleToast.makeText(context, context.getString(R.string.activate_srtm_plugin),
+						Toast.makeText(context, context.getString(R.string.activate_srtm_plugin),
 								Toast.LENGTH_SHORT).show();
 						break;
 					case DOWNLOAD:
@@ -350,7 +352,7 @@ public class ItemViewHolder {
 		final File fl = indexItem.getTargetFile(context.getMyApplication());
 		if (fl.exists()) {
 			item = optionsMenu.getMenu().add(R.string.shared_string_remove).setIcon(
-							context.getMyApplication().getIconsCache().getContentIcon(R.drawable.ic_action_remove_dark));
+							context.getMyApplication().getIconsCache().getThemedIcon(R.drawable.ic_action_remove_dark));
 			item.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
 				@Override
 				public boolean onMenuItemClick(MenuItem item) {
@@ -386,7 +388,7 @@ public class ItemViewHolder {
 			});
 		}
 		item = optionsMenu.getMenu().add(R.string.shared_string_download)
-				.setIcon(context.getMyApplication().getIconsCache().getContentIcon(R.drawable.ic_action_import));
+				.setIcon(context.getMyApplication().getIconsCache().getThemedIcon(R.drawable.ic_action_import));
 		item.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
 			@Override
 			public boolean onMenuItemClick(MenuItem item) {
@@ -399,10 +401,10 @@ public class ItemViewHolder {
 	}
 
 	private Drawable getContentIcon(DownloadActivity context, int resourceId) {
-		return context.getMyApplication().getIconsCache().getContentIcon(resourceId);
+		return context.getMyApplication().getIconsCache().getThemedIcon(resourceId);
 	}
 
 	private Drawable getContentIcon(DownloadActivity context, int resourceId, int color) {
-		return context.getMyApplication().getIconsCache().getPaintedContentIcon(resourceId, color);
+		return context.getMyApplication().getIconsCache().getPaintedIcon(resourceId, color);
 	}
 }

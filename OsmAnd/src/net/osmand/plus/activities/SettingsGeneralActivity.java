@@ -23,9 +23,9 @@ import android.support.v7.app.AlertDialog;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Toast;
+
 import net.osmand.IProgress;
 import net.osmand.IndexConstants;
-import net.osmand.access.AccessibleToast;
 import net.osmand.osm.io.NetworkUtils;
 import net.osmand.plus.ApplicationMode;
 import net.osmand.plus.OsmandApplication;
@@ -335,7 +335,12 @@ public class SettingsGeneralActivity extends SettingsBaseActivity {
 
 	private void showAppDirDialogV19() {
 		AlertDialog.Builder bld = new AlertDialog.Builder(this);
-		ChooseAppDirFragment frg = new DashChooseAppDirFragment.ChooseAppDirFragment(this, (Dialog) null);
+		ChooseAppDirFragment frg = new DashChooseAppDirFragment.ChooseAppDirFragment(this, (Dialog) null) {
+			@Override
+			protected void successCallback() {
+				updateApplicationDirTextAndSummary();
+			}
+		};
 		bld.setView(frg.initView(getLayoutInflater(), null, null));
 		AlertDialog dlg = bld.show();
 		frg.setDialog(dlg);
@@ -466,7 +471,7 @@ public class SettingsGeneralActivity extends SettingsBaseActivity {
 		final File path = new File(newDir);
 		path.mkdirs();
 		if (!path.canRead() || !path.exists()) {
-			AccessibleToast.makeText(this, R.string.specified_dir_doesnt_exist, Toast.LENGTH_LONG).show();
+			Toast.makeText(this, R.string.specified_dir_doesnt_exist, Toast.LENGTH_LONG).show();
 			return;
 		}
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -548,7 +553,7 @@ public class SettingsGeneralActivity extends SettingsBaseActivity {
 				protected void onPostExecute(Void result) {
 					setProgressVisibility(false);
 					if (!NativeOsmandLibrary.isNativeSupported(storage, getMyApplication())) {
-						AccessibleToast.makeText(SettingsGeneralActivity.this, R.string.native_library_not_supported, Toast.LENGTH_LONG).show();
+						Toast.makeText(SettingsGeneralActivity.this, R.string.native_library_not_supported, Toast.LENGTH_LONG).show();
 					}
 				}
 			}.execute();
@@ -571,7 +576,7 @@ public class SettingsGeneralActivity extends SettingsBaseActivity {
 			runOnUiThread(new Runnable() {
 				@Override
 				public void run() {
-					AccessibleToast.makeText(SettingsGeneralActivity.this, b.toString(), Toast.LENGTH_LONG).show();
+					Toast.makeText(SettingsGeneralActivity.this, b.toString(), Toast.LENGTH_LONG).show();
 
 				}
 			});

@@ -225,7 +225,6 @@ public class Algorithms {
             				colorString.charAt(1) + colorString.charAt(1) +
             				colorString.charAt(2) + colorString.charAt(2) +
             				colorString.charAt(3) + colorString.charAt(3);
-            				
             	}
             	long color = Long.parseLong(colorString.substring(1), 16);
             	if (colorString.length() == 7) {
@@ -515,7 +514,7 @@ public class Algorithms {
 	}
 	
 
-	public static String formatDuration(int seconds) {
+	public static String formatDuration(int seconds, boolean fullForm) {
 		String sec;
 		if (seconds % 60 < 10) {
 			sec = "0" + (seconds % 60);
@@ -523,7 +522,7 @@ public class Algorithms {
 			sec = (seconds % 60) + "";
 		}
 		int minutes = seconds / 60;
-		if (minutes < 60) {
+		if ((!fullForm) && (minutes < 60)) {
 			return minutes + ":" + sec;
 		} else {
 			String min;
@@ -570,4 +569,23 @@ public class Algorithms {
 		}
 		return hexString;
 	}
+
+	public static int getRainbowColor(double percent) {
+
+		// Given an input percentage (0.0-1.0) this will produce a colour from a "wide rainbow"
+		// from purple (low) to red(high).  This is useful for producing value-based colourations (e.g., altitude)
+
+		double a = (1. - percent) * 5.;
+		int X = (int)Math.floor(a);
+		int Y = (int)(Math.floor(255 * (a - X)));
+		switch (X) {
+			case 0: return 0xFFFF0000 + (Y<<8);
+			case 1: return 0xFF00FF00 + ((255-Y)<<16);
+			case 2: return 0xFF00FF00 + Y;
+			case 3: return 0xFF0000FF + ((255-Y)<<8);
+			case 4: return 0xFF0000FF + (Y << 16);
+		}
+		return 0xFFFF00FF;
+	}
+
 }

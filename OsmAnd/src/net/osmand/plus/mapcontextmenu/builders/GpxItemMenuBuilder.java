@@ -56,7 +56,7 @@ public class GpxItemMenuBuilder extends MenuBuilder {
 		buildTextView(ll, gpxSmallTextMargin, gpxTextSize, textColor,
 				OsmAndFormatter.getFormattedDistance(item.analysis.totalDistance, app));
 		buildIcon(ll, gpxSmallIconMargin, R.drawable.ic_small_time);
-		buildTextView(ll, gpxSmallTextMargin, gpxTextSize, textColor, Algorithms.formatDuration((int) (item.analysis.timeSpan / 1000)) + "");
+		buildTextView(ll, gpxSmallTextMargin, gpxTextSize, textColor, Algorithms.formatDuration((int) (item.analysis.timeSpan / 1000), app.accessibilityEnabled()) + "");
 	}
 
 	private void buildIcon(LinearLayout ll, int gpxSmallIconMargin, int iconId) {
@@ -65,7 +65,7 @@ public class GpxItemMenuBuilder extends MenuBuilder {
 		llIconParams.setMargins(0, 0, gpxSmallIconMargin, 0);
 		llIconParams.gravity = Gravity.CENTER_VERTICAL;
 		icon.setLayoutParams(llIconParams);
-		icon.setImageDrawable(app.getIconsCache().getContentIcon(iconId));
+		icon.setImageDrawable(app.getIconsCache().getThemedIcon(iconId));
 		ll.addView(icon);
 	}
 

@@ -1,7 +1,6 @@
 package net.osmand.plus;
 
 import net.osmand.PlatformUtil;
-import net.osmand.access.AccessibleToast;
 import net.osmand.plus.monitoring.OsmandMonitoringPlugin;
 import net.osmand.plus.osmo.OsMoPlugin;
 import android.app.AlarmManager;
@@ -144,6 +143,9 @@ public class NavigationService extends Service implements LocationListener {
 			LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 			try {
 				locationManager.requestLocationUpdates(serviceOffProvider, 0, 0, NavigationService.this);
+			} catch (SecurityException e) {
+				Toast.makeText(this, R.string.no_location_permission, Toast.LENGTH_LONG).show();
+				Log.d(PlatformUtil.TAG, "Location service permission not granted"); //$NON-NLS-1$
 			} catch (IllegalArgumentException e) {
 				Toast.makeText(this, R.string.gps_not_available, Toast.LENGTH_LONG).show();
 				Log.d(PlatformUtil.TAG, "GPS location provider not available"); //$NON-NLS-1$
@@ -164,9 +166,6 @@ public class NavigationService extends Service implements LocationListener {
 	}
 	
 	protected void stopService() {
-		if (settings.SAVE_GLOBAL_TRACK_TO_GPX.get()) {
-			settings.SAVE_GLOBAL_TRACK_TO_GPX.set(false);
-		}
 		OsMoPlugin osmoPlugin = OsmandPlugin.getEnabledPlugin(OsMoPlugin.class);
 		if (osmoPlugin != null) {
 			if (osmoPlugin.getTracker().isEnabledTracker()) {
@@ -202,7 +201,11 @@ public class NavigationService extends Service implements LocationListener {
 		usedBy = 0;
 		// remove updates
 		LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-		locationManager.removeUpdates(this);
+		try {
+			locationManager.removeUpdates(this);
+		} catch (SecurityException e) {
+			Log.d(PlatformUtil.TAG, "Location service permission not granted"); //$NON-NLS-1$
+		}
 
 		if (!isContinuous()) {
 			WakeLock lock = getLock(this);
@@ -225,7 +228,11 @@ public class NavigationService extends Service implements LocationListener {
 			if (!isContinuous()) {
 				// unregister listener and wait next time
 				LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-				locationManager.removeUpdates(this);
+				try {
+					locationManager.removeUpdates(this);
+				} catch (SecurityException e) {
+					Log.d(PlatformUtil.TAG, "Location service permission not granted"); //$NON-NLS-1$
+				}
 				WakeLock lock = getLock(this);
 				if (lock.isHeld()) {
 					lock.release();
@@ -238,7 +245,7 @@ public class NavigationService extends Service implements LocationListener {
 
 	@Override
 	public void onProviderDisabled(String provider) {
-		AccessibleToast.makeText(this, getString(R.string.off_router_service_no_gps_available), Toast.LENGTH_LONG).show();
+		Toast.makeText(this, getString(R.string.off_router_service_no_gps_available), Toast.LENGTH_LONG).show();
 	}
 
 

@@ -23,6 +23,7 @@ import net.osmand.Location;
 import net.osmand.data.LatLon;
 import net.osmand.plus.ApplicationMode;
 import net.osmand.plus.ContextMenuAdapter;
+import net.osmand.plus.ContextMenuItem;
 import net.osmand.plus.GPXUtilities;
 import net.osmand.plus.OsmandApplication;
 import net.osmand.plus.OsmandSettings;
@@ -203,7 +204,7 @@ public class RoutePreferencesMenu {
 	}
 
 	public static void selectVoiceGuidance(final MapActivity mapActivity, final CallbackWithObject<String> callback) {
-		final ContextMenuAdapter adapter = new ContextMenuAdapter(mapActivity);
+		final ContextMenuAdapter adapter = new ContextMenuAdapter();
 
 		String[] entries;
 		final String[] entrieValues;
@@ -215,7 +216,8 @@ public class RoutePreferencesMenu {
 		String selectedValue = mapActivity.getMyApplication().getSettings().VOICE_PROVIDER.get();
 		entrieValues[k] = OsmandSettings.VOICE_PROVIDER_NOT_USE;
 		entries[k] = mapActivity.getResources().getString(R.string.shared_string_do_not_use);
-		adapter.item(entries[k]).reg();
+		ContextMenuItem.ItemBuilder itemBuilder = new ContextMenuItem.ItemBuilder();
+		adapter.addItem(itemBuilder.setTitle(entries[k]).createItem());
 		if (OsmandSettings.VOICE_PROVIDER_NOT_USE.equals(selectedValue)) {
 			selected = k;
 		}
@@ -224,7 +226,7 @@ public class RoutePreferencesMenu {
 			entries[k] = (s.contains("tts") ?  mapActivity.getResources().getString(R.string.ttsvoice) + " " : "") +
 					FileNameTranslationHelper.getVoiceName(mapActivity, s);
 			entrieValues[k] = s;
-			adapter.item(entries[k]).reg();
+			adapter.addItem(itemBuilder.setTitle(entries[k]).createItem());
 			if (s.equals(selectedValue)) {
 				selected = k;
 			}
@@ -232,7 +234,7 @@ public class RoutePreferencesMenu {
 		}
 		entrieValues[k] = MORE_VALUE;
 		entries[k] =  mapActivity.getResources().getString(R.string.install_more);
-		adapter.item(entries[k]).reg();
+		adapter.addItem(itemBuilder.setTitle(entries[k]).createItem());
 
 		AlertDialog.Builder bld = new AlertDialog.Builder(mapActivity);
 		bld.setSingleChoiceItems(entries, selected, new DialogInterface.OnClickListener() {
@@ -295,19 +297,19 @@ public class RoutePreferencesMenu {
 					settings.putExtra(SettingsBaseActivity.INTENT_APP_MODE, routingHelper.getAppMode().getStringKey());
 					mapActivity.startActivity(settings);
 				} else if (obj instanceof MuteSoundRoutingParameter) {
-					final CompoundButton btn = (CompoundButton) view.findViewById(R.id.check_item);
+					final CompoundButton btn = (CompoundButton) view.findViewById(R.id.toggle_item);
 					btn.performClick();
 				} else if (obj instanceof VoiceGuidanceRoutingParameter) {
 					doSelectVoiceGuidance();
 				} else if (obj instanceof InterruptMusicRoutingParameter) {
-					final CompoundButton btn = (CompoundButton) view.findViewById(R.id.check_item);
+					final CompoundButton btn = (CompoundButton) view.findViewById(R.id.toggle_item);
 					btn.performClick();
 				} else if (obj instanceof AvoidRoadsRoutingParameter) {
 					selectRestrictedRoads();
 				} else if (view.findViewById(R.id.GPXRouteSpinner) != null) {
 					showOptionsMenu((TextView) view.findViewById(R.id.GPXRouteSpinner));
 				} else {
-					CheckBox ch = (CheckBox) view.findViewById(R.id.check_item);
+					CheckBox ch = (CheckBox) view.findViewById(R.id.toggle_item);
 					if (ch != null) {
 						ch.setChecked(!ch.isChecked());
 					}
@@ -329,8 +331,8 @@ public class RoutePreferencesMenu {
 					v.findViewById(R.id.description_text).setVisibility(View.GONE);
 					v.findViewById(R.id.select_button).setVisibility(View.GONE);
 					((ImageView) v.findViewById(R.id.icon))
-							.setImageDrawable(app.getIconsCache().getContentIcon(R.drawable.ic_action_volume_up, !nightMode));
-					final CompoundButton btn = (CompoundButton) v.findViewById(R.id.check_item);
+							.setImageDrawable(app.getIconsCache().getIcon(R.drawable.ic_action_volume_up, !nightMode));
+					final CompoundButton btn = (CompoundButton) v.findViewById(R.id.toggle_item);
 					btn.setVisibility(View.VISIBLE);
 					btn.setChecked(!routingHelper.getVoiceRouter().isMute());
 					btn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -349,8 +351,8 @@ public class RoutePreferencesMenu {
 					View v = mapActivity.getLayoutInflater().inflate(R.layout.switch_select_list_item, null);
 					AndroidUtils.setListItemBackground(mapActivity, v, nightMode);
 					((ImageView) v.findViewById(R.id.icon))
-							.setImageDrawable(app.getIconsCache().getContentIcon(R.drawable.ic_action_road_works_dark, !nightMode));
-					v.findViewById(R.id.check_item).setVisibility(View.GONE);
+							.setImageDrawable(app.getIconsCache().getIcon(R.drawable.ic_action_road_works_dark, !nightMode));
+					v.findViewById(R.id.toggle_item).setVisibility(View.GONE);
 					final TextView btn = (TextView) v.findViewById(R.id.select_button);
 					btn.setTextColor(btn.getLinkTextColors());
 					btn.setOnClickListener(new View.OnClickListener() {
@@ -375,7 +377,7 @@ public class RoutePreferencesMenu {
 					AndroidUtils.setListItemBackground(mapActivity, v, nightMode);
 					v.findViewById(R.id.icon).setVisibility(View.GONE);
 					v.findViewById(R.id.description_text).setVisibility(View.GONE);
-					v.findViewById(R.id.check_item).setVisibility(View.GONE);
+					v.findViewById(R.id.toggle_item).setVisibility(View.GONE);
 					final TextView btn = (TextView) v.findViewById(R.id.select_button);
 					btn.setTextColor(btn.getLinkTextColors());
 					String voiceProvider = settings.VOICE_PROVIDER.get();
@@ -409,7 +411,7 @@ public class RoutePreferencesMenu {
 					AndroidUtils.setListItemBackground(mapActivity, v, nightMode);
 					v.findViewById(R.id.select_button).setVisibility(View.GONE);
 					v.findViewById(R.id.icon).setVisibility(View.GONE);
-					final CompoundButton btn = (CompoundButton) v.findViewById(R.id.check_item);
+					final CompoundButton btn = (CompoundButton) v.findViewById(R.id.toggle_item);
 					btn.setVisibility(View.VISIBLE);
 					btn.setChecked(settings.INTERRUPT_MUSIC.get());
 					btn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -435,7 +437,7 @@ public class RoutePreferencesMenu {
 					final TextView gpxSpinner = (TextView) v.findViewById(R.id.GPXRouteSpinner);
 					AndroidUtils.setTextPrimaryColor(mapActivity, gpxSpinner, nightMode);
 					((ImageView) v.findViewById(R.id.dropDownIcon))
-							.setImageDrawable(app.getIconsCache().getContentIcon(R.drawable.ic_action_arrow_drop_down, !nightMode));
+							.setImageDrawable(app.getIconsCache().getIcon(R.drawable.ic_action_arrow_drop_down, !nightMode));
 					updateSpinnerItems(gpxSpinner);
 					return v;
 				}
@@ -443,12 +445,12 @@ public class RoutePreferencesMenu {
 					View v = mapActivity.getLayoutInflater().inflate(R.layout.layers_list_activity_item, null);
 					AndroidUtils.setListItemBackground(mapActivity, v, nightMode);
 					final ImageView icon = (ImageView) v.findViewById(R.id.icon);
-					icon.setImageDrawable(app.getIconsCache().getContentIcon(R.drawable.map_action_settings, !nightMode));
+					icon.setImageDrawable(app.getIconsCache().getIcon(R.drawable.map_action_settings, !nightMode));
 					icon.setVisibility(View.VISIBLE);
 					TextView titleView = (TextView) v.findViewById(R.id.title);
 					titleView.setText(R.string.routing_settings_2);
 					AndroidUtils.setTextPrimaryColor(mapActivity, titleView, nightMode);
-					v.findViewById(R.id.check_item).setVisibility(View.GONE);
+					v.findViewById(R.id.toggle_item).setVisibility(View.GONE);
 					return v;
 				}
 				return inflateRoutingParameter(position);
@@ -458,7 +460,7 @@ public class RoutePreferencesMenu {
 				View v = mapActivity.getLayoutInflater().inflate(R.layout.layers_list_activity_item, null);
 				AndroidUtils.setListItemBackground(mapActivity, v, nightMode);
 				final TextView tv = (TextView) v.findViewById(R.id.title);
-				final CheckBox ch = ((CheckBox) v.findViewById(R.id.check_item));
+				final CheckBox ch = ((CheckBox) v.findViewById(R.id.toggle_item));
 				final LocalRoutingParameter rp = getItem(position);
 				AndroidUtils.setTextPrimaryColor(mapActivity, tv, nightMode);
 				tv.setText(rp.getText(mapActivity));

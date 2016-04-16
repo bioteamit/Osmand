@@ -13,7 +13,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import net.osmand.IndexConstants;
-import net.osmand.access.AccessibleToast;
 import net.osmand.plus.GPXUtilities;
 import net.osmand.plus.GPXUtilities.GPXFile;
 import net.osmand.plus.GpxSelectionHelper;
@@ -171,6 +170,7 @@ public class DashTrackFragment extends DashBaseFragment {
 			});
 			ImageButton showOnMap = ((ImageButton) v.findViewById(R.id.show_on_map));
 			showOnMap.setVisibility(View.VISIBLE);
+			showOnMap.setContentDescription(getString(R.string.shared_string_show_on_map));
 			updateShowOnMap(app, f, v, showOnMap);
 			tracks.addView(v);
 		}
@@ -193,7 +193,7 @@ public class DashTrackFragment extends DashBaseFragment {
 				}
 			});
 		} else {
-			showOnMap.setImageDrawable(app.getIconsCache().getContentIcon(R.drawable.ic_show_on_map));
+			showOnMap.setImageDrawable(app.getIconsCache().getThemedIcon(R.drawable.ic_show_on_map));
 			showOnMap.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
@@ -211,7 +211,7 @@ public class DashTrackFragment extends DashBaseFragment {
 
 	private void showOnMap(GPXUtilities.GPXFile file){
 		if (file.isEmpty()) {
-			AccessibleToast.makeText(getActivity(), R.string.gpx_file_is_empty, Toast.LENGTH_LONG).show();
+			Toast.makeText(getActivity(), R.string.gpx_file_is_empty, Toast.LENGTH_LONG).show();
 			return;
 		}
 

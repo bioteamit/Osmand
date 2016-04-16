@@ -5,7 +5,8 @@ import android.widget.ArrayAdapter;
 
 import net.osmand.plus.ApplicationMode;
 import net.osmand.plus.ContextMenuAdapter;
-import net.osmand.plus.ContextMenuAdapter.OnContextMenuClick;
+import net.osmand.plus.ContextMenuAdapter.ItemClickListener;
+import net.osmand.plus.ContextMenuItem;
 import net.osmand.plus.OsmandApplication;
 import net.osmand.plus.OsmandPlugin;
 import net.osmand.plus.OsmandSettings;
@@ -104,18 +105,27 @@ public class SRTMPlugin extends OsmandPlugin {
 	
 	@Override
 	public void registerLayerContextMenuActions(final OsmandMapTileView mapView, ContextMenuAdapter adapter, final MapActivity mapActivity) {
-		OnContextMenuClick listener = new OnContextMenuClick() {
+		ItemClickListener listener = new ItemClickListener() {
 			@Override
-			public boolean onContextMenuClick(ArrayAdapter<?> adapter, int itemId, int pos, boolean isChecked) {
+			public boolean onContextMenuClick(ArrayAdapter<ContextMenuItem> adapter, int itemId, int pos, boolean isChecked) {
 				if (itemId == R.string.layer_hillshade) {
 					HILLSHADE.set(!HILLSHADE.get());
+					adapter.getItem(pos).setColorRes(HILLSHADE.get() ? R.color.osmand_orange
+							: ContextMenuItem.INVALID_ID);
+					adapter.notifyDataSetChanged();
 					updateLayers(mapView, mapActivity);
 				}
 				return true;
 			}
 		};
-		adapter.item(R.string.layer_hillshade).selected(HILLSHADE.get()? 1 : 0)
-			.iconColor( R.drawable.ic_action_hillshade_dark).listen(listener).position(13).layout(R.layout.drawer_list_item).reg();
+		adapter.addItem(new ContextMenuItem.ItemBuilder()
+				.setTitleId(R.string.layer_hillshade, mapActivity)
+				.setSelected(HILLSHADE.get())
+				.setColor(HILLSHADE.get() ? R.color.osmand_orange : ContextMenuItem.INVALID_ID)
+				.setIcon(R.drawable.ic_action_hillshade_dark)
+				.setListener(listener)
+				.setPosition(13)
+				.createItem());
 	}
 	
 	@Override

@@ -16,7 +16,6 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import net.osmand.access.AccessibleToast;
 import net.osmand.plus.OsmandApplication;
 import net.osmand.plus.R;
 import net.osmand.plus.activities.SettingsBaseActivity;
@@ -87,7 +86,7 @@ public class SettingsOsMoActivity extends SettingsBaseActivity {
 		StringBuilder s = new StringBuilder();
 		if(service.isConnected()) {
 			int seconds = (int) ((System.currentTimeMillis() - service.getConnectionTime()) / 1000);
-			s.append(getString(R.string.osmo_conn_successfull, Algorithms.formatDuration(seconds))).append("\n");
+			s.append(getString(R.string.osmo_conn_successfull, Algorithms.formatDuration(seconds, getMyApplication().accessibilityEnabled()))).append("\n");
 			SessionInfo si = service.getCurrentSessionInfo();
 			if(si == null) {
 				s.append(getString(R.string.osmo_auth_pending)).append("\n");
@@ -150,7 +149,7 @@ public class SettingsOsMoActivity extends SettingsBaseActivity {
 			OsMoService service = plugin.getService();
 			SessionInfo ci = service.getCurrentSessionInfo();
 			if(ci == null || ci.trackerId == null) {
-				AccessibleToast.makeText(this, R.string.osmo_auth_pending, Toast.LENGTH_SHORT).show();
+				Toast.makeText(this, R.string.osmo_auth_pending, Toast.LENGTH_SHORT).show();
 			} else {
 				ShareDialog dlg = new ShareDialog(this);
 				dlg.setTitle(getString(R.string.osmo_tracker_id));

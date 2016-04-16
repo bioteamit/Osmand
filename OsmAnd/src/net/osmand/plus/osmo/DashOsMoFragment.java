@@ -148,11 +148,11 @@ public class DashOsMoFragment extends DashLocationFragment implements OsMoGroups
 	}
 
 	private void setupHader(final View header) {
-		trackr = (CompoundButton) header.findViewById(R.id.card_content).findViewById(R.id.check_item);
+		trackr = (CompoundButton) header.findViewById(R.id.card_content).findViewById(R.id.toggle_item);
 
 		ImageButton share = (ImageButton) header.findViewById(R.id.share);
 		IconsCache cache = getMyApplication().getIconsCache();
-		share.setImageDrawable(cache.getContentIcon(R.drawable.ic_action_gshare_dark));
+		share.setImageDrawable(cache.getThemedIcon(R.drawable.ic_action_gshare_dark));
 		share.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -170,7 +170,7 @@ public class DashOsMoFragment extends DashLocationFragment implements OsMoGroups
 		}
 
 		View cardContent = header.findViewById(R.id.card_content);
-		View enableOsmo = header.findViewById(R.id.header_layout).findViewById(R.id.check_item);
+		View enableOsmo = header.findViewById(R.id.header_layout).findViewById(R.id.toggle_item);
 		View manage = header.findViewById(R.id.manage);
 		if (plugin != null && plugin.getService().isEnabled() ) {
 			cardContent.setVisibility(View.VISIBLE);
@@ -184,7 +184,7 @@ public class DashOsMoFragment extends DashLocationFragment implements OsMoGroups
 			return;
 		}
 
-		CompoundButton trackr = (CompoundButton) header.findViewById(R.id.check_item);
+		CompoundButton trackr = (CompoundButton) header.findViewById(R.id.toggle_item);
 		if (plugin != null && plugin.getTracker() != null) {
 			trackr.setChecked(plugin.getTracker().isEnabledTracker());
 		}
@@ -286,15 +286,15 @@ public class DashOsMoFragment extends DashLocationFragment implements OsMoGroups
 					loc.getLongitude()) : null);
 			distances.add(dv);
 
-			final CompoundButton enableDevice = (CompoundButton) v.findViewById(R.id.check_item);
+			final CompoundButton enableDevice = (CompoundButton) v.findViewById(R.id.toggle_item);
 			enableDevice.setVisibility(View.GONE);
 			ImageView icon = (ImageView) v.findViewById(R.id.icon);
 			if (device.isEnabled()) {
 				icon.setImageDrawable(getMyApplication().getIconsCache().
-						getPaintedContentIcon(R.drawable.ic_person, device.getColor()));
+						getPaintedIcon(R.drawable.ic_person, device.getColor()));
 			} else {
 				icon.setImageDrawable(getMyApplication().getIconsCache().
-						getContentIcon(R.drawable.ic_person));
+						getThemedIcon(R.drawable.ic_person));
 			}
 
 			((TextView) v.findViewById(R.id.name)).setText(name);

@@ -12,7 +12,7 @@ import net.osmand.Location;
 import net.osmand.PlatformUtil;
 import net.osmand.plus.ApplicationMode;
 import net.osmand.plus.ContextMenuAdapter;
-import net.osmand.plus.ContextMenuAdapter.OnContextMenuClick;
+import net.osmand.plus.ContextMenuItem;
 import net.osmand.plus.GPXUtilities;
 import net.osmand.plus.GPXUtilities.GPXFile;
 import net.osmand.plus.GPXUtilities.WptPt;
@@ -274,15 +274,18 @@ public class OsMoPlugin extends OsmandPlugin implements OsMoReactor {
 
 	@Override
 	public void registerOptionsMenuItems(final MapActivity mapActivity, ContextMenuAdapter helper) {
-		helper.item(R.string.osmo_groups).iconColor(R.drawable.ic_osmo_dark).position(6)
-				.listen(new OnContextMenuClick() {
+		helper.addItem(new ContextMenuItem.ItemBuilder().setTitleId(R.string.osmo_groups, mapActivity)
+				.setIcon(R.drawable.ic_osmo_dark)
+				.setListener(new ContextMenuAdapter.ItemClickListener() {
 					@Override
-					public boolean onContextMenuClick(ArrayAdapter<?> adapter, int itemId, int pos, boolean isChecked) {
+					public boolean onContextMenuClick(ArrayAdapter<ContextMenuItem> adapter, int itemId, int pos, boolean isChecked) {
 						Intent intent = new Intent(mapActivity, OsMoGroupsActivity.class);
 						mapActivity.startActivity(intent);
 						return true;
 					}
-				}).reg();
+				})
+				.setPosition(6)
+				.createItem());
 	}
 
 

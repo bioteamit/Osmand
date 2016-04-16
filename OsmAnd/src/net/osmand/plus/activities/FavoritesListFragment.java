@@ -212,7 +212,7 @@ public class FavoritesListFragment extends OsmAndListFragment implements SearchA
 				ImageButton options = (ImageButton) row.findViewById(R.id.options);
 				options.setFocusable(false);
 				options.setImageDrawable(((OsmandApplication) activity.getApplication())
-						.getIconsCache().getContentIcon(R.drawable.ic_overflow_menu_white));
+						.getIconsCache().getThemedIcon(R.drawable.ic_overflow_menu_white));
 				options.setVisibility(View.VISIBLE);
 				options.setOnClickListener(new View.OnClickListener() {
 					@Override
@@ -223,7 +223,7 @@ public class FavoritesListFragment extends OsmAndListFragment implements SearchA
 			}
 			if (!favorite.getCategory().isEmpty()) {
 				giImage.setVisibility(View.VISIBLE);
-				giImage.setImageDrawable(app.getIconsCache().getContentIcon(R.drawable.ic_small_group));
+				giImage.setImageDrawable(app.getIconsCache().getThemedIcon(R.drawable.ic_small_group));
 			} else {
 				giImage.setVisibility(View.GONE);
 			}
@@ -234,7 +234,7 @@ public class FavoritesListFragment extends OsmAndListFragment implements SearchA
 					favorite.getLatitude(), favorite.getLongitude(), screenOrientation, app, activity);
 
 			name.setText(getName(favorite));
-			final CheckBox ch = (CheckBox) row.findViewById(R.id.check_item);
+			final CheckBox ch = (CheckBox) row.findViewById(R.id.toggle_item);
 			icon.setVisibility(View.VISIBLE);
 			ch.setVisibility(View.GONE);
 			return row;

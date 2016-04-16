@@ -358,7 +358,7 @@ public class MapContextMenuFragment extends Fragment implements DownloadEvents {
 		// FAB
 		fabView = (ImageView) view.findViewById(R.id.context_menu_fab_view);
 		if (menu.fabVisible()) {
-			fabView.setImageDrawable(iconsCache.getIcon(menu.getFabIconId(), 0, 0f));
+			fabView.setImageDrawable(iconsCache.getIcon(menu.getFabIconId(), 0));
 			if (menu.isLandscapeLayout()) {
 				FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) fabView.getLayoutParams();
 				params.setMargins(0, 0, dpToPx(28f), 0);
@@ -395,6 +395,7 @@ public class MapContextMenuFragment extends Fragment implements DownloadEvents {
 		buttonFavorite.setImageDrawable(iconsCache.getIcon(menu.getFavActionIconId(),
 				!nightMode ? R.color.icon_color : R.color.dashboard_subheader_text_dark));
 		AndroidUtils.setDashButtonBackground(getMapActivity(), buttonFavorite, nightMode);
+		buttonFavorite.setContentDescription(getString(menu.getFavActionStringId()));
 		buttonFavorite.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -406,9 +407,11 @@ public class MapContextMenuFragment extends Fragment implements DownloadEvents {
 		if (getMyApplication().getSettings().USE_MAP_MARKERS.get()) {
 			buttonWaypoint.setImageDrawable(iconsCache.getIcon(R.drawable.map_action_flag_dark,
 					!nightMode ? R.color.icon_color : R.color.dashboard_subheader_text_dark));
+			buttonWaypoint.setContentDescription(getString(R.string.shared_string_add_to_map_markers));
 		} else {
 			buttonWaypoint.setImageDrawable(iconsCache.getIcon(R.drawable.map_action_waypoint,
 					!nightMode ? R.color.icon_color : R.color.dashboard_subheader_text_dark));
+			buttonWaypoint.setContentDescription(getString(R.string.context_menu_item_destination_point));
 		}
 		AndroidUtils.setDashButtonBackground(getMapActivity(), buttonWaypoint, nightMode);
 		buttonWaypoint.setOnClickListener(new View.OnClickListener() {
@@ -709,6 +712,7 @@ public class MapContextMenuFragment extends Fragment implements DownloadEvents {
 		final ImageButton buttonFavorite = (ImageButton) view.findViewById(R.id.context_menu_fav_button);
 		buttonFavorite.setImageDrawable(iconsCache.getIcon(menu.getFavActionIconId(),
 				!nightMode ? R.color.icon_color : R.color.dashboard_subheader_text_dark));
+		buttonFavorite.setContentDescription(getString(menu.getFavActionStringId()));
 
 		buildHeader();
 

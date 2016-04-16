@@ -37,7 +37,7 @@
 	<uses-feature android:name="android.hardware.sensor.accelerometer" android:required="false" />
 	<uses-feature android:name="android.hardware.sensor.gyroscope" android:required="false" />
 	<uses-feature android:name="android.hardware.touchscreen" android:required="false" />
-	<uses-feature android:name="com.sec.feature.spen_usp" android:required="true"/>
+	<uses-feature android:name="com.sec.feature.spen_usp" android:required="false"/>
 	
 
 
@@ -64,7 +64,7 @@
         
         <provider
             android:name="android.support.v4.content.FileProvider"
-            android:authorities="net.osmand.fileprovider"
+            android:authorities="net.osmand.plus.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true" >
             <meta-data

@@ -27,13 +27,12 @@ import android.widget.Toast;
 
 import net.osmand.CallbackWithObject;
 import net.osmand.IndexConstants;
-import net.osmand.access.AccessibleToast;
 import net.osmand.data.LatLon;
 import net.osmand.data.PointDescription;
 import net.osmand.data.RotatedTileBox;
 import net.osmand.plus.ApplicationMode;
 import net.osmand.plus.ContextMenuAdapter;
-import net.osmand.plus.ContextMenuAdapter.OnContextMenuClick;
+import net.osmand.plus.ContextMenuItem;
 import net.osmand.plus.GPXUtilities;
 import net.osmand.plus.GPXUtilities.GPXFile;
 import net.osmand.plus.GPXUtilities.Route;
@@ -374,11 +373,11 @@ public class DistanceCalculatorPlugin extends OsmandPlugin {
 			@Override
 			protected void onPostExecute(String warning) {
 				if (warning == null) {
-					AccessibleToast.makeText(activity,
+					Toast.makeText(activity,
 							MessageFormat.format(app.getString(R.string.gpx_saved_sucessfully), toSave.getAbsolutePath()),
 							Toast.LENGTH_LONG).show();
 				} else {
-					AccessibleToast.makeText(activity, warning, Toast.LENGTH_LONG).show();
+					Toast.makeText(activity, warning, Toast.LENGTH_LONG).show();
 				}
 				if(dlg != null && dlg.isShowing()) {
 					dlg.dismiss();
@@ -640,7 +639,7 @@ public class DistanceCalculatorPlugin extends OsmandPlugin {
 		}
 		
 		@Override
-		public void populateObjectContextMenu(LatLon latLon, Object o, ContextMenuAdapter adapter) {
+		public void populateObjectContextMenu(LatLon latLon, Object o, ContextMenuAdapter adapter, MapActivity mapActivity) {
 			if (o != null && o instanceof WptPt) {
 				final WptPt p = (WptPt) o;
 				boolean containsPoint = false;
@@ -654,10 +653,10 @@ public class DistanceCalculatorPlugin extends OsmandPlugin {
 					}
 				}
 				if (containsPoint) {
-					OnContextMenuClick listener = new OnContextMenuClick() {
+					ContextMenuAdapter.ItemClickListener listener = new ContextMenuAdapter.ItemClickListener() {
 
 						@Override
-						public boolean onContextMenuClick(ArrayAdapter<?> adapter, int itemId, int pos, boolean isChecked) {
+						public boolean onContextMenuClick(ArrayAdapter<ContextMenuItem> adapter, int itemId, int pos, boolean isChecked) {
 							if (itemId == R.string.delete_point) {
 								for (int i = 0; i < measurementPoints.size(); i++) {
 									Iterator<WptPt> it = measurementPoints.get(i).iterator();
@@ -675,7 +674,10 @@ public class DistanceCalculatorPlugin extends OsmandPlugin {
 							return true;
 						}
 					};
-					adapter.item(R.string.delete_point).iconColor(R.drawable.ic_action_delete_dark).listen(listener).reg();
+					adapter.addItem(new ContextMenuItem.ItemBuilder()
+							.setTitleId(R.string.delete_point, mapActivity)
+							.setIcon(R.drawable.ic_action_delete_dark)
+							.setListener(listener).createItem());
 				}
 			}
 		}

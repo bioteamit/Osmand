@@ -4,7 +4,6 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.Dialog;
-import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
@@ -23,10 +22,8 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.NotificationCompat.Builder;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.NotificationCompat;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -44,8 +41,6 @@ import net.osmand.PlatformUtil;
 import net.osmand.StateChangedListener;
 import net.osmand.ValueHolder;
 import net.osmand.access.AccessibilityPlugin;
-import net.osmand.access.AccessibleActivity;
-import net.osmand.access.AccessibleToast;
 import net.osmand.access.MapAccessibilityActions;
 import net.osmand.core.android.AtlasMapRendererView;
 import net.osmand.data.LatLon;
@@ -69,7 +64,6 @@ import net.osmand.plus.OsmandSettings;
 import net.osmand.plus.R;
 import net.osmand.plus.TargetPointsHelper;
 import net.osmand.plus.TargetPointsHelper.TargetPoint;
-import net.osmand.plus.Version;
 import net.osmand.plus.activities.search.SearchActivity;
 import net.osmand.plus.base.FailSafeFuntions;
 import net.osmand.plus.base.MapViewTrackingUtilities;
@@ -115,7 +109,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class MapActivity extends AccessibleActivity implements DownloadEvents,
+public class MapActivity extends OsmandActionBarActivity implements DownloadEvents,
 		ActivityCompat.OnRequestPermissionsResultCallback, IRouteInformationListener,
 		MapMarkerChangedListener {
 	public static final String INTENT_KEY_PARENT_MAP_ACTIVITY = "intent_parent_map_activity_key";
@@ -170,25 +164,6 @@ public class MapActivity extends AccessibleActivity implements DownloadEvents,
 	private static boolean permissionDone;
 	private boolean permissionAsked;
 	private boolean permissionGranted;
-
-	private Notification getNotification() {
-		Intent notificationIndent = new Intent(this, getMyApplication().getAppCustomization().getMapActivity());
-		notificationIndent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-		PendingIntent pi = PendingIntent.getActivity(this, 0, notificationIndent, PendingIntent.FLAG_UPDATE_CURRENT);
-//		Notification notification = new Notification(R.drawable.bgs_icon_drive, "", //$NON-NLS-1$
-//				System.currentTimeMillis());
-//		notification.flags |= Notification.FLAG_AUTO_CANCEL;
-//		notification.setLatestEventInfo(this, Version.getAppName(app), getString(R.string.go_back_to_osmand),
-//				pi);
-		int smallIcon = app.getSettings().getApplicationMode().getSmallIconDark();
-		final Builder noti = new NotificationCompat.Builder(this).setContentTitle(Version.getAppName(app))
-				.setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-				.setContentText(getString(R.string.go_back_to_osmand))
-				.setSmallIcon(smallIcon)
-//	        .setLargeIcon(Helpers.getBitmap(R.drawable.mirakel, getBaseContext()))
-				.setContentIntent(pi).setOngoing(true);
-		return noti.build();
-	}
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -602,7 +577,7 @@ public class MapActivity extends AccessibleActivity implements DownloadEvents,
 			System.err.println("OnCreate for MapActivity took " + (System.currentTimeMillis() - tm) + " ms");
 		}
 
-		if (!permissionDone) {
+		if (!permissionDone && !app.getAppInitializer().isFirstTime()) {
 			if (!permissionAsked) {
 				if (app.isExternalStorageDirectoryReadOnly()
 						&& getSupportFragmentManager().findFragmentByTag(DataStoragePlaceDialogFragment.TAG) == null) {
@@ -625,6 +600,7 @@ public class MapActivity extends AccessibleActivity implements DownloadEvents,
 				permissionDone = true;
 			}
 		}
+		enableDrawer();
 	}
 
 	private void restartApp() {
@@ -700,12 +676,12 @@ public class MapActivity extends AccessibleActivity implements DownloadEvents,
 						-1);
 				getMapActions().enterRoutePlanningModeGivenGpx(null, null, null, false, true);
 			} catch (NumberFormatException e) {
-				AccessibleToast.makeText(this,
+				Toast.makeText(this,
 						getString(R.string.navigation_intent_invalid, schemeSpecificPart),
 						Toast.LENGTH_LONG).show(); //$NON-NLS-1$
 			}
 		} else {
-			AccessibleToast.makeText(this,
+			Toast.makeText(this,
 					getString(R.string.navigation_intent_invalid, schemeSpecificPart),
 					Toast.LENGTH_LONG).show(); //$NON-NLS-1$
 		}
@@ -814,16 +790,16 @@ public class MapActivity extends AccessibleActivity implements DownloadEvents,
 		final int newZoom = mapView.getZoom() + stp;
 		final double zoomFrac = mapView.getZoomFractionalPart();
 		if (newZoom > 22) {
-			AccessibleToast.makeText(this, R.string.edit_tilesource_maxzoom, Toast.LENGTH_SHORT).show(); //$NON-NLS-1$
+			Toast.makeText(this, R.string.edit_tilesource_maxzoom, Toast.LENGTH_SHORT).show(); //$NON-NLS-1$
 			return;
 		}
 		if (newZoom < 1) {
-			AccessibleToast.makeText(this, R.string.edit_tilesource_minzoom, Toast.LENGTH_SHORT).show(); //$NON-NLS-1$
+			Toast.makeText(this, R.string.edit_tilesource_minzoom, Toast.LENGTH_SHORT).show(); //$NON-NLS-1$
 			return;
 		}
 		mapView.getAnimatedDraggingThread().startZooming(newZoom, zoomFrac, changeLocation);
 		if (app.accessibilityEnabled())
-			AccessibleToast.makeText(this, getString(R.string.zoomIs) + " " + newZoom, Toast.LENGTH_SHORT).show(); //$NON-NLS-1$
+			Toast.makeText(this, getString(R.string.zoomIs) + " " + newZoom, Toast.LENGTH_SHORT).show(); //$NON-NLS-1$
 		showAndHideMapPosition();
 	}
 
@@ -864,12 +840,12 @@ public class MapActivity extends AccessibleActivity implements DownloadEvents,
 
 	@Override
 	protected void onStop() {
-		if (app.getRoutingHelper().isFollowingMode()) {
-			mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-			if (mNotificationManager != null) {
-				mNotificationManager.notify(APP_NOTIFICATION_ID, getNotification());
-			}
-		}
+	//	if (app.getRoutingHelper().isFollowingMode()) {
+	//		mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+	//		if (mNotificationManager != null) {
+	//			mNotificationManager.notify(APP_NOTIFICATION_ID, getNotification());
+	//		}
+	//	}
 		wakeLockHelper.onStop(this);
 		if (getMyApplication().getNavigationService() == null) {
 			getMyApplication().getNotificationHelper().removeServiceNotificationCompletely();
@@ -1095,9 +1071,9 @@ public class MapActivity extends AccessibleActivity implements DownloadEvents,
 		if (Environment.MEDIA_MOUNTED.equals(state)) {
 			// ok
 		} else if (Environment.MEDIA_MOUNTED_READ_ONLY.equals(state)) {
-			AccessibleToast.makeText(this, R.string.sd_mounted_ro, Toast.LENGTH_LONG).show();
+			Toast.makeText(this, R.string.sd_mounted_ro, Toast.LENGTH_LONG).show();
 		} else {
-			AccessibleToast.makeText(this, R.string.sd_unmounted, Toast.LENGTH_LONG).show();
+			Toast.makeText(this, R.string.sd_unmounted, Toast.LENGTH_LONG).show();
 		}
 	}
 

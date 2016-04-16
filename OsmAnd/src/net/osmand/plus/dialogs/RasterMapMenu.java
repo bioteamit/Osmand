@@ -5,6 +5,7 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 
 import net.osmand.plus.ContextMenuAdapter;
+import net.osmand.plus.ContextMenuItem;
 import net.osmand.plus.OsmandApplication;
 import net.osmand.plus.OsmandPlugin;
 import net.osmand.plus.OsmandSettings;
@@ -20,8 +21,8 @@ public class RasterMapMenu {
 
 	public static ContextMenuAdapter createListAdapter(final MapActivity mapActivity,
 													   final OsmandRasterMapsPlugin.RasterMapType type) {
-		ContextMenuAdapter adapter = new ContextMenuAdapter(mapActivity, false);
-		adapter.setDefaultLayoutId(R.layout.drawer_list_material_item);
+		ContextMenuAdapter adapter = new ContextMenuAdapter();
+		adapter.setDefaultLayoutId(R.layout.list_item_icon_and_menu);
 		createLayersItems(adapter, mapActivity, type);
 		return adapter;
 	}
@@ -71,7 +72,8 @@ public class RasterMapMenu {
 		final MapActivityLayers mapLayers = mapActivity.getMapLayers();
 		ContextMenuAdapter.OnRowItemClick l = new ContextMenuAdapter.OnRowItemClick() {
 			@Override
-			public boolean onRowItemClick(ArrayAdapter<?> adapter, View view, int itemId, int pos) {
+			public boolean onRowItemClick(ArrayAdapter<ContextMenuItem> adapter,
+										  View view, int itemId, int pos) {
 				if (itemId == mapTypeString) {
 					if (selected) {
 						plugin.selectMapOverlayLayer(mapActivity.getMapView(), mapTypePreference,
@@ -83,7 +85,7 @@ public class RasterMapMenu {
 			}
 
 			@Override
-			public boolean onContextMenuClick(final ArrayAdapter<?> adapter,
+			public boolean onContextMenuClick(final ArrayAdapter<ContextMenuItem> adapter,
 											  int itemId, int pos, boolean isChecked) {
 				if (itemId == toggleActionStringId) {
 					if (isChecked) {
@@ -111,12 +113,19 @@ public class RasterMapMenu {
 				return false;
 			}
 		};
-		int selectedCode = selected ? 1 : 0;
 		mapTypeDescr = selected ? mapTypeDescr : mapActivity.getString(R.string.shared_string_none);
-		contextMenuAdapter.item(toggleActionStringId).listen(l).selected(selectedCode).reg();
+		contextMenuAdapter.addItem(new ContextMenuItem.ItemBuilder()
+				.setTitleId(toggleActionStringId, mapActivity)
+				.hideDivider(true)
+				.setListener(l)
+				.setSelected(selected).createItem());
 		if (selected) {
-			contextMenuAdapter.item(mapTypeString).listen(l).layout(R.layout.two_line_list_item)
-					.description(mapTypeDescr).reg();
+			contextMenuAdapter.addItem(new ContextMenuItem.ItemBuilder()
+					.setTitleId(mapTypeString, mapActivity)
+					.hideDivider(true)
+					.setListener(l)
+					.setLayout(R.layout.list_item_icon_and_menu_wide)
+					.setDescription(mapTypeDescr).createItem());
 			ContextMenuAdapter.OnIntegerValueChangedListener integerListener =
 					new ContextMenuAdapter.OnIntegerValueChangedListener() {
 						@Override
@@ -127,20 +136,28 @@ public class RasterMapMenu {
 						}
 					};
 			// android:max="255" in layout is expected
-			contextMenuAdapter.item(mapTypeStringTransparency)
-					.layout(R.layout.progress_list_item)
-					.iconColor(R.drawable.ic_action_opacity)
-					.progress(mapTransparencyPreference.get())
-					.listen(l)
-					.listenInteger(integerListener).reg();
+			contextMenuAdapter.addItem(new ContextMenuItem.ItemBuilder()
+					.setTitleId(mapTypeStringTransparency, mapActivity)
+					.hideDivider(true)
+					.setLayout(R.layout.list_item_progress)
+					.setIcon(R.drawable.ic_action_opacity)
+					.setProgress(mapTransparencyPreference.get())
+					.setListener(l)
+					.setIntegerListener(integerListener).createItem());
 			if (type == OsmandRasterMapsPlugin.RasterMapType.UNDERLAY) {
-				contextMenuAdapter.item(R.string.show_polygons).listen(l)
-						.selected(hidePolygonsPref.get() ? 0 : 1).reg();
+				contextMenuAdapter.addItem(new ContextMenuItem.ItemBuilder()
+						.setTitleId(R.string.show_polygons, mapActivity)
+						.hideDivider(true)
+						.setListener(l)
+						.setSelected(hidePolygonsPref.get()).createItem());
 			}
 			Boolean transparencySwitchState = settings.SHOW_LAYER_TRANSPARENCY_SEEKBAR.get()
 					&& mapLayers.getMapControlsLayer().isTransparencyBarInitialized();
-			contextMenuAdapter.item(R.string.show_transparency_seekbar).listen(l)
-					.selected(transparencySwitchState ? 1 : 0).reg();
+			contextMenuAdapter.addItem(new ContextMenuItem.ItemBuilder()
+					.setTitleId(R.string.show_transparency_seekbar, mapActivity)
+					.hideDivider(true)
+					.setListener(l)
+					.setSelected(transparencySwitchState).createItem());
 		}
 	}
 

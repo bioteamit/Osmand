@@ -18,7 +18,8 @@ import android.widget.TimePicker;
 import net.osmand.data.LatLon;
 import net.osmand.plus.ApplicationMode;
 import net.osmand.plus.ContextMenuAdapter;
-import net.osmand.plus.ContextMenuAdapter.OnContextMenuClick;
+import net.osmand.plus.ContextMenuAdapter.ItemClickListener;
+import net.osmand.plus.ContextMenuItem;
 import net.osmand.plus.OsmAndFormatter;
 import net.osmand.plus.OsmandApplication;
 import net.osmand.plus.OsmandPlugin;
@@ -216,9 +217,9 @@ public class ParkingPositionPlugin extends OsmandPlugin {
 			final double latitude, final double longitude,
 			ContextMenuAdapter adapter, Object selectedObj) {
 
-		OnContextMenuClick addListener = new OnContextMenuClick() {
+		ItemClickListener addListener = new ItemClickListener() {
 			@Override
-			public boolean onContextMenuClick(ArrayAdapter<?> adapter, int resId,
+			public boolean onContextMenuClick(ArrayAdapter<ContextMenuItem> adapter, int resId,
 					int pos, boolean isChecked) {
 				if (resId == R.string.context_menu_item_add_parking_point) {
 					showAddParkingDialog(mapActivity, latitude, longitude);
@@ -226,9 +227,11 @@ public class ParkingPositionPlugin extends OsmandPlugin {
 				return true;
 			}
 		};
-		adapter.item(R.string.context_menu_item_add_parking_point)
-		.iconColor( R.drawable.ic_action_parking_dark).listen(addListener).reg();
-		
+		adapter.addItem(new ContextMenuItem.ItemBuilder()
+				.setTitleId(R.string.context_menu_item_add_parking_point, mapActivity)
+				.setIcon(R.drawable.ic_action_parking_dark)
+				.setListener(addListener)
+				.createItem());
 	}
 
 	/**

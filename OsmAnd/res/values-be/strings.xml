@@ -439,8 +439,6 @@
 	<string name="info_button">Інфармацыя</string>
 	<string name="back_to_location">Вярнуцца да становішча</string>
 	
-	<string name="accessibility_extensions_descr">Пашырэньні даступнасьці для старых вэрсій Android</string>
-	<string name="accessibility_extensions">Пашырэньні даступнасьці</string>
 	<string name="accessibility_mode">Рэжым даступнасьці</string>
 	<string name="accessibility_mode_descr">Уключыць уласьцівасьці даступнасьці</string>
 	<string name="accessibility_default">Паводле глябальных наладаў сыстэмы</string>
@@ -483,13 +481,9 @@
 	<string name="settings_direction_style_descr">Абярыце стыль як паказваць адносныя напрамкі падчас руху</string>
 	<string name="auto_announce_on">Уключыць аўтаматычнае агалошваньне</string>
 	<string name="auto_announce_off">Выключыць аўтаматычнае агалошваньне</string>
-	<string name="scroll_map_by_gestures_descr">Пасоўваць мапу рухамі на тачскрыне</string>
-	<string name="scroll_map_by_gestures">Натуральнае пасоўваньне мапы</string>
 	<string name="i_am_here">Я тут</string>
 	<string name="zoom_by_trackball_descr">Зьмяняць маштаб гарызантальнымі рухамі трэкболу</string>
 	<string name="zoom_by_trackball">Карыстацца трэкболам для зьмены маштабу</string>
-	<string name="use_short_object_names_descr">Ужываць кароткія назвы аб\'ектаў у рэжыме агляду</string>
-	<string name="use_short_object_names">Ужываць назвы аб\'ектаў</string>
 	<string name="accessibility_preferences_descr">Налады даступнасьці</string>
 	<string name="shared_string_accessibility">Даступнасьць</string>
 	<string name="rendering_out_of_memory">Недастаткова памяці каб паказаць абраную прастору</string>
@@ -1249,7 +1243,7 @@
     <string name="interrupt_music">Перапыненьне музыкі</string>
 	<string name="osmo_settings_uuid">Унікальны ідэнтыфікатар прылады</string>
     <string name="osmo_settings_descr">Глянуць унікальны рэгістрацыйны ключ прыстасаваньня і наладзіць асабісты канал адсочваньня</string>
-    <string name="osmo_plugin_description">"Модуль забясьпечвае функцыянальнасьць г. зв. пашыранага жывога адсочваньня OsMo, гл. Http: //osmo.mobi.↵\n↵\nЁн дазваляе адсочваць усе прылады ў вашай групе ў рэальным часе і мець зносіны. Магчымыя розныя варыянты опцый для адсочваньня сэсіі або сталага адсочваньня.↵\n↵\nАнанімныя групы ствараюцца па жаданьні на пэўную колькасьць дзён, але з абмежаваным функцыяналам, гэта значыць няма дыстанцыйнага кіраваньня і няма адміністратара групы. Цалкам функцыянальныя групы, з другога боку, могуць быць створаны на вэб-сайце і толькі зарэгістраваныя карыстальнікі маюць да іх доступ. "</string>
+    <string name="osmo_plugin_description">"Гэты модуль дае некаторыя функцыянальныя магчымасьці для маніторынгу OpenStreetMap гл. https://osmo.mobi\n\nВы можаце паглядзець ўсе аб\'екты, што ўключаны ў групу ў рэжыме рэальнага часу. Вы таксама можаце ўбачыць пункты і маршруты, загружаныя ў вашу групу.\n\nГрупа не была выдаленая пасьля некалькіх месяцаў, прывесьці яе ў адпаведнасць з правіламі, з якімі вы ствараеце групы на сайце OsMo.mobi "</string>
     <string name="osmo_plugin_name">OpenStreetMap адсочваньне</string>
     <string name="osmo_settings">OsMo</string>
    	<string name="always_center_position_on_map">Паказваць становішча заўсёды ў цэнтры</string>
@@ -1410,21 +1404,17 @@
     <string name="osmo_gpx_track_downloaded">Сьцягнуты %1$s сьлед OsMo.</string>
     <string name="osmo_group_by_invite">Уваход па запрашэньнi</string>
     <string name="osmo_group_information">Калі ласка, прачытайце перад стварэньнем групы!</string>
-    <string name="osmo_group_information_desc">" - Усе створаныя групы зьяўляюцца агульнымі! Калі вы хочаце заставацца ананімным, падключайце прыладу наўпрост праз Tracker-ідэнтыфікатар.
-\n - Прыватныя групы абмежаваныя 8 асобамі.
-\n - У выпадку бязьдзейнасці або актыўнасьці толькі 1 чалавека на працягу 2 тыдняў, група будзе выдаленая.
-\n - Вы можаце абмежаваць ўваход у групу, напрыклад па запрашэньні, але для кантрольню групаю, вам неабходна скарыстацца кансольлю адміністратара.
-\n - Калі вам трэба стварыць групу з іншымі ўмовамі, калі ласка, зьвяртайцеся на http://osmo.mobi"</string>
+    <string name="osmo_group_information_desc">" - Калі ласка, увядзіце назву і апісаньне групы пры стварэньні\n- З праграмы ствараюцца толькі групы простага тыпу, падрабязьней на сайце https://osmo.mobi/g/new\n- Групамі можна кіраваць праз вэб-сайт, разьмяшчаючы маршруты і пункты даступныя ўсім\n- Мы не падтрымліваем выкарыстаньне толькі аднаго карыстальніка, калі толькі гэтая група не POI\n- Прыватныя групы абмежаваныя да 8 чалавек.\n- Падрабязныя ўмовы заўсёды на OsMo.mobi\n- Калі вам патрэбныя спэцыяльныя ўмовы, калі ласка, зьвяжыцеся са службай падтрымкі: osmo.mobi@gmail.com "</string>
     <string name="osmo_auth_error_short">Не атрымалася выканаць аўтарызацыю</string>
     <string name="osmo_auth_error">Адбылася памылка аўтарызацыі OsMo: %1$s.\nГэта можа быць выклікана часовай непрацаздольнасьцю службы ці сканьчэньнем вашай рэгістрацыі.\nХочаце зарэгістравацца ізноў?</string>
-    <string name="rendering_attr_hideBuildings_name">Схаваць будынкі</string>
-    <string name="rendering_attr_hideNonVehicleHighways_name">Схаваць не аўтамабільныя дарогі</string>
-    <string name="rendering_attr_hideText_name">Схаваць тэкст</string>
-    <string name="rendering_attr_hideWoodScrubs_name">Схаваць лясы і хмызьнякі</string>
+    <string name="rendering_attr_hideBuildings_name">Будынкі</string>
+    <string name="rendering_attr_hideNonVehicleHighways_name">Не аўтамабільныя дарогі</string>
+    <string name="rendering_attr_hideText_name">Тэкст</string>
+    <string name="rendering_attr_hideWoodScrubs_name">Лясы і хмызьнякі</string>
     <string name="rendering_attr_buildings15zoom_name">Будынкі на маштабе 15</string>
     <string name="rendering_attr_moreDetailed_name">Больш падрабязна</string>
     <string name="rendering_attr_lessDetailed_name">Менш падрабязна</string>
-    <string name="rendering_attr_hideAccess_name">Схаваць абмежаваньні доступу</string>
+    <string name="rendering_attr_hideAccess_name">Абмежаваньні доступу</string>
     <string name="rendering_attr_showAccess_name">Паказаць абмежаваньні доступу</string>
     <string name="rendering_attr_showSurfaceGrade_name">Адлюстроўваць якасьць дарог</string>
     <string name="rendering_attr_showSurfaces_name">Адлюстроўваць тып пакрыцьця</string>
@@ -1559,7 +1549,7 @@
     <string name="use_opengl_render_descr">Выкарыстоўваць апаратнае паскарэньне OpenGL (можа не працаваць на некаторых прыстасаваньнях)</string>
     <string name="everything_up_to_date">Усе файлы ў актуальным стане</string>
     <string name="no_internet_connection">Немагчыма cьцягнуць. Калі ласка, праверце ваша Інтэрнэт-злучэньне.</string>
-    <string name="download_tab_downloads">Усё cьцягнутае</string>
+    <string name="download_tab_downloads">Даступнае</string>
     <string name="download_tab_updates">Абнаўленьні</string>
     <string name="download_tab_local">Лякальныя</string>
 	<string name="navigate_point_zone">Зона</string>
@@ -1779,7 +1769,7 @@
     <string name="storage_directory">Захоўваньне мапы</string>
     <string name="storage_directory_multiuser">Агульнае сховішча</string>
     <string name="application_dir_change_warning3">Вы хочаце, каб OsmAnd таксама скапіяваў свае файлы дадзеных у новае месца прызначэньня?</string>
-    <string name="rendering_attr_hideHouseNumbers_name">Схаваць нумары дамоў</string>
+    <string name="rendering_attr_hideHouseNumbers_name">Нумары дамоў</string>
     
 	<string name="routing_attr_avoid_borders_description">Пазьбягаць перасячэньня мяжы іншай краіны</string>
 	<string name="routing_attr_height_name">Абмежаваньне па вышыні</string>
@@ -2003,7 +1993,7 @@
     <string name="techical_articles_item">Тэхнічныя артыкулы</string>
     <string name="read_more">Падрабязьней</string>
     <string name="whats_new">Што новага ў</string>
-    <string name="rendering_attr_hideProposed_name">Схаваць плануемыя аб\'екты</string>
+    <string name="rendering_attr_hideProposed_name">Плануемыя аб\'екты</string>
     <string name="lang_mk">македонская</string>
     <string name="lang_nds">ніжненямецкая</string>
     <string name="lang_fy">заходнефрыская</string>
@@ -2098,7 +2088,7 @@
     <string name="shared_string_remove">Выдаліць</string>
     <string name="road_blocked">Дарога заблякаваная</string>
     <string name="switch_start_finish">Памяняць месцамі пункт адпраўленьня і пункт прызначэньня</string>
-    <string name="rendering_attr_hideIcons_name">Схаваць значкі POI</string>
+    <string name="rendering_attr_hideIcons_name">Значкі POI</string>
     <string name="rec_split">Разьбіцьцё на кліпы</string>
     <string name="rec_split_title">Выкарыстоўваць разьбіцьцё на кліпы</string>
     <string name="rec_split_desc">Цыклічны перазапіс кліпаў пры перавышэньні зададзенага аб\'ёму сховішча</string>
@@ -2112,7 +2102,7 @@
     <string name="shared_string_status">Стан</string>
     <string name="shared_string_save_changes">Захаваць зьмены</string>
     <string name="shared_string_email_address">E-mail адрас</string>
-    <string name="rendering_attr_hideUnderground_name">Схаваць падземныя аб\'екты</string>
+    <string name="rendering_attr_hideUnderground_name">Падземныя аб\'екты</string>
     <string name="data_is_not_available">Зьвесткі недаступныя</string>
     <string name="shared_string_read_more">Чытаць далей</string>
     <string name="clear_updates_proposition_message">Вы можаце выдаліць сьцягнутыя абнаўленьні і вярнуцца да першапачатковай рэдакцыі мапы</string>
@@ -2176,4 +2166,40 @@
     <string name="osm_live_support_region">Падтрымоўваны рэгіён</string>
     <string name="osm_live_enter_user_name">Калі ласка ўвядзіце імя</string>
     <string name="select_map_markers">Абярыце маркеры</string>
+    <string name="file_name_containes_illegal_char">Назва файлу зьмяшчае недапушчальны сымбаль</string>
+<string name="rendering_value_thin_name">Тонкі</string>
+    <string name="rendering_value_medium_name">Сярэдні</string>
+    <string name="rendering_value_bold_name">Тоўсты</string>
+    <string name="map_mode">Рэжым мапы</string>
+    <string name="number_of_gpx_files_selected_pattern">Абрана %s GPX файлаў</string>
+    <string name="add_points_to_map_markers_q">Хочаце дадаць усе пункты да маркераў мапы?</string>
+    <string name="shared_string_add_to_map_markers">Дадаць да маркераў мапы</string>
+    <string name="no_map_markers_found">Калі ласка, дадайце маркеры праз экран мапы</string>
+    <string name="storage_directory_readonly_desc">Абраны для захоўваньня зьвестак каталёг даступны толькі для чытаньня. Каталёг захоўваньня часова разьмешчаны ва ўнутранай памяці. Калі ласка, абярыце падыходзячы каталёг для захоўваньня зьвестак.</string>
+    <string name="osm_live_email_desc">Неабходна прадаставіць інфармацыю пра ўкладальнікаў</string>
+    <string name="show_map_markers_description">Актывуе функцыю маркераў мапы</string>
+    <string name="no_waypoints_found">Не знайшлося шляхавых пунктаў</string>
+    <string name="access_default_color">Колер па змаўчаньні</string>
+    <string name="access_category_choice">Выберыце катэгорыю</string>
+    <string name="access_hint_enter_name">Увядзіце імя</string>
+    <string name="access_hint_enter_category">Увядзіце катэгорыю</string>
+    <string name="access_hint_enter_description">Увядзіце апісаньне</string>
+    <string name="access_map_linked_to_location">Мапа прывязаная да месцазнаходжаньня</string>
+    <string name="access_collapsed_list">Згорнуты сьпіс</string>
+    <string name="access_expanded_list">Разгорнуты сьпіс</string>
+    <string name="access_empty_list">Пусты сьпіс</string>
+    <string name="access_tree_list">Іерархічны сьпіс</string>
+    <string name="access_shared_string_not_installed">Не ўсталяваны</string>
+    <string name="access_widget_expand">Разгарнуць</string>
+    <string name="access_shared_string_navigate_up">Перайсьці ўверх</string>
+    <string name="access_sort">Сартаваць</string>
+    <string name="access_disable_offroute_recalc">Не змяняць маршрут пры сходзе са шляху</string>
+    <string name="access_disable_offroute_recalc_descr">Прадухіляе аўтаматычны пералік маршруту пры значным аддаленьні ад зададзенага шляху</string>
+    <string name="access_disable_wrong_direction_recalc">Не зьмяняць маршрут пры няслушным кірунку руху</string>
+    <string name="access_disable_wrong_direction_recalc_descr">Прадухіляе аўтаматычны пералік маршруту пры няслушным кірунку руху</string>
+    <string name="access_smart_autoannounce">Інтэлектуальнае аўтаабвяшчэньне</string>
+    <string name="access_smart_autoannounce_descr">Казаць толькі пры зьмене кірунку на мэтавы пункт</string>
+    <string name="access_autoannounce_period">Пэрыяд аўтаабвяшчэньняў</string>
+    <string name="access_autoannounce_period_descr">Мінімальны час паміж абвяшчэньнямі</string>
+    <string name="map_widget_bearing">Азімут</string>
     </resources>

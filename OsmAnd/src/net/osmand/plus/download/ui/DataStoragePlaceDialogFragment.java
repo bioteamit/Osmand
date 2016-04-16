@@ -15,7 +15,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import net.osmand.access.AccessibleToast;
 import net.osmand.plus.OsmandApplication;
 import net.osmand.plus.OsmandSettings;
 import net.osmand.plus.R;
@@ -90,11 +89,16 @@ public class DataStoragePlaceDialogFragment extends BottomSheetDialogFragment {
 		internalStorageDescription.setText(getFreeSpace(internalStorage));
 
 		View sharedMemoryRow = view.findViewById(R.id.sharedMemoryRow);
-		sharedMemoryRow.setOnClickListener(sharedMemoryOnClickListener);
-		ImageView sharedMemoryImageView = (ImageView) view.findViewById(R.id.sharedMemoryImageView);
-		sharedMemoryImageView.setImageDrawable(getContentIcon(R.drawable.ic_sdcard));
-		TextView sharedMemoryDescription = (TextView) view.findViewById(R.id.sharedMemoryDescription);
-		sharedMemoryDescription.setText(getFreeSpace(sharedStorage));
+		if (hasExternalStoragePermission && sharedStorage != null) {
+			sharedMemoryRow.setOnClickListener(sharedMemoryOnClickListener);
+			ImageView sharedMemoryImageView = (ImageView) view.findViewById(R.id.sharedMemoryImageView);
+			sharedMemoryImageView.setImageDrawable(getContentIcon(R.drawable.ic_sdcard));
+			TextView sharedMemoryDescription = (TextView) view.findViewById(R.id.sharedMemoryDescription);
+			sharedMemoryDescription.setText(getFreeSpace(sharedStorage));
+		} else {
+			view.findViewById(R.id.divSharedStorage).setVisibility(View.GONE);
+			sharedMemoryRow.setVisibility(View.GONE);
+		}
 
 		View memoryStickRow = view.findViewById(R.id.memoryStickRow);
 		if (hasExternalStoragePermission && externalStorage != null) {
@@ -138,7 +142,7 @@ public class DataStoragePlaceDialogFragment extends BottomSheetDialogFragment {
 
 	private String getFreeSpace(File dir) {
 		String sz = "";
-		if (dir.canRead()) {
+		if (dir != null && dir.canRead()) {
 			StatFs fs = new StatFs(dir.getAbsolutePath());
 			@SuppressWarnings("deprecation")
 			float size = (float) fs.getAvailableBlocks() * fs.getBlockSize();
@@ -195,7 +199,7 @@ public class DataStoragePlaceDialogFragment extends BottomSheetDialogFragment {
 					.setExternalStorageDirectory(type, selectedFile.getAbsolutePath());
 			reloadData();
 		} else {
-			AccessibleToast.makeText(context, R.string.specified_directiory_not_writeable,
+			Toast.makeText(context, R.string.specified_directiory_not_writeable,
 					Toast.LENGTH_LONG).show();
 		}
 		return wr;

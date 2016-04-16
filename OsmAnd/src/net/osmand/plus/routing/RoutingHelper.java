@@ -315,7 +315,7 @@ public class RoutingHelper {
 				// >100m off current route (sideways)
 				if (currentRoute > 0) {
 					double dist = getOrthogonalDistance(currentLocation, routeNodes.get(currentRoute - 1), routeNodes.get(currentRoute));
-					if (dist > 1.7 * posTolerance) {
+					if ((!settings.DISABLE_OFFROUTE_RECALC.get()) && (dist > (1.7 * posTolerance))) {
 						log.info("Recalculate route, because correlation  : " + dist); //$NON-NLS-1$
 						calculateRoute = true;
 					}
@@ -329,7 +329,7 @@ public class RoutingHelper {
 				// 3. Identify wrong movement direction
 				Location next = route.getNextRouteLocation();
 				boolean wrongMovementDirection = checkWrongMovementDirection(currentLocation, next);
-				if (wrongMovementDirection && currentLocation.distanceTo(routeNodes.get(currentRoute)) >  2 * posTolerance) {
+				if ((!settings.DISABLE_WRONG_DIRECTION_RECALC.get()) && wrongMovementDirection && (currentLocation.distanceTo(routeNodes.get(currentRoute)) > (2 * posTolerance))) {
 					log.info("Recalculate route, because wrong movement direction: " + currentLocation.distanceTo(routeNodes.get(currentRoute))); //$NON-NLS-1$
 					calculateRoute = true;
 				}
@@ -657,7 +657,7 @@ public class RoutingHelper {
 					String msg = app.getString(R.string.new_route_calculated_dist) + ": "
 							+ OsmAndFormatter.getFormattedDistance(res.getWholeDistance(), app);
 					if (OsmandPlugin.isDevelopment() && res.getRoutingTime() != 0f) {
-						msg += " (" + Algorithms.formatDuration((int) res.getRoutingTime()) + ")";
+						msg += " (" + Algorithms.formatDuration((int) res.getRoutingTime(), app.accessibilityEnabled()) + ")";
 					}
 					app.showToastMessage(msg);
 				}
@@ -914,30 +914,7 @@ public class RoutingHelper {
 			}
 		}
 	}
-	
-	public boolean startTaskInRouteThreadIfPossible(final Runnable r) {
-		if (currentRunningJob == null) {
-			synchronized (this) {
-				currentRunningJob = new Thread(new Runnable() {
-					@Override
-					public void run() {
-						synchronized (RoutingHelper.this) {
-							try {
-								r.run();
-							} finally {
-								currentRunningJob = null;
-							}
-						}
-					}
-				}, "Calculating position"); //$NON-NLS-1$
-				currentRunningJob.start();
-				return true;
-			}
-		}
-		return false;
-	}
-	
-	
+
 	private void updateProgress(final RouteCalculationParams params) {
 		if(progressRoute != null ) {
 			app.runInUIThread(new Runnable() {

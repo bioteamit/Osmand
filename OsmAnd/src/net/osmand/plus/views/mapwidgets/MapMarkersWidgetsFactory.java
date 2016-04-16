@@ -54,8 +54,7 @@ public class MapMarkersWidgetsFactory {
 	private ImageButton moreButton2nd;
 
 	private LatLon loc;
-	private MapMarker marker;
-	private MapMarker marker2nd;
+	private LatLon lastKnownPosition;
 
 	public MapMarkersWidgetsFactory(final MapActivity map) {
 		this.map = map;
@@ -184,8 +183,9 @@ public class MapMarkersWidgetsFactory {
 			Location l = map.getMapViewTrackingUtilities().getMyLocation();
 			if (l != null) {
 				loc = new LatLon(l.getLatitude(), l.getLongitude());
+				lastKnownPosition = loc;
 			} else {
-				loc = null;
+				loc = lastKnownPosition;
 			}
 		}
 
@@ -234,6 +234,10 @@ public class MapMarkersWidgetsFactory {
 			Location.distanceBetween(marker.getLatitude(), marker.getLongitude(), loc.getLatitude(), loc.getLongitude(), mes);
 		}
 
+		if (customLocation) {
+			heading = 0f;
+		}
+
 		boolean newImage = false;
 		DirectionDrawable dd;
 		if (!(arrowImg.getDrawable() instanceof DirectionDrawable)) {
@@ -252,13 +256,11 @@ public class MapMarkersWidgetsFactory {
 		arrowImg.invalidate();
 
 		int dist = (int) mes[0];
-		String txt = null;
+		String txt;
 		if (loc != null) {
 			txt = OsmAndFormatter.getFormattedDistance(dist, map.getMyApplication());
 		} else {
-			if ((firstLine && marker != this.marker) || (!firstLine && marker != this.marker2nd)) {
-				txt = "—";
-			}
+			txt = "—";
 		}
 		if (txt != null) {
 			distText.setText(txt);
@@ -277,13 +279,6 @@ public class MapMarkersWidgetsFactory {
 		}
 
 		addressText.setText(descr);
-
-		if (firstLine) {
-			this.marker = marker;
-		} else {
-			this.marker2nd = marker;
-		}
-
 	}
 
 	public TextInfoWidget createMapMarkerControl(final MapActivity map, final boolean firstMarker) {

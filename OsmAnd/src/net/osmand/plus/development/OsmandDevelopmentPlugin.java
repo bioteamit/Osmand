@@ -5,7 +5,7 @@ import android.content.Intent;
 import android.widget.ArrayAdapter;
 
 import net.osmand.plus.ContextMenuAdapter;
-import net.osmand.plus.ContextMenuAdapter.OnContextMenuClick;
+import net.osmand.plus.ContextMenuItem;
 import net.osmand.plus.OsmandApplication;
 import net.osmand.plus.OsmandPlugin;
 import net.osmand.plus.R;
@@ -56,15 +56,17 @@ public class OsmandDevelopmentPlugin extends OsmandPlugin {
 	@Override
 	public void registerOptionsMenuItems(final MapActivity mapActivity, ContextMenuAdapter helper) {
 		if (Version.isDeveloperVersion(mapActivity.getMyApplication())) {
-			helper.item(R.string.version_settings).iconColor(R.drawable.ic_action_gabout_dark)
-					.listen(new OnContextMenuClick() {
+			helper.addItem(new ContextMenuItem.ItemBuilder()
+					.setTitleId(R.string.version_settings, mapActivity)
+					.setIcon(R.drawable.ic_action_gabout_dark)
+					.setListener(new ContextMenuAdapter.ItemClickListener() {
 						@Override
-						public boolean onContextMenuClick(ArrayAdapter<?> adapter, int itemId, int pos, boolean isChecked) {
+						public boolean onContextMenuClick(ArrayAdapter<ContextMenuItem> adapter, int itemId, int pos, boolean isChecked) {
 							final Intent mapIntent = new Intent(mapActivity, ContributionVersionActivity.class);
 							mapActivity.startActivityForResult(mapIntent, 0);
 							return true;
 						}
-					}).reg();
+					}).createItem());
 		}
 
 	}
@@ -109,7 +111,7 @@ public class OsmandDevelopmentPlugin extends OsmandPlugin {
 		final OsmandMapTileView mv = activity.getMapView();
 		if (mapInfoLayer != null && mapInfoLayer.getSideWidget(FPSTextInfoWidget.class) == null) {
 			FPSTextInfoWidget fps = new FPSTextInfoWidget(mv, activity);
-			mapInfoLayer.registerSideWidget(fps, R.drawable.widget_no_icon,
+			mapInfoLayer.registerSideWidget(fps, R.drawable.ic_action_fps,
 					R.string.map_widget_fps_info, "fps", false, 30);
 			mapInfoLayer.recreateControls();
 		}

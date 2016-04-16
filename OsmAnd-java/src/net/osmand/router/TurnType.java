@@ -158,6 +158,7 @@ public class TurnType {
 	// 0 bit - 0/1 - to use or not
 	// 1-5 bits - additional turn info 
 	// 6-10 bits - secondary turn
+	// 11-15 bits - tertiary turn
 	public void setLanes(int[] lanes) {
 		this.lanes = lanes;
 	}
@@ -179,8 +180,34 @@ public class TurnType {
 	}
 
 	public static int getSecondaryTurn(int laneValue) {
-		// Get the primary turn modifier for the lane
-		return (laneValue >> 5);
+		// Get the secondary turn modifier for the lane
+		return (laneValue >> 5) & ((1 << 5) - 1);
+	}
+	
+	public static void setPrimaryTurnShiftOthers(int[] lanes, int lane, int turnType) {
+		int pt = getPrimaryTurn(lanes[lane]);
+		int st = getSecondaryTurn(lanes[lane]);
+		//int tt = getTertiaryTurn(lanes[lane]);
+		setPrimaryTurnAndReset(lanes, lane, turnType);
+		setSecondaryTurn(lanes, lane, pt);
+		setTertiaryTurn(lanes, lane, st);
+	}
+	
+	public static void setSecondaryTurnShiftOthers(int[] lanes, int lane, int turnType) {
+		int st = getSecondaryTurn(lanes[lane]);
+		//int tt = getTertiaryTurn(lanes[lane]);
+		setSecondaryTurn(lanes, lane, turnType);
+		setTertiaryTurn(lanes, lane, st);
+	}
+
+	public static void setTertiaryTurn(int[] lanes, int lane, int turnType) {
+		lanes[lane] &= ~(15 << 10);
+		lanes[lane] |= (turnType << 10);
+	}
+
+	public static int getTertiaryTurn(int laneValue) {
+		// Get the tertiary turn modifier for the lane
+		return (laneValue >> 10);
 	}
 
 	
@@ -241,11 +268,19 @@ public class TurnType {
 	}
 
 	public static boolean isLeftTurn(int type) {
-		return type == TL || type == TSHL || type == TSLL || type == TRU;
+		return type == TL || type == TSHL || type == TSLL || type == TU || type == KL;
+	}
+	
+	public static boolean isLeftTurnNoUTurn(int type) {
+		return type == TL || type == TSHL || type == TSLL || type == KL;
 	}
 	
 	public static boolean isRightTurn(int type) {
-		return type == TR || type == TSHR || type == TSLR || type == TU;
+		return type == TR || type == TSHR || type == TSLR || type == TRU || type == KR;
+	}
+	
+	public static boolean isRightTurnNoUTurn(int type) {
+		return type == TR || type == TSHR || type == TSLR || type == KR;
 	}
 
 	public static boolean isSlightTurn(int type) {

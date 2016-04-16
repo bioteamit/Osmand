@@ -18,6 +18,7 @@ import net.osmand.data.LatLon;
 import net.osmand.data.PointDescription;
 import net.osmand.data.RotatedTileBox;
 import net.osmand.plus.ContextMenuAdapter;
+import net.osmand.plus.ContextMenuItem;
 import net.osmand.plus.R;
 import net.osmand.plus.activities.MapActivity;
 import net.osmand.plus.mapcontextmenu.MapContextMenu;
@@ -131,20 +132,21 @@ public class ContextMenuLayer extends OsmandMapLayer {
 	}
 
 	@Override
-	public void populateObjectContextMenu(LatLon latLon, Object o, ContextMenuAdapter adapter) {
+	public void populateObjectContextMenu(LatLon latLon, Object o, ContextMenuAdapter adapter, MapActivity mapActivity) {
 		if (menu.hasHiddenBottomInfo()) {
-			ContextMenuAdapter.OnContextMenuClick listener = new ContextMenuAdapter.OnContextMenuClick() {
+			ContextMenuAdapter.ItemClickListener listener = new ContextMenuAdapter.ItemClickListener() {
 				@Override
-				public boolean onContextMenuClick(ArrayAdapter<?> adapter, int itemId, int pos, boolean isChecked) {
+				public boolean onContextMenuClick(ArrayAdapter<ContextMenuItem> adapter, int itemId, int pos, boolean isChecked) {
 					if (itemId == R.string.shared_string_show_description) {
 						menu.openMenuFullScreen();
 					}
 					return true;
 				}
 			};
-			adapter.item(R.string.shared_string_show_description)
-					.iconColor(R.drawable.ic_action_note_dark).listen(listener)
-					.reg();
+			adapter.addItem(new ContextMenuItem.ItemBuilder()
+					.setTitleId(R.string.shared_string_show_description, activity)
+					.setIcon(R.drawable.ic_action_note_dark).setListener(listener)
+					.createItem());
 		}
 	}
 

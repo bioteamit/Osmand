@@ -10,11 +10,10 @@ import android.widget.Toast;
 import net.osmand.CallbackWithObject;
 import net.osmand.ResultMatcher;
 import net.osmand.StateChangedListener;
-import net.osmand.access.AccessibleToast;
 import net.osmand.map.ITileSource;
 import net.osmand.map.TileSourceManager.TileSourceTemplate;
 import net.osmand.plus.ContextMenuAdapter;
-import net.osmand.plus.ContextMenuAdapter.Item;
+import net.osmand.plus.ContextMenuItem;
 import net.osmand.plus.GPXUtilities.GPXFile;
 import net.osmand.plus.GPXUtilities.WptPt;
 import net.osmand.plus.OsmandApplication;
@@ -228,7 +227,7 @@ public class MapActivityLayers {
 					if (g.showCurrentTrack) {
 						if (!settings.SAVE_TRACK_TO_GPX.get() && !
 								settings.SAVE_GLOBAL_TRACK_TO_GPX.get()) {
-							AccessibleToast.makeText(activity,
+							Toast.makeText(activity,
 									R.string.gpx_monitoring_disabled_warn, Toast.LENGTH_LONG).show();
 						} else {
 							g.path = getString(R.string.show_current_gpx_title);
@@ -259,10 +258,12 @@ public class MapActivityLayers {
 
 
 	public AlertDialog selectPOIFilterLayer(final OsmandMapTileView mapView, final PoiUIFilter[] selected) {
-		OsmandApplication app = (OsmandApplication) getApplication();
+		OsmandApplication app = getApplication();
 		final PoiFiltersHelper poiFilters = app.getPoiFilters();
-		final ContextMenuAdapter adapter = new ContextMenuAdapter(activity);
-		adapter.item(R.string.shared_string_search).iconColor(R.drawable.ic_action_search_dark).reg();
+		final ContextMenuAdapter adapter = new ContextMenuAdapter();
+		adapter.addItem(new ContextMenuItem.ItemBuilder()
+				.setTitleId(R.string.shared_string_search, app)
+				.setIcon(R.drawable.ic_action_search_dark).createItem());
 		final List<PoiUIFilter> list = new ArrayList<PoiUIFilter>();
 		list.add(poiFilters.getCustomPOIFilter());
 		for (PoiUIFilter f : poiFilters.getTopDefinedPoiFilters()) {
@@ -301,18 +302,20 @@ public class MapActivityLayers {
 
 	private void addFilterToList(final ContextMenuAdapter adapter, final List<PoiUIFilter> list, PoiUIFilter f) {
 		list.add(f);
-		Item it = adapter.item(f.getName()).selected(-1);
+		ContextMenuItem.ItemBuilder builder = new ContextMenuItem.ItemBuilder();
+		builder.setTitle(f.getName());
 		if (RenderingIcons.containsBigIcon(f.getIconId())) {
-			it.icon(RenderingIcons.getBigIconResourceId(f.getIconId()));
+			builder.setIcon(RenderingIcons.getBigIconResourceId(f.getIconId()));
 		} else {
-			it.icon(R.drawable.mx_user_defined);
+			builder.setIcon(R.drawable.mx_user_defined);
 		}
-		it.reg();
+		builder.setColor(R.color.osmand_orange);
+		adapter.addItem(builder.createItem());
 	}
 
 	public void selectMapLayer(final OsmandMapTileView mapView) {
 		if (OsmandPlugin.getEnabledPlugin(OsmandRasterMapsPlugin.class) == null) {
-			AccessibleToast.makeText(activity, R.string.map_online_plugin_is_not_installed, Toast.LENGTH_LONG).show();
+			Toast.makeText(activity, R.string.map_online_plugin_is_not_installed, Toast.LENGTH_LONG).show();
 			return;
 		}
 		final OsmandSettings settings = getApplication().getSettings();

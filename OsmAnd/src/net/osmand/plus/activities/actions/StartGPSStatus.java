@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.view.View;
@@ -23,7 +22,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import net.osmand.access.AccessibleAlertBuilder;
 import net.osmand.plus.R;
 import net.osmand.plus.Version;
 import net.osmand.plus.activities.MapActivity;
@@ -104,7 +102,7 @@ public class StartGPSStatus extends OsmAndAction {
 			res[i++] = g.stringRes;
 		}
 		OsmandMapTileView view = mapActivity.getMapView();
-		AlertDialog.Builder builder = new AccessibleAlertBuilder(mapActivity);
+		AlertDialog.Builder builder = new AlertDialog.Builder(mapActivity);
 		LinearLayout ll = new LinearLayout(activity);
 		final ListView lv = new ListView(activity);
 		lv.setPadding(7, 3, 7, 0);
@@ -114,19 +112,14 @@ public class StartGPSStatus extends OsmAndAction {
 		lp.setMargins(7, 10, 7, 0);
 		cb.setLayoutParams(lp);
 		
-		final int layout;
-		if(Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB){
-			layout = R.layout.list_menu_item;
-		} else {
-			layout = R.layout.list_menu_item_native;
-		}
+		final int layout = R.layout.list_menu_item_native;
 		final ArrayAdapter<GpsStatusApps> adapter = new ArrayAdapter<GpsStatusApps>(mapActivity, layout, GpsStatusApps.values()) {
 			@Override
 			public View getView(int position, View convertView, ViewGroup parent) {
 				View v = mapActivity.getLayoutInflater().inflate(layout, null);
 	            TextView tv = (TextView)v.findViewById(R.id.title);
 	            tv.setText(getItem(position).stringRes);		
-	            v.findViewById(R.id.check_item).setVisibility(View.INVISIBLE);
+	            v.findViewById(R.id.toggle_item).setVisibility(View.INVISIBLE);
 				return v;
 			}
 		};
@@ -174,7 +167,7 @@ public class StartGPSStatus extends OsmAndAction {
 			mapActivity.startActivity(intent);
 		} else {
 			if (Version.isMarketEnabled(getMyApplication())) {
-				AlertDialog.Builder builder = new AccessibleAlertBuilder(mapActivity);
+				AlertDialog.Builder builder = new AlertDialog.Builder(mapActivity);
 				builder.setMessage(mapActivity. getString(R.string.gps_status_app_not_found));
 				builder.setPositiveButton(mapActivity.getString(R.string.shared_string_yes), new DialogInterface.OnClickListener() {
 					@Override

@@ -22,7 +22,7 @@ import net.osmand.Location;
 import net.osmand.ValueHolder;
 import net.osmand.plus.ApplicationMode;
 import net.osmand.plus.ContextMenuAdapter;
-import net.osmand.plus.ContextMenuAdapter.OnContextMenuClick;
+import net.osmand.plus.ContextMenuItem;
 import net.osmand.plus.GPXUtilities.WptPt;
 import net.osmand.plus.NavigationService;
 import net.osmand.plus.OsmAndFormatter;
@@ -129,9 +129,9 @@ public class OsmandMonitoringPlugin extends OsmandPlugin {
 	@Override
 	public void registerMapContextMenuActions(final MapActivity mapActivity, final double latitude, final double longitude,
 			ContextMenuAdapter adapter, Object selectedObj) {
-		OnContextMenuClick listener = new OnContextMenuClick() {
+		ContextMenuAdapter.ItemClickListener listener = new ContextMenuAdapter.ItemClickListener() {
 			@Override
-			public boolean onContextMenuClick(ArrayAdapter<?> adapter, int resId, int pos, boolean isChecked) {
+			public boolean onContextMenuClick(ArrayAdapter<ContextMenuItem> adapter, int resId, int pos, boolean isChecked) {
 				if (resId == R.string.context_menu_item_add_waypoint) {
 					mapActivity.getContextMenu().addWptPt();
 				} else if (resId == R.string.context_menu_item_edit_waypoint) {
@@ -140,13 +140,17 @@ public class OsmandMonitoringPlugin extends OsmandPlugin {
 				return true;
 			}
 		};
-		adapter.item(R.string.context_menu_item_add_waypoint).iconColor(R.drawable.ic_action_gnew_label_dark)
-				.listen(listener).reg();
+		adapter.addItem(new ContextMenuItem.ItemBuilder()
+				.setTitleId(R.string.context_menu_item_add_waypoint, mapActivity)
+				.setIcon(R.drawable.ic_action_gnew_label_dark)
+				.setListener(listener).createItem());
 		if (selectedObj instanceof WptPt) {
 			WptPt pt = (WptPt) selectedObj;
 			if (app.getSelectedGpxHelper().getSelectedGPXFile(pt) != null) {
-				adapter.item(R.string.context_menu_item_edit_waypoint).iconColor(R.drawable.ic_action_edit_dark)
-						.listen(listener).reg();
+				adapter.addItem(new ContextMenuItem.ItemBuilder()
+						.setTitleId(R.string.context_menu_item_edit_waypoint, mapActivity)
+						.setIcon(R.drawable.ic_action_edit_dark)
+						.setListener(listener).createItem());
 			}
 		}
 	}
@@ -348,6 +352,7 @@ public class OsmandMonitoringPlugin extends OsmandPlugin {
 		settings.SAVE_GLOBAL_TRACK_TO_GPX.set(false);
 		if (app.getNavigationService() != null) {
 			app.getNavigationService().stopIfNeeded(app, NavigationService.USED_BY_GPX);
+			app.getNotificationHelper().showNotification();
 		}
 	}
 

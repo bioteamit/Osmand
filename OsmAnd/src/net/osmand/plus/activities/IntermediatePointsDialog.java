@@ -23,7 +23,6 @@ import android.widget.TextView;
 
 import net.osmand.Location;
 import net.osmand.TspAnt;
-import net.osmand.access.AccessibleAlertBuilder;
 import net.osmand.data.LatLon;
 import net.osmand.plus.OsmAndFormatter;
 import net.osmand.plus.OsmandApplication;
@@ -86,7 +85,7 @@ public class IntermediatePointsDialog {
 			}
 		});
 		
-		AlertDialog.Builder builder = new AccessibleAlertBuilder(activity);
+		AlertDialog.Builder builder = new AlertDialog.Builder(activity);
 		builder.setView(contentView);
 		builder.setInverseBackgroundForced(true);
 		lv.setBackgroundColor(Color.WHITE);
@@ -198,7 +197,7 @@ public class IntermediatePointsDialog {
 			final List<TargetPoint> intermediates, final TIntArrayList originalPositions,  final boolean[] checkedIntermediates) {
 		final int padding = (int) (12 * activity.getResources().getDisplayMetrics().density + 0.5f);
 		final ArrayAdapter<TargetPoint> listadapter = new ArrayAdapter<TargetPoint>(app, 
-				changeOrder? R.layout.change_order_item : R.layout.list_menu_item, R.id.title,
+				changeOrder? R.layout.change_order_item : R.layout.list_menu_item_native, R.id.title,
 				intermediates) {
 			@Override
 			public View getView(final int position, View convertView, ViewGroup parent) {
@@ -253,9 +252,9 @@ public class IntermediatePointsDialog {
 				} else {
 					int icon = position == intermediates.size() - 1? R.drawable.ic_action_target:
 						R.drawable.ic_action_intermediate;
-					tv.setCompoundDrawablesWithIntrinsicBounds(app.getIconsCache().getContentIcon(icon), null, null, null);
+					tv.setCompoundDrawablesWithIntrinsicBounds(app.getIconsCache().getThemedIcon(icon), null, null, null);
 					tv.setCompoundDrawablePadding(padding);
-					final CheckBox ch = ((CheckBox) v.findViewById(R.id.check_item));
+					final CheckBox ch = ((CheckBox) v.findViewById(R.id.toggle_item));
 					ch.setVisibility(View.VISIBLE);
 					ch.setOnCheckedChangeListener(null);
 					ch.setChecked(checkedIntermediates[position]);

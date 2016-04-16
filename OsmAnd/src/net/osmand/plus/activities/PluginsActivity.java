@@ -1,8 +1,5 @@
 package net.osmand.plus.activities;
 
-import net.osmand.plus.OsmandApplication;
-import net.osmand.plus.OsmandPlugin;
-import net.osmand.plus.R;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.res.TypedArray;
@@ -16,6 +13,10 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import net.osmand.plus.OsmandApplication;
+import net.osmand.plus.OsmandPlugin;
+import net.osmand.plus.R;
 
 public class PluginsActivity extends OsmandListActivity {
 	public static final int ACTIVE_PLUGINS_LIST_MODIFIED = 1;
@@ -93,10 +94,12 @@ public class PluginsActivity extends OsmandListActivity {
 			pluginLogo.setImageResource(plugin.getLogoResourceId());
 			if (plugin.isActive()) {
 				pluginLogo.setBackgroundResource(R.drawable.bg_plugin_logo_enabled);
+				pluginLogo.setContentDescription(getString(R.string.shared_string_disable));
 			} else {
 				TypedArray attributes = getTheme().obtainStyledAttributes(
 						new int[] {R.attr.bg_plugin_logo_disabled});
 				pluginLogo.setBackgroundDrawable(attributes.getDrawable(0));
+				pluginLogo.setContentDescription(getString(plugin.needsInstallation() ? R.string.access_shared_string_not_installed : R.string.shared_string_enable));
 				attributes.recycle();
 			}
 			pluginLogo.setOnClickListener(new View.OnClickListener() {
@@ -121,7 +124,7 @@ public class PluginsActivity extends OsmandListActivity {
 
 
 			ImageView pluginOptions = (ImageView) view.findViewById(R.id.plugin_options);
-			pluginOptions.setImageDrawable(getMyApplication().getIconsCache().getContentIcon(R.drawable.ic_overflow_menu_white));
+			pluginOptions.setImageDrawable(getMyApplication().getIconsCache().getThemedIcon(R.drawable.ic_overflow_menu_white));
 			pluginOptions.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {

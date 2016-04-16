@@ -11,7 +11,9 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Environment;
+import android.support.annotation.DrawableRes;
 import android.support.annotation.Nullable;
+import android.support.annotation.StringRes;
 
 import net.osmand.IndexConstants;
 import net.osmand.StateChangedListener;
@@ -75,7 +77,7 @@ public class OsmandSettings {
 		private List<WeakReference<StateChangedListener<T>>> l = null;
 
 		@Override
-		public void addListener(StateChangedListener<T> listener) {
+		public synchronized void addListener(StateChangedListener<T> listener) {
 			if (l == null) {
 				l = new LinkedList<WeakReference<StateChangedListener<T>>>();
 			}
@@ -84,7 +86,7 @@ public class OsmandSettings {
 			}
 		}
 
-		public void fireEvent(T value) {
+		public synchronized void fireEvent(T value) {
 			if (l != null) {
 				Iterator<WeakReference<StateChangedListener<T>>> it = l.iterator();
 				while (it.hasNext()) {
@@ -99,7 +101,7 @@ public class OsmandSettings {
 		}
 
 		@Override
-		public void removeListener(StateChangedListener<T> listener) {
+		public synchronized void removeListener(StateChangedListener<T> listener) {
 			if (l != null) {
 				Iterator<WeakReference<StateChangedListener<T>>> it = l.iterator();
 				while (it.hasNext()) {
@@ -778,20 +780,24 @@ public class OsmandSettings {
 			new BooleanPreference("use_trackball_for_movements", true).makeGlobal();
 
 	// this value string is synchronized with settings_pref.xml preference name
+	public final OsmandPreference<Boolean> ACCESSIBILITY_SMART_AUTOANNOUNCE =
+		new BooleanAccessibilityPreference("accessibility_smart_autoannounce", true).makeGlobal();
+	
+	// this value string is synchronized with settings_pref.xml preference name
+	// cache of metrics constants as they are used very often
+	public final OsmandPreference<Integer> ACCESSIBILITY_AUTOANNOUNCE_PERIOD = new IntPreference("accessibility_autoannounce_period", 10000).makeGlobal().cache();
+	
+	// this value string is synchronized with settings_pref.xml preference name
+	public final OsmandPreference<Boolean> DISABLE_OFFROUTE_RECALC =
+		new BooleanAccessibilityPreference("disable_offroute_recalc", false).makeGlobal();
+	
+	// this value string is synchronized with settings_pref.xml preference name
+	public final OsmandPreference<Boolean> DISABLE_WRONG_DIRECTION_RECALC =
+		new BooleanAccessibilityPreference("disable_wrong_direction_recalc", false).makeGlobal();
+	
+	// this value string is synchronized with settings_pref.xml preference name
 	public final OsmandPreference<Boolean> ZOOM_BY_TRACKBALL =
 			new BooleanAccessibilityPreference("zoom_by_trackball", false).makeGlobal();
-
-	// this value string is synchronized with settings_pref.xml preference name
-	public final OsmandPreference<Boolean> SCROLL_MAP_BY_GESTURES =
-			new BooleanAccessibilityPreference("scroll_map_by_gestures", true).makeGlobal();
-
-	// this value string is synchronized with settings_pref.xml preference name
-	public final OsmandPreference<Boolean> USE_SHORT_OBJECT_NAMES =
-			new BooleanAccessibilityPreference("use_short_object_names", false).makeGlobal();
-
-	// this value string is synchronized with settings_pref.xml preference name
-	public final OsmandPreference<Boolean> ACCESSIBILITY_EXTENSIONS =
-			new BooleanAccessibilityPreference("accessibility_extensions", false).makeGlobal();
 
 
 	// magnetic field doesn'torkmost of the time on some phones
@@ -2526,19 +2532,27 @@ public class OsmandSettings {
 
 
 	public enum DayNightMode {
-		AUTO(R.string.daynight_mode_auto),
-		DAY(R.string.daynight_mode_day),
-		NIGHT(R.string.daynight_mode_night),
-		SENSOR(R.string.daynight_mode_sensor);
+		AUTO(R.string.daynight_mode_auto, R.drawable.ic_action_map_sunst),
+		DAY(R.string.daynight_mode_day, R.drawable.ic_action_map_day),
+		NIGHT(R.string.daynight_mode_night, R.drawable.ic_action_map_night),
+		SENSOR(R.string.daynight_mode_sensor, R.drawable.ic_action_map_light_sensor);
 
 		private final int key;
+		@DrawableRes
+		private final int drawableRes;
 
-		DayNightMode(int key) {
+		DayNightMode(@StringRes int key, @DrawableRes int drawableRes) {
 			this.key = key;
+			this.drawableRes = drawableRes;
 		}
 
 		public String toHumanString(Context ctx) {
 			return ctx.getString(key);
+		}
+
+		@DrawableRes
+		public int getIconRes() {
+			return drawableRes;
 		}
 
 		public boolean isSensor() {

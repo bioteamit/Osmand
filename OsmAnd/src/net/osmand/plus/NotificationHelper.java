@@ -67,7 +67,7 @@ public class NotificationHelper {
 
 	public Builder buildNotificationInStatusBar() {
 		NavigationService service = app.getNavigationService();
-		String notificationText ;
+		String notificationText = "";
 		int icon = R.drawable.bgs_icon;
 		OsmandMonitoringPlugin monitoringPlugin = OsmandPlugin.getEnabledPlugin(OsmandMonitoringPlugin.class);
 		if (service != null) {
@@ -84,7 +84,8 @@ public class NotificationHelper {
 				if (s.length() > 0) {
 					s += ", ";
 				}
-				s += app.getString(R.string.shared_string_trip_recording).toLowerCase();
+				s += app.getString(R.string.shared_string_trip_recording).toLowerCase()
+					+ ": " + OsmAndFormatter.getFormattedDistance(app.getSavingTrackHelper().getDistance(), app);
 			}
 			if ((service.getUsedBy() & NavigationService.USED_BY_LIVE) != 0) {
 				if (s.length() > 0) {
@@ -103,13 +104,17 @@ public class NotificationHelper {
 			} else {
 				notificationText = notificationText + Integer.toString(soi / 1000 / 60) + " " + app.getString(R.string.int_min);
 			}
-		} else if(monitoringPlugin == null) {
-			return null;
+		//} else if(monitoringPlugin == null) {
+		//	return null;
+		//} else if(app.getSavingTrackHelper().getDistance() > 0f){
+		//This produces system notification if unsaved GPX track exists, displaying recorded distance. But only while OsmAnd is in the foreground and while recording has been stopped (otherwise background notification caries this info anyway)
+		//Purpose is doubtful, we have widget for that. If we re-instate, we need to implement notification refresh upon track saved, maybe also work on notification wording to clarify meaning.
+		//	notificationText =	app.getString(R.string.shared_string_trip_recording);
+		//	float dst = app.getSavingTrackHelper().getDistance();
+		//	notificationText += ": "+OsmAndFormatter.getFormattedDistance(dst, app);
+		//	icon = R.drawable.ic_action_polygom_dark;
 		} else {
-			notificationText =	app.getString(R.string.shared_string_trip_recording);
-			float dst = app.getSavingTrackHelper().getDistance();
-			notificationText += " ("+OsmAndFormatter.getFormattedDistance(dst, app)+")";
-			icon = R.drawable.ic_action_polygom_dark;
+			return null;
 		}
 
 		Intent contentIntent = new Intent(app, MapActivity.class);
@@ -125,20 +130,22 @@ public class NotificationHelper {
 			PendingIntent savePendingIntent = PendingIntent.getBroadcast(app, 0, saveIntent,
 					PendingIntent.FLAG_UPDATE_CURRENT);
 
-			if(service != null && service.getUsedBy() == NavigationService.USED_BY_GPX) {
+			if(service != null && (service.getUsedBy()&2)!=0) {
+				//checks if service.getUsedBy() includes NavigationService.USED_BY_GPX
 				Intent stopIntent = new Intent(OSMAND_STOP_GPX_SERVICE_ACTION);
 				PendingIntent stopPendingIntent = PendingIntent.getBroadcast(app, 0, stopIntent,
 						PendingIntent.FLAG_UPDATE_CURRENT);
 				notificationBuilder.addAction(R.drawable.ic_action_rec_stop,
-						app.getString(R.string.shared_string_control_stop), stopPendingIntent);
+						app.getString(R.string.gpx_monitoring_stop), stopPendingIntent);
 				notificationBuilder.addAction(R.drawable.ic_action_save, app.getString(R.string.shared_string_save),
 						savePendingIntent);
-			} else if(service == null) {
+//			} else if(service == null) {
+			} else {
 				Intent startIntent = new Intent(OSMAND_START_GPX_SERVICE_ACTION);
 				PendingIntent startPendingIntent = PendingIntent.getBroadcast(app, 0, startIntent,
 						PendingIntent.FLAG_UPDATE_CURRENT);
 				notificationBuilder.addAction(R.drawable.ic_action_rec_start,
-						app.getString(R.string.shared_string_control_start), startPendingIntent);
+						app.getString(R.string.gpx_monitoring_start), startPendingIntent);
 				notificationBuilder.addAction(R.drawable.ic_action_save, app.getString(R.string.shared_string_save),
 						savePendingIntent);
 			}

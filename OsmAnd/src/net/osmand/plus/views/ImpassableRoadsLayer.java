@@ -13,6 +13,7 @@ import net.osmand.data.LatLon;
 import net.osmand.data.PointDescription;
 import net.osmand.data.RotatedTileBox;
 import net.osmand.plus.ContextMenuAdapter;
+import net.osmand.plus.ContextMenuItem;
 import net.osmand.plus.R;
 import net.osmand.plus.activities.MapActivity;
 import net.osmand.plus.routing.RoutingHelper;
@@ -117,18 +118,20 @@ public class ImpassableRoadsLayer extends OsmandMapLayer implements ContextMenuL
 
 	@Override
 	public void collectObjectsFromPoint(PointF point, RotatedTileBox tileBox, List<Object> o) {
-		int ex = (int) point.x;
-		int ey = (int) point.y;
-		int compare = getRadiusPoi(tileBox);
-		int radius = compare * 3 / 2;
+		if (tileBox.getZoom() >= startZoom) {
+			int ex = (int) point.x;
+			int ey = (int) point.y;
+			int compare = getRadiusPoi(tileBox);
+			int radius = compare * 3 / 2;
 
-		for (RouteDataObject road : getMissingRoads()) {
-			Location location = getMissingRoadLocations().get(road.getId());
-			int x = (int) tileBox.getPixXFromLatLon(location.getLatitude(), location.getLongitude());
-			int y = (int) tileBox.getPixYFromLatLon(location.getLatitude(), location.getLongitude());
-			if (calculateBelongs(ex, ey, x, y, compare)) {
-				compare = radius;
-				o.add(road);
+			for (RouteDataObject road : getMissingRoads()) {
+				Location location = getMissingRoadLocations().get(road.getId());
+				int x = (int) tileBox.getPixXFromLatLon(location.getLatitude(), location.getLongitude());
+				int y = (int) tileBox.getPixYFromLatLon(location.getLatitude(), location.getLongitude());
+				if (calculateBelongs(ex, ey, x, y, compare)) {
+					compare = radius;
+					o.add(road);
+				}
 			}
 		}
 	}
@@ -158,24 +161,25 @@ public class ImpassableRoadsLayer extends OsmandMapLayer implements ContextMenuL
 	}
 
 	@Override
-	public void populateObjectContextMenu(final LatLon latLon, final Object o, ContextMenuAdapter adapter) {
+	public void populateObjectContextMenu(final LatLon latLon, final Object o, ContextMenuAdapter adapter, MapActivity mapActivity) {
 		if (latLon != null && o == null
 				&& (routingHelper.isRoutePlanningMode() || routingHelper.isFollowingMode())) {
 
-			ContextMenuAdapter.OnContextMenuClick listener = new ContextMenuAdapter.OnContextMenuClick() {
+			ContextMenuAdapter.ItemClickListener listener = new ContextMenuAdapter.ItemClickListener() {
 				@Override
-				public boolean onContextMenuClick(ArrayAdapter<?> adapter, int itemId, int pos, boolean isChecked) {
+				public boolean onContextMenuClick(ArrayAdapter<ContextMenuItem> adapter, int itemId, int pos, boolean isChecked) {
 					if (itemId == R.string.avoid_road) {
 						activity.getMyApplication().getAvoidSpecificRoads().addImpassableRoad(
 								activity, latLon, false);
 					}
-					activity.refreshMap();
 					return true;
 				}
 			};
 
-			adapter.item(R.string.avoid_road).iconColor(
-					R.drawable.ic_action_road_works_dark).listen(listener).reg();
+			adapter.addItem(new ContextMenuItem.ItemBuilder().setTitleId(R.string.avoid_road, activity)
+					.setIcon(R.drawable.ic_action_road_works_dark)
+					.setListener(listener)
+					.createItem());
 		}
 	}
 }

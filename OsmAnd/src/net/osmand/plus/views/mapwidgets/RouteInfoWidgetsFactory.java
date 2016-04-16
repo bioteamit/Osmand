@@ -1,9 +1,26 @@
 package net.osmand.plus.views.mapwidgets;
 
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import android.app.Activity;
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BlurMaskFilter;
+import android.graphics.BlurMaskFilter.Blur;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.ColorFilter;
+import android.graphics.Matrix;
+import android.graphics.Paint;
+import android.graphics.Paint.Style;
+import android.graphics.Path;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
+import android.graphics.drawable.Drawable;
+import android.text.format.DateFormat;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import net.osmand.Location;
 import net.osmand.binary.RouteDataObject;
@@ -21,6 +38,7 @@ import net.osmand.plus.activities.MapActivity;
 import net.osmand.plus.base.MapViewTrackingUtilities;
 import net.osmand.plus.helpers.AndroidUiHelper;
 import net.osmand.plus.helpers.WaypointHelper;
+import net.osmand.plus.mapcontextmenu.other.MapRouteInfoMenu;
 import net.osmand.plus.routing.AlarmInfo;
 import net.osmand.plus.routing.AlarmInfo.AlarmInfoType;
 import net.osmand.plus.routing.RouteCalculationResult.NextDirectionInfo;
@@ -30,26 +48,16 @@ import net.osmand.plus.views.AnimateDraggingMapThread;
 import net.osmand.plus.views.OsmandMapLayer.DrawSettings;
 import net.osmand.plus.views.OsmandMapTileView;
 import net.osmand.plus.views.TurnPathHelper;
-import net.osmand.plus.mapcontextmenu.other.MapRouteInfoMenu;
 import net.osmand.router.RouteResultPreparation;
 import net.osmand.router.TurnType;
 import net.osmand.util.Algorithms;
 import net.osmand.util.MapUtils;
-import android.app.Activity;
-import android.content.Context;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.ColorFilter;
-import android.graphics.Matrix;
-import android.graphics.Paint;
-import android.graphics.Paint.Style;
-import android.graphics.Path;
-import android.graphics.drawable.Drawable;
-import android.text.format.DateFormat;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class RouteInfoWidgetsFactory {
 
@@ -496,8 +504,79 @@ public class RouteInfoWidgetsFactory {
 		};
 		return distanceControl;
 	}
-	
-	
+
+
+	public abstract static class BearingToPointInfoControl extends TextInfoWidget {
+
+		private final OsmandMapTileView view;
+		private float[] calculations = new float[2];
+		private int cachedDegrees;
+
+		public BearingToPointInfoControl(MapActivity ma, int res, int resNight) {
+			super(ma);
+			this.view = ma.getMapView();
+			if (res != 0 && resNight != 0) {
+				setIcons(res, resNight);
+			}
+			setText(null, null);
+			setOnClickListener(new View.OnClickListener() {
+
+				@Override
+				public void onClick(View v) {
+					click(view);
+				}
+			});
+		}
+
+		protected void click(final OsmandMapTileView view) {
+			AnimateDraggingMapThread thread = view.getAnimatedDraggingThread();
+			LatLon pointToNavigate = getPointToNavigate();
+			if (pointToNavigate != null) {
+				int fZoom = view.getZoom() < 15 ? 15 : view.getZoom();
+				thread.startMoving(pointToNavigate.getLatitude(), pointToNavigate.getLongitude(), fZoom, true);
+			}
+		}
+
+		@Override
+		public boolean updateInfo(DrawSettings drawSettings) {
+			int b = getBearing();
+			if (distChanged(cachedDegrees, b)) {
+				cachedDegrees = b;
+				if (b >= 0) {
+					setText(String.valueOf(b) + "°", null);
+				} else {
+					setText(null, null);
+				}
+				return true;
+			}
+			return false;
+		}
+
+		public abstract LatLon getPointToNavigate();
+
+		public int getBearing() {
+			int d = -1;
+			Location myLocation = getOsmandApplication().getLocationProvider().getLastKnownLocation();
+			LatLon l = getPointToNavigate();
+			if (myLocation != null && l != null) {
+				Location.distanceBetween(myLocation.getLatitude(), myLocation.getLongitude(), l.getLatitude(), l.getLongitude(), calculations);
+				d = (int) calculations[1];
+			}
+			return d;
+		}
+	}
+
+	public TextInfoWidget createBearingControl(final MapActivity map) {
+		BearingToPointInfoControl bearingControl = new BearingToPointInfoControl(map,R.drawable.widget_target_day,
+				R.drawable.widget_target_night) {
+			@Override
+			public LatLon getPointToNavigate() {
+				TargetPoint p = map.getPointToNavigate();
+				return p == null ? null : p.point;
+			}
+		};
+		return bearingControl;
+	}
 	
 	private static Path getPathFromTurnType(List<Path> paths, int laneType, Path defaultType, float coef) {
 		if(laneType == 0) {
@@ -518,7 +597,8 @@ public class RouteInfoWidgetsFactory {
 		paths.set(laneType, p);
 		return p;
 	}
-	
+
+
 	public static class LanesControl {
 		private MapViewTrackingUtilities trackingUtilities;
 		private OsmAndLocationProvider locationProvider;
@@ -631,32 +711,44 @@ public class RouteInfoWidgetsFactory {
 	
 	
 	private static class LanesDrawable extends Drawable {
-		int[] lanes = null; 
+		int[] lanes = null;
 		boolean imminent = false;
 		private Context ctx;
 		private ArrayList<Path> paths = new ArrayList<Path>();
+		private Map<TurnPathHelper.TurnResource, Bitmap> bitmapCache = new HashMap<TurnPathHelper.TurnResource, Bitmap>();
 		private Paint paintBlack;
 		private Path laneStraight;
+		private final Bitmap laneStraightBitmap;
 		private Paint paintRouteDirection;
+		private Paint paintSecondTurn;
 		private float scaleCoefficient;
 		private int height;
 		private int width;
 		private static final float miniCoeff = 2f;
-		
-		public LanesDrawable(Context ctx, float scaleCoefficent) {
+		private final boolean leftSide;
+
+		public LanesDrawable(MapActivity ctx, float scaleCoefficent) {
 			this.ctx = ctx;
+			OsmandSettings settings = ctx.getMyApplication().getSettings();
+			leftSide = settings.DRIVING_REGION.get().leftHandDriving;
+
 			this.scaleCoefficient = scaleCoefficent;
 			laneStraight = getPathFromTurnType(paths, TurnType.C, null, scaleCoefficient / miniCoeff);
+			laneStraightBitmap = TurnPathHelper.getBitmapFromTurnType(ctx.getResources(), bitmapCache, TurnType.C, 0, 0, TurnPathHelper.FIRST_TURN, scaleCoefficient / miniCoeff, leftSide);
 			paintBlack = new Paint();
 			paintBlack.setStyle(Style.STROKE);
 			paintBlack.setColor(Color.BLACK);
 			paintBlack.setAntiAlias(true);
 			paintBlack.setStrokeWidth(2.5f);
 			
-			paintRouteDirection = new Paint();
-			paintRouteDirection.setStyle(Style.FILL);
+			paintRouteDirection = new Paint(Paint.ANTI_ALIAS_FLAG);
+			paintRouteDirection.setStyle(Style.FILL_AND_STROKE);
 			paintRouteDirection.setColor(ctx.getResources().getColor(R.color.nav_arrow));
-			paintRouteDirection.setAntiAlias(true);
+
+			paintSecondTurn = new Paint(Paint.ANTI_ALIAS_FLAG);
+			paintSecondTurn.setStyle(Style.FILL_AND_STROKE);
+			paintSecondTurn.setColor(ctx.getResources().getColor(R.color.nav_arrow_distant));
+
 		}
 
 		public void updateBounds() {
@@ -676,8 +768,82 @@ public class RouteInfoWidgetsFactory {
 			return width;
 		}
 
+
 		@Override
 		public void draw(Canvas canvas) {
+			float w = 72 * scaleCoefficient / miniCoeff;
+
+			Bitmap src = Bitmap.createBitmap(canvas.getWidth(), canvas.getHeight(), Bitmap.Config.ARGB_8888);
+			// setup canvas for painting
+			Canvas srcCanvas = new Canvas(src);
+			// setup default color
+			srcCanvas.drawColor(0, PorterDuff.Mode.CLEAR);
+
+			//to change color immediately when needed
+			if (lanes != null && lanes.length > 0) {
+				srcCanvas.save();
+				// canvas.translate((int) (16 * scaleCoefficient), 0);
+				for (int i = 0; i < lanes.length; i++) {
+					if ((lanes[i] & 1) == 1) {
+						paintRouteDirection.setColor(imminent ? ctx.getResources().getColor(R.color.nav_arrow_imminent) :
+								ctx.getResources().getColor(R.color.nav_arrow));
+					} else {
+						paintRouteDirection.setColor(ctx.getResources().getColor(R.color.nav_arrow_distant));
+					}
+					int turnType = TurnType.getPrimaryTurn(lanes[i]);
+					int secondTurnType = TurnType.getSecondaryTurn(lanes[i]);
+					int thirdTurnType = TurnType.getTertiaryTurn(lanes[i]);
+
+					float coef = scaleCoefficient / miniCoeff;
+					if(thirdTurnType > 0){
+						Bitmap bSecond = null;
+						bSecond = TurnPathHelper.getBitmapFromTurnType(ctx.getResources(), bitmapCache, turnType, 
+								secondTurnType, thirdTurnType, TurnPathHelper.THIRD_TURN, coef, leftSide);
+						if (bSecond != null){
+							paintSecondTurn.setColorFilter(new PorterDuffColorFilter(paintSecondTurn.getColor(), PorterDuff.Mode.SRC_ATOP));
+							srcCanvas.drawBitmap(bSecond, 0f, 0f, paintSecondTurn);
+						}
+					}
+					if(secondTurnType > 0){
+						Bitmap bSecond = null;
+						bSecond = TurnPathHelper.getBitmapFromTurnType(ctx.getResources(), bitmapCache, turnType, 
+								secondTurnType, thirdTurnType, TurnPathHelper.SECOND_TURN, coef, leftSide);
+						if (bSecond != null){
+							paintSecondTurn.setColorFilter(new PorterDuffColorFilter(paintSecondTurn.getColor(), PorterDuff.Mode.SRC_ATOP));
+							srcCanvas.drawBitmap(bSecond, 0f, 0f, paintSecondTurn);
+						}
+					}
+					Bitmap b = TurnPathHelper.getBitmapFromTurnType(ctx.getResources(), bitmapCache, turnType, 
+							secondTurnType, thirdTurnType, TurnPathHelper.FIRST_TURN, coef, leftSide);
+					if(b != null) {
+						paintRouteDirection.setColorFilter(new PorterDuffColorFilter(paintRouteDirection.getColor(), PorterDuff.Mode.SRC_ATOP));
+						srcCanvas.drawBitmap(b, 0f, 0f, paintRouteDirection);
+						srcCanvas.translate(w, 0);
+					}
+				}
+				srcCanvas.restore();
+			}
+
+			// create a blur paint for capturing alpha
+			Paint ptBlur = new Paint();
+			ptBlur.setMaskFilter(new BlurMaskFilter(5, Blur.OUTER));
+			int[] offsetXY = new int[2];
+			// capture alpha into a bitmap
+			Bitmap bmAlpha = src.extractAlpha(ptBlur, offsetXY);
+			// create a color paint
+			Paint ptAlphaColor = new Paint();
+			ptAlphaColor.setColor(0xFF000000);
+			// paint color for captured alpha region (bitmap)
+			canvas.drawBitmap(bmAlpha, offsetXY[0], offsetXY[1], ptAlphaColor);
+			// free memory
+			bmAlpha.recycle();
+
+			// paint the image source
+			canvas.drawBitmap(src, 0, 0, null);
+		}
+
+		//@Override
+		public void drawOld(Canvas canvas) {
 			float w = 72 * scaleCoefficient / miniCoeff;
 			//to change color immediately when needed
 			if (lanes != null && lanes.length > 0) {

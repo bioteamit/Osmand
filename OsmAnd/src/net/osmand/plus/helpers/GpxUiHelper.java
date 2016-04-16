@@ -5,6 +5,8 @@ import android.app.Application;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
+import android.graphics.drawable.Drawable;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.util.TypedValue;
 import android.view.View;
@@ -21,13 +23,14 @@ import android.widget.Toast;
 
 import net.osmand.CallbackWithObject;
 import net.osmand.IndexConstants;
-import net.osmand.access.AccessibleToast;
 import net.osmand.plus.ContextMenuAdapter;
+import net.osmand.plus.ContextMenuItem;
 import net.osmand.plus.GPXUtilities;
 import net.osmand.plus.GPXUtilities.GPXFile;
 import net.osmand.plus.GPXUtilities.GPXTrackAnalysis;
 import net.osmand.plus.GPXUtilities.TrkSegment;
 import net.osmand.plus.GpxSelectionHelper.SelectedGpxFile;
+import net.osmand.plus.IconsCache;
 import net.osmand.plus.OsmAndFormatter;
 import net.osmand.plus.OsmandApplication;
 import net.osmand.plus.R;
@@ -67,11 +70,11 @@ public class GpxUiHelper {
 	public static String getDescription(OsmandApplication app, GPXTrackAnalysis analysis, boolean html) {
 		StringBuilder description = new StringBuilder();
 		String nl = html ? "<br/>" : "\n";
-		String timeSpanClr = Algorithms.colorToString(app.getResources().getColor(R.color.gpx_time_span_color));
-		String distanceClr = Algorithms.colorToString(app.getResources().getColor(R.color.gpx_distance_color));
-		String speedClr = Algorithms.colorToString(app.getResources().getColor(R.color.gpx_speed));
-		String ascClr = Algorithms.colorToString(app.getResources().getColor(R.color.gpx_altitude_asc));
-		String descClr = Algorithms.colorToString(app.getResources().getColor(R.color.gpx_altitude_desc));
+		String timeSpanClr = Algorithms.colorToString(ContextCompat.getColor(app, R.color.gpx_time_span_color));
+		String distanceClr = Algorithms.colorToString(ContextCompat.getColor(app, R.color.gpx_distance_color));
+		String speedClr = Algorithms.colorToString(ContextCompat.getColor(app, R.color.gpx_speed));
+		String ascClr = Algorithms.colorToString(ContextCompat.getColor(app, R.color.gpx_altitude_asc));
+		String descClr = Algorithms.colorToString(ContextCompat.getColor(app, R.color.gpx_altitude_desc));
 		// OUTPUT:
 		// 1. Total distance, Start time, End time
 		description.append(app.getString(R.string.gpx_info_distance, getColorValue(distanceClr,
@@ -90,16 +93,14 @@ public class GpxUiHelper {
 
 		// 2. Time span
 		if (analysis.timeSpan > 0 && analysis.timeSpan / 1000 != analysis.timeMoving / 1000) {
-			final String formatDuration = Algorithms.formatDuration((int) (analysis.timeSpan / 1000)
-			);
+			final String formatDuration = Algorithms.formatDuration((int) (analysis.timeSpan / 1000), app.accessibilityEnabled());
 			description.append(nl).append(app.getString(R.string.gpx_timespan,
 					getColorValue(timeSpanClr, formatDuration, html)));
 		}
 
 		// 3. Time moving, if any
 		if (analysis.isTimeMoving()) {
-			final String formatDuration = Algorithms.formatDuration((int) (analysis.timeMoving / 1000)
-			);
+			final String formatDuration = Algorithms.formatDuration((int) (analysis.timeMoving / 1000), app.accessibilityEnabled());
 			description.append(nl).append(app.getString(R.string.gpx_timemoving,
 					getColorValue(timeSpanClr, formatDuration, html)));
 		}
@@ -135,15 +136,14 @@ public class GpxUiHelper {
 		final File dir = app.getAppPath(IndexConstants.GPX_INDEX_DIR);
 		final List<String> allGpxList = getSortedGPXFilenames(dir, false);
 		if (allGpxList.isEmpty()) {
-			AccessibleToast.makeText(activity, R.string.gpx_files_not_found, Toast.LENGTH_LONG).show();
+			Toast.makeText(activity, R.string.gpx_files_not_found, Toast.LENGTH_LONG).show();
 		}
 
 		if (!allGpxList.isEmpty() || showCurrentGpx) {
 			if (showCurrentGpx) {
 				allGpxList.add(0, activity.getString(R.string.show_current_gpx_title));
 			}
-			final ContextMenuAdapter adapter = createGpxContextMenuAdapter(activity, allGpxList, selectedGpxList, multipleChoice,
-					showCurrentGpx);
+			final ContextMenuAdapter adapter = createGpxContextMenuAdapter(allGpxList, selectedGpxList, showCurrentGpx);
 
 			return createDialog(activity, showCurrentGpx, multipleChoice, callbackWithObject, allGpxList, adapter);
 		}
@@ -156,15 +156,14 @@ public class GpxUiHelper {
 		final File dir = app.getAppPath(IndexConstants.GPX_INDEX_DIR);
 		final List<String> list = getSortedGPXFilenames(dir, false);
 		if (list.isEmpty()) {
-			AccessibleToast.makeText(activity, R.string.gpx_files_not_found, Toast.LENGTH_LONG).show();
+			Toast.makeText(activity, R.string.gpx_files_not_found, Toast.LENGTH_LONG).show();
 		}
 		if (!list.isEmpty() || showCurrentGpx) {
 			if (showCurrentGpx) {
 				list.add(0, activity.getString(R.string.show_current_gpx_title));
 			}
 
-			final ContextMenuAdapter adapter = createGpxContextMenuAdapter(activity, list, null, multipleChoice,
-					showCurrentGpx);
+			final ContextMenuAdapter adapter = createGpxContextMenuAdapter(list, null, showCurrentGpx);
 			return createDialog(activity, showCurrentGpx, multipleChoice, callbackWithObject, list, adapter);
 		}
 		return null;
@@ -187,17 +186,16 @@ public class GpxUiHelper {
 				}
 			}
 
-			final ContextMenuAdapter adapter = createGpxContextMenuAdapter(activity, list, null, false,
-					showCurrentGpx);
+			final ContextMenuAdapter adapter = createGpxContextMenuAdapter(list, null, showCurrentGpx);
 			return createDialog(activity, showCurrentGpx, false, callbackWithObject, list, adapter);
 		}
 		return null;
 	}
 
-	private static ContextMenuAdapter createGpxContextMenuAdapter(Activity activity, List<String> allGpxList,
-																  List<String> selectedGpxList, boolean multipleChoice,
+	private static ContextMenuAdapter createGpxContextMenuAdapter(List<String> allGpxList,
+																  List<String> selectedGpxList,
 																  boolean showCurrentTrack) {
-		final ContextMenuAdapter adapter = new ContextMenuAdapter(activity);
+		final ContextMenuAdapter adapter = new ContextMenuAdapter();
 		//element position in adapter
 		int i = 0;
 		for (String s : allGpxList) {
@@ -207,8 +205,8 @@ public class GpxUiHelper {
 			}
 			s = s.replace('_', ' ');
 
-			adapter.item(s).selected(multipleChoice ? 0 : -1)
-					.iconColor(R.drawable.ic_action_polygom_dark).reg();
+			adapter.addItem(ContextMenuItem.createBuilder(s).setSelected(false)
+					.setIcon(R.drawable.ic_action_polygom_dark).createItem());
 
 			//if there's some selected files - need to mark them as selected
 			if (selectedGpxList != null) {
@@ -220,15 +218,16 @@ public class GpxUiHelper {
 	}
 
 	protected static void updateSelection(List<String> selectedGpxList, boolean showCurrentTrack,
-										  final ContextMenuAdapter adapter, int i, String fileName) {
-		if (i == 0 && showCurrentTrack) {
+										  final ContextMenuAdapter adapter, int position, String fileName) {
+		ContextMenuItem item = adapter.getItem(position);
+		if (position == 0 && showCurrentTrack) {
 			if (selectedGpxList.contains("")) {
-				adapter.setSelection(i, 1);
+				item.setSelected(true);
 			}
 		} else {
 			for (String file : selectedGpxList) {
 				if (file.endsWith(fileName)) {
-					adapter.setSelection(i, 1);
+					item.setSelected(true);
 					break;
 				}
 			}
@@ -243,21 +242,25 @@ public class GpxUiHelper {
 
 			@Override
 			public boolean processResult(GPXFile[] result) {
-				cmAdapter.setItemName(position, cmAdapter.getItemName(position) + "\n" + getDescription((OsmandApplication) app, result[0], f, false));
+				ContextMenuItem item = cmAdapter.getItem(position);
+				item.setTitle(item.getTitle() + "\n" + getDescription((OsmandApplication) app, result[0], f, false));
 				adapter.notifyDataSetInvalidated();
 				return true;
 			}
 		}, dir, null, filename);
 	}
 
-	private static AlertDialog createDialog(final Activity activity, final boolean showCurrentGpx,
-											final boolean multipleChoice, final CallbackWithObject<GPXFile[]> callbackWithObject,
-											final List<String> list, final ContextMenuAdapter adapter) {
+	private static AlertDialog createDialog(final Activity activity,
+											final boolean showCurrentGpx,
+											final boolean multipleChoice,
+											final CallbackWithObject<GPXFile[]> callbackWithObject,
+											final List<String> list,
+											final ContextMenuAdapter adapter) {
 		final OsmandApplication app = (OsmandApplication) activity.getApplication();
+		final IconsCache iconsCache = app.getIconsCache();
 		final File dir = app.getAppPath(IndexConstants.GPX_INDEX_DIR);
 		AlertDialog.Builder builder = new AlertDialog.Builder(activity);
 		// final int padding = (int) (12 * activity.getResources().getDisplayMetrics().density + 0.5f);
-		final boolean light = app.getSettings().isLightContent();
 		final int layout = R.layout.list_menu_item_native;
 
 		final ArrayAdapter<String> listAdapter = new ArrayAdapter<String>(activity, layout, R.id.title,
@@ -269,32 +272,35 @@ public class GpxUiHelper {
 				if (v == null) {
 					v = activity.getLayoutInflater().inflate(layout, null);
 				}
-				ImageView icon = (ImageView) v.findViewById(R.id.icon);
-				icon.setImageDrawable(adapter.getImage(app, position, light));
+				final ContextMenuItem item = adapter.getItem(position);
+				ImageView iconView = (ImageView) v.findViewById(R.id.icon);
+				Drawable icon = iconsCache.getThemedIcon(item.getIcon());
+				iconView.setImageDrawable(icon);
 				final ArrayAdapter<String> arrayAdapter = this;
-				icon.setOnClickListener(new View.OnClickListener() {
+				iconView.setOnClickListener(new View.OnClickListener() {
 					@Override
 					public void onClick(View v) {
 						if (showCurrentGpx && position == 0) {
 							return;
 						}
-						int nline = adapter.getItemName(position).indexOf('\n');
+						int nline = item.getTitle().indexOf('\n');
 						if (nline == -1) {
 							setDescripionInDialog(arrayAdapter, adapter, activity, dir, list.get(position), position);
 						} else {
-							adapter.setItemName(position, adapter.getItemName(position).substring(0, nline));
+							item.setTitle(item.getTitle().substring(0, nline));
 							arrayAdapter.notifyDataSetInvalidated();
 						}
 					}
 
 				});
 				if (showCurrentGpx && position == 0) {
-					icon.setVisibility(View.INVISIBLE);
+					iconView.setVisibility(View.INVISIBLE);
 				} else {
-					icon.setVisibility(View.VISIBLE);
+					iconView.setVisibility(View.VISIBLE);
+					iconView.setContentDescription(activity.getString(item.getTitle().contains("\n") ? R.string.shared_string_collapse : R.string.access_widget_expand));
 				}
 				TextView tv = (TextView) v.findViewById(R.id.title);
-				tv.setText(adapter.getItemName(position));
+				tv.setText(item.getTitle());
 				tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
 
 				// Put the image on the TextView
@@ -302,16 +308,16 @@ public class GpxUiHelper {
 				// tv.setCompoundDrawablesWithIntrinsicBounds(adapter.getImageId(position, light), 0, 0, 0);
 				// }
 				// tv.setCompoundDrawablePadding(padding);
-				final CheckBox ch = ((CheckBox) v.findViewById(R.id.check_item));
-				if (adapter.getSelection(position) == -1) {
+				final CheckBox ch = ((CheckBox) v.findViewById(R.id.toggle_item));
+				if (item.getSelected() == null) {
 					ch.setVisibility(View.INVISIBLE);
 				} else {
 					ch.setOnCheckedChangeListener(null);
-					ch.setChecked(adapter.getSelection(position) > 0);
+					ch.setChecked(item.getSelected());
 					ch.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 						@Override
 						public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-							adapter.setSelection(position, isChecked ? 1 : 0);
+							item.setSelected(isChecked);
 						}
 					});
 				}
@@ -337,12 +343,12 @@ public class GpxUiHelper {
 							if (app != null && app.getSelectedGpxHelper() != null) {
 								app.getSelectedGpxHelper().clearAllGpxFileToShow();
 							}
-							if (showCurrentGpx && adapter.getSelection(0) > 0) {
+							if (app != null && showCurrentGpx && adapter.getItem(0).getSelected()) {
 								currentGPX = app.getSavingTrackHelper().getCurrentGpx();
 							}
 							List<String> s = new ArrayList<>();
 							for (int i = (showCurrentGpx ? 1 : 0); i < adapter.length(); i++) {
-								if (adapter.getSelection(i) > 0) {
+								if (adapter.getItem(i).getSelected()) {
 									s.add(list.get(i));
 								}
 							}
@@ -360,7 +366,8 @@ public class GpxUiHelper {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 				if (multipleChoice) {
-					adapter.setSelection(position, adapter.getSelection(position) > 0 ? 0 : 1);
+					ContextMenuItem item = adapter.getItem(position);
+					item.setSelected(!item.getSelected());
 					listAdapter.notifyDataSetInvalidated();
 				} else {
 					dlg.dismiss();
@@ -465,7 +472,7 @@ public class GpxUiHelper {
 					@Override
 					public void run() {
 						if (warn.length() > 0) {
-							AccessibleToast.makeText(activity, warn, Toast.LENGTH_LONG).show();
+							Toast.makeText(activity, warn, Toast.LENGTH_LONG).show();
 						} else {
 							callbackWithObject.processResult(result);
 						}

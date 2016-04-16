@@ -65,7 +65,7 @@
                 android:layout_gravity="center_vertical"
                 android:layout_marginLeft="@dimen/map_button_margin"
                 android:layout_marginRight="@dimen/map_button_margin"
-                android:src="@drawable/ic_action_test_light"/>
+                tools:src="@drawable/ic_action_test_light"/>
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -130,17 +130,19 @@
 
             <ImageButton
                 android:id="@+id/waypoint_more"
+                android:contentDescription="@string/shared_string_more"
                 android:layout_width="@dimen/map_address_height"
                 android:layout_height="@dimen/map_address_height"
                 android:background="@drawable/btn_circle_transparent"
-                android:src="@drawable/ic_action_test_light"/>
+                tools:src="@drawable/ic_action_test_light"/>
 
             <ImageButton
                 android:id="@+id/waypoint_close"
+                android:contentDescription="@string/shared_string_close"
                 android:layout_width="@dimen/map_address_height"
                 android:layout_height="@dimen/map_address_height"
                 android:background="@drawable/bottom_shadow"
-                android:src="@drawable/ic_action_test_light"/>
+                tools:src="@drawable/ic_action_test_light"/>
         </LinearLayout>
     </FrameLayout>
 
@@ -211,6 +213,7 @@
 
                     <ImageButton
                         android:id="@+id/marker_btn_ok"
+                        android:contentDescription="@string/shared_string_remove"
                         android:layout_width="50dp"
                         android:layout_height="50dp"
                         android:background="?attr/selectableItemBackgroundBorderless"
@@ -218,6 +221,7 @@
 
                     <ImageButton
                         android:id="@+id/marker_btn_more"
+                        android:contentDescription="@string/shared_string_more"
                         android:layout_width="50dp"
                         android:layout_height="50dp"
                         android:background="?attr/selectableItemBackgroundBorderless"
@@ -292,6 +296,7 @@
 
                     <ImageButton
                         android:id="@+id/marker_btn_ok_2dn"
+                        android:contentDescription="@string/shared_string_remove"
                         android:layout_width="50dp"
                         android:layout_height="48dp"
                         android:background="?attr/selectableItemBackgroundBorderless"
@@ -357,18 +362,20 @@
 
                     <ImageButton
                         android:id="@+id/map_layers_button"
+                        android:contentDescription="@string/configure_map"
                         android:layout_width="@dimen/map_small_button_size"
                         android:layout_height="@dimen/map_small_button_size"
                         android:background="@drawable/btn_inset_circle_trans"
-                        android:src="@drawable/ic_action_test_light"/>
+                        tools:src="@drawable/ic_action_test_light"/>
 
                     <ImageButton
                         android:id="@+id/map_compass_button"
+                        android:contentDescription="@string/map_widget_compass"
                         android:layout_width="@dimen/map_small_button_size"
                         android:layout_height="@dimen/map_small_button_size"
                         android:layout_marginLeft="@dimen/map_small_button_margin"
                         android:background="@drawable/btn_inset_circle_trans"
-                        android:src="@drawable/ic_action_test_light"/>
+                        tools:src="@drawable/ic_action_test_light"/>
                 </LinearLayout>
             </LinearLayout>
             <!-- empty block to not let widgets grow more than 45% -->
@@ -422,11 +429,12 @@
 
                     <ImageButton
                         android:id="@+id/map_collapse_button"
+                        android:contentDescription="@string/shared_string_collapse"
                         android:layout_width="@dimen/map_small_button_size"
                         android:layout_height="@dimen/map_small_button_size"
                         android:layout_gravity="top|center_horizontal"
                         android:background="@drawable/btn_inset_circle_trans"
-                        android:src="@drawable/ic_action_test_light"/>
+                        tools:src="@drawable/ic_action_test_light"/>
                 </LinearLayout>
             </FrameLayout>
         </LinearLayout>

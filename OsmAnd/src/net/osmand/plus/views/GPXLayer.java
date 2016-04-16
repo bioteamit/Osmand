@@ -8,7 +8,6 @@ import android.graphics.ColorFilter;
 import android.graphics.Paint;
 import android.graphics.Paint.Align;
 import android.graphics.Paint.Style;
-import android.graphics.Path;
 import android.graphics.PointF;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuff.Mode;
@@ -39,8 +38,6 @@ import net.osmand.render.RenderingRulesStorage;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import gnu.trove.list.array.TIntArrayList;
 
 public class GPXLayer extends OsmandMapLayer implements ContextMenuLayer.IContextMenuProvider, 
 			MapTextProvider<WptPt> {
@@ -140,7 +137,7 @@ public class GPXLayer extends OsmandMapLayer implements ContextMenuLayer.IContex
 	private int updatePaints(int color, boolean routePoints, boolean currentTrack, DrawSettings nightMode, RotatedTileBox tileBox){
 		RenderingRulesStorage rrs = view.getApplication().getRendererRegistry().getCurrentSelectedRenderer();
 		final boolean isNight = nightMode != null && nightMode.isNightMode();
-		int hsh = calculateHash(rrs, routePoints, isNight, tileBox.getMapDensity());
+		int hsh = calculateHash(rrs, routePoints, isNight, tileBox.getMapDensity(), tileBox.getZoom());
 		if (hsh != cachedHash) {
 			cachedHash = hsh;
 			cachedColor = view.getResources().getColor(R.color.gpx_track);
@@ -168,6 +165,8 @@ public class GPXLayer extends OsmandMapLayer implements ContextMenuLayer.IContex
 				if (currentTrack) {
 					additional = (additional.length() == 0 ? "" : ";") + "currentTrack=true";
 				}
+				req.setIntFilter(rrs.PROPS.R_MINZOOM, tileBox.getZoom());
+				req.setIntFilter(rrs.PROPS.R_MAXZOOM, tileBox.getZoom());
 				if (additional.length() > 0) {
 					req.setStringFilter(rrs.PROPS.R_ADDITIONAL, additional);
 				}
@@ -205,7 +204,8 @@ public class GPXLayer extends OsmandMapLayer implements ContextMenuLayer.IContex
 	public void onPrepareBufferImage(Canvas canvas, RotatedTileBox tileBox, DrawSettings settings) {
 		if(points != null) {
 			updatePaints(0, false, false, settings, tileBox);
-			drawSegments(canvas, tileBox, points);
+			for (TrkSegment ts : points)
+				ts.drawRenderers(view.getZoom(), paint, canvas, tileBox);
 		} else {
 			List<SelectedGpxFile> selectedGPXFiles = selectedGpxHelper.getSelectedGPXFiles();
 			cache.clear();
@@ -280,13 +280,13 @@ public class GPXLayer extends OsmandMapLayer implements ContextMenuLayer.IContex
 					true).getIntrinsicWidth() * 3 / 2.5f;
 			QuadTree<QuadRect> boundIntersections = initBoundIntersections(tileBox);
 
+			List<LatLon> fullObjectsLatLon = new ArrayList<>();
+			List<LatLon> smallObjectsLatLon = new ArrayList<>();
 			// request to load
 			final QuadRect latLonBounds = tileBox.getLatLonBounds();
 			for (SelectedGpxFile g : selectedGPXFiles) {
 				List<WptPt> pts = getListStarPoints(g);
 				List<WptPt> fullObjects = new ArrayList<>();
-				List<LatLon> fullObjectsLatLon = new ArrayList<>();
-				List<LatLon> smallObjectsLatLon = new ArrayList<>();
 				int fcolor = g.getColor() == 0 ? defPointColor : g.getColor();
 				for (WptPt o : pts) {
 					if (o.lat >= latLonBounds.bottom && o.lat <= latLonBounds.top
@@ -315,19 +315,32 @@ public class GPXLayer extends OsmandMapLayer implements ContextMenuLayer.IContex
 					FavoriteImageDrawable fid = FavoriteImageDrawable.getOrCreate(view.getContext(), pointColor, true);
 					fid.drawBitmapInCenter(canvas, x, y);
 				}
-				this.fullObjectsLatLon = fullObjectsLatLon;
-				this.smallObjectsLatLon = smallObjectsLatLon;
 			}
+			this.fullObjectsLatLon = fullObjectsLatLon;
+			this.smallObjectsLatLon = smallObjectsLatLon;
 		}
 	}
 
 	private void drawSelectedFilesSegments(Canvas canvas, RotatedTileBox tileBox,
 			List<SelectedGpxFile> selectedGPXFiles, DrawSettings settings) {
+
 		for (SelectedGpxFile g : selectedGPXFiles) {
-			List<TrkSegment> points = g.getPointsToDisplay();
-			boolean routePoints = g.isRoutePoints();
-			updatePaints(g.getColor(), routePoints, g.isShowCurrentTrack(), settings, tileBox);
-			drawSegments(canvas, tileBox, points);
+			List<TrkSegment> segments = g.getPointsToDisplay();
+			for (TrkSegment ts : segments) {
+
+				if (ts.renders.isEmpty()				// only do once (CODE HERE NEEDS TO BE UI INSTEAD)
+						&& !ts.points.isEmpty()) {		// hmmm. 0-point tracks happen, but.... how?
+
+					if (g.isShowCurrentTrack()) {
+						ts.renders.add(new Renderable.CurrentTrack(ts.points));
+					} else {
+						ts.renders.add(new Renderable.StandardTrack(ts.points, 17.2));
+					}
+				}
+
+				updatePaints(ts.getColor(cachedColor), g.isRoutePoints(), g.isShowCurrentTrack(), settings, tileBox);
+				ts.drawRenderers(view.getZoom(), paint, canvas, tileBox);
+			}
 		}
 	}
 
@@ -350,82 +363,10 @@ public class GPXLayer extends OsmandMapLayer implements ContextMenuLayer.IContex
 		return pts;
 	}
 
-	private void drawSegments(Canvas canvas, RotatedTileBox tileBox, List<TrkSegment> points) {
-		final QuadRect latLonBounds = tileBox.getLatLonBounds();
-		for (TrkSegment l : points) {
-			int startIndex = -1;
-			int endIndex = -1;
-		    int prevCross = 0;
-		    double shift = 0;
-			for (int i = 0; i < l.points.size(); i++) {
-				WptPt ls = l.points.get(i);
-				int cross = 0;
-				cross |= (ls.lon < latLonBounds.left - shift ? 1 : 0);
-				cross |= (ls.lon > latLonBounds.right + shift ? 2 : 0);
-				cross |= (ls.lat > latLonBounds.top + shift ? 4 : 0);
-				cross |= (ls.lat < latLonBounds.bottom - shift ? 8 : 0);
-				if (i > 0) {
-					if ((prevCross & cross) == 0) {
-						if (endIndex == i - 1 && startIndex != -1) {
-							// continue previous line
-						} else {
-							// start new segment
-							if (startIndex >= 0) {
-								drawSegment(canvas, tileBox, l, startIndex, endIndex);
-							}
-							startIndex = i - 1;
-						}
-						endIndex = i;
-					}
-				}
-				prevCross = cross;
-			}
-			if (startIndex != -1) {
-				drawSegment(canvas, tileBox, l, startIndex, endIndex);
-			}
-		}
-	}
-	
+
 	@Override
 	public void onDraw(Canvas canvas, RotatedTileBox tileBox, DrawSettings settings) {
 	}
-
-
-	
-	private void drawSegment(Canvas canvas, RotatedTileBox tb, TrkSegment l, int startIndex, int endIndex) {
-		TIntArrayList tx = new TIntArrayList();
-		TIntArrayList ty = new TIntArrayList();
-		canvas.rotate(-tb.getRotate(), tb.getCenterPixelX(), tb.getCenterPixelY());
-		Path path = new Path();
-		for (int i = startIndex; i <= endIndex; i++) {
-			WptPt p = l.points.get(i);
-			int x = (int) tb.getPixXFromLatLon(p.lat, p.lon);
-			int y = (int) tb.getPixYFromLatLon(p.lat, p.lon);
-//			int x = tb.getPixXFromLonNoRot(p.lon);
-//			int y = tb.getPixYFromLatNoRot(p.lat);
-			tx.add(x);
-			ty.add(y);
-		}
-		calculatePath(tb, tx, ty, path);
-		if(isPaint_1) {
-			canvas.drawPath(path, paint_1);
-		}
-		if(isShadowPaint) {
-			canvas.drawPath(path, shadowPaint);
-		}
-		int clr = paint.getColor();
-		if(clr != l.getColor(clr) && l.getColor(clr) != 0) {
-			paint.setColor(l.getColor(clr));
-		}
-		canvas.drawPath(path, paint);
-		paint.setColor(clr);
-		if(isPaint2) {
-			canvas.drawPath(path, paint2);
-		}
-		canvas.rotate(tb.getRotate(), tb.getCenterPixelX(), tb.getCenterPixelY());
-		
-	}
-	
 	
 	private boolean calculateBelongs(int ex, int ey, int objx, int objy, int radius) {
 		return (Math.abs(objx - ex) <= radius * 2 && Math.abs(objy - ey) <= radius * 2) ;
@@ -482,7 +423,9 @@ public class GPXLayer extends OsmandMapLayer implements ContextMenuLayer.IContex
 
 	@Override
 	public void collectObjectsFromPoint(PointF point, RotatedTileBox tileBox, List<Object> res) {
-		getWptFromPoint(tileBox, point, res);
+		if (tileBox.getZoom() >= startZoom) {
+			getWptFromPoint(tileBox, point, res);
+		}
 	}
 
 	@Override
